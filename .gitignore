@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Vendors
+vendors/*
+
+# vs code
+.vs-code/*
+
+# Windows script
+*.bat
