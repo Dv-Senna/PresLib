@@ -5,7 +5,7 @@
 namespace pl
 {
 	Block::Block(pl::Instance &instance) :
-		m_instance {},
+		m_instance {instance},
 		m_children {},
 		m_id {s_id()}
 	{

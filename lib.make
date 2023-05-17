@@ -61,8 +61,16 @@ endif
 GENERATED :=
 OBJECTS :=
 
+GENERATED += $(OBJDIR)/block.o
+GENERATED += $(OBJDIR)/group.o
 GENERATED += $(OBJDIR)/instance.o
+GENERATED += $(OBJDIR)/line.o
+GENERATED += $(OBJDIR)/slide.o
+OBJECTS += $(OBJDIR)/block.o
+OBJECTS += $(OBJDIR)/group.o
 OBJECTS += $(OBJDIR)/instance.o
+OBJECTS += $(OBJDIR)/line.o
+OBJECTS += $(OBJDIR)/slide.o
 
 # Rules
 # #############################################
@@ -126,7 +134,19 @@ endif
 # File Rules
 # #############################################
 
+$(OBJDIR)/block.o: lib/src/block.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/group.o: lib/src/block/group.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/line.o: lib/src/block/line.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/instance.o: lib/src/instance.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/slide.o: lib/src/slide.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 

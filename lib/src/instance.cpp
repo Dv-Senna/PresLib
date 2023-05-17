@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 
 #include <SDL2/SDL.h>
@@ -8,7 +9,10 @@
 
 namespace pl
 {
-	Instance::Instance() : m_window {nullptr}, m_renderer {nullptr}
+	Instance::Instance() : 
+		m_window {nullptr},
+		m_renderer {nullptr},
+		m_slides {}
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
@@ -36,6 +40,9 @@ namespace pl
 		
 		if (SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_ADD) != 0)
 			throw std::runtime_error("PL : Can't change renderer blend mode : " + std::string(SDL_GetError()));
+
+		if (SDL_RenderSetLogicalSize(m_renderer, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT) != 0)
+			throw std::runtime_error("PL : Can't set viewport size : " + std::string(SDL_GetError()));
 	}
 
 
@@ -70,15 +77,46 @@ namespace pl
 						break;
 				}
 			}
+
+			SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+			SDL_RenderClear(m_renderer);
+
+
+			for (auto slide : m_slides)
+				slide->render();
+
+
+			SDL_RenderPresent(m_renderer);
 		}
-
-
-		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-		SDL_RenderClear(m_renderer);
-
-
-		SDL_RenderPresent(m_renderer);
 	}
+
+
+
+	SDL_Window *Instance::getWindow() const noexcept
+	{
+		return m_window;
+	}
+
+
+
+	SDL_Renderer *Instance::getRenderer() const noexcept
+	{
+		return m_renderer;
+	}
+
+
+	void Instance::addSlide(pl::Slide *slide)
+	{
+		m_slides.push_back(slide);
+	}
+
+
+
+	void Instance::removeSlide(pl::Slide *slide)
+	{
+		m_slides.remove(slide);
+	}
+
 
 
 

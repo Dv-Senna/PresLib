@@ -18,12 +18,14 @@ namespace pl
 
 			virtual void render();
 
-			void addChildren(pl::Block *block);
-			void removeChildren(pl::Block *block);
+			virtual void addChildren(pl::Block *block);
+			virtual void removeChildren(pl::Block *block);
 
 		
-		private:
+		protected:
 			pl::Instance &m_instance;
+
+		private:
 			std::list<pl::Block *> m_children;
 			pl::BlockID m_id;
 
