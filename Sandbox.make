@@ -21,11 +21,11 @@ endif
 RESCOMP = windres
 TARGETDIR = sandbox/bin
 TARGET = $(TARGETDIR)/sandbox.exe
-INCLUDES += -Isandbox/include -Ilib/include -Ivendors/SDL2/include
+INCLUDES += -Isandbox/include -Ilib/include -Ivendors/SDL2/include -Ivendors/SDL2_gfx/include -Ivendors/SDL2/include/SDL2 -Ivendors/SDL2_ttf/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-LIBS += -lpreslib -lSDL2 -lSDL2main -lmingw32
+LIBS += -lpreslib -lSDL2_gfx -lSDL2_ttf -lSDL2 -lSDL2main -lmingw32
 LDDEPS +=
 LINKCMD = $(CXX) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
 define PREBUILDCMDS
@@ -40,14 +40,14 @@ OBJDIR = sandbox/obj/debug
 DEFINES += -DDEBUG -DPL_DEBUG -DPL_PLATEFORM_WINDOWS
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -Wall -Wextra
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -Wall -Wextra -std=c++20
-ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -Lvendors/SDL2/lib
+ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -Lvendors/SDL2/lib -Lvendors/SDL2_gfx/lib -Lvendors/SDL2_ttf/lib
 
 else ifeq ($(config),release)
 OBJDIR = sandbox/obj/release
 DEFINES += -DNDEBUG -DPL_NO_DEBUG -DPL_RELEASE -DPL_PLATEFORM_WINDOWS
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -Wall -Wextra
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -Wall -Wextra -std=c++20
-ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -Lvendors/SDL2/lib -s
+ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -Lvendors/SDL2/lib -Lvendors/SDL2_gfx/lib -Lvendors/SDL2_ttf/lib -s
 
 endif
 

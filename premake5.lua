@@ -21,7 +21,10 @@ project "lib"
 
 	includedirs {
 		"lib/include/pl",
-		"vendors/SDL2/include"
+		"vendors/SDL2/include",
+		"vendors/SDL2_gfx/include",
+		"vendors/SDL2/include/SDL2",
+		"vendors/SDL2_ttf/include",
 	}
 
 	filter "configurations:debug"
@@ -60,16 +63,23 @@ project "Sandbox"
 	includedirs {
 		"sandbox/include",
 		"lib/include",
-		"vendors/SDL2/include"
+		"vendors/SDL2/include",
+		"vendors/SDL2_gfx/include",
+		"vendors/SDL2/include/SDL2",
+		"vendors/SDL2_ttf/include",
 	}
 
 	libdirs {
 		"lib/bin",
-		"vendors/SDL2/lib"
+		"vendors/SDL2/lib",
+		"vendors/SDL2_gfx/lib",
+		"vendors/SDL2_ttf/lib",
 	}
 
 	links {
 		"preslib",
+		"SDL2_gfx",
+		"SDL2_ttf",
 		"SDL2",
 		"SDL2main",
 		"mingw32",

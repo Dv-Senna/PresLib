@@ -21,7 +21,7 @@ endif
 RESCOMP = windres
 TARGETDIR = lib/bin
 TARGET = $(TARGETDIR)/preslib.lib
-INCLUDES += -Ilib/include/pl -Ivendors/SDL2/include
+INCLUDES += -Ilib/include/pl -Ivendors/SDL2/include -Ivendors/SDL2_gfx/include -Ivendors/SDL2/include/SDL2 -Ivendors/SDL2_ttf/include
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
@@ -62,17 +62,25 @@ GENERATED :=
 OBJECTS :=
 
 GENERATED += $(OBJDIR)/block.o
+GENERATED += $(OBJDIR)/ellipse.o
+GENERATED += $(OBJDIR)/font.o
+GENERATED += $(OBJDIR)/fontManager.o
 GENERATED += $(OBJDIR)/group.o
 GENERATED += $(OBJDIR)/instance.o
 GENERATED += $(OBJDIR)/line.o
 GENERATED += $(OBJDIR)/rectangle.o
 GENERATED += $(OBJDIR)/slide.o
+GENERATED += $(OBJDIR)/text.o
 OBJECTS += $(OBJDIR)/block.o
+OBJECTS += $(OBJDIR)/ellipse.o
+OBJECTS += $(OBJDIR)/font.o
+OBJECTS += $(OBJDIR)/fontManager.o
 OBJECTS += $(OBJDIR)/group.o
 OBJECTS += $(OBJDIR)/instance.o
 OBJECTS += $(OBJDIR)/line.o
 OBJECTS += $(OBJDIR)/rectangle.o
 OBJECTS += $(OBJDIR)/slide.o
+OBJECTS += $(OBJDIR)/text.o
 
 # Rules
 # #############################################
@@ -139,6 +147,9 @@ endif
 $(OBJDIR)/block.o: lib/src/block.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/ellipse.o: lib/src/block/ellipse.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/group.o: lib/src/block/group.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -146,6 +157,15 @@ $(OBJDIR)/line.o: lib/src/block/line.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/rectangle.o: lib/src/block/rectangle.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/text.o: lib/src/block/text.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/font.o: lib/src/font.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/fontManager.o: lib/src/fontManager.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/instance.o: lib/src/instance.cpp

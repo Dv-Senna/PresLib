@@ -14,7 +14,7 @@ namespace pl::block
 				pl::Instance &instance,
 				pl::math::Vec2 start,
 				pl::math::Vec2 end,
-				const pl::utils::Color color = {255, 255, 255}
+				const pl::utils::Color color = pl::utils::white
 			);
 			~Line() = default;
 

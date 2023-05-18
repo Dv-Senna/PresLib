@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <SDL2/SDL.h>
+#include <SDL2_ttf/SDL_ttf.h>
 
 #include "instance.hpp"
 
@@ -12,11 +13,15 @@ namespace pl
 	Instance::Instance() : 
 		m_window {nullptr},
 		m_renderer {nullptr},
+		m_fontManager {},
 		m_slides {},
 		m_renderingCallback {nullptr}
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
+
+		if (TTF_Init() != 0)
+			throw std::runtime_error("PL : Can't init SDL2_ttf : " + std::string(TTF_GetError()));
 
 		m_window = SDL_CreateWindow(
 			"Presentation",
@@ -52,6 +57,7 @@ namespace pl
 	{
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(m_window);
+		TTF_Quit();
 		SDL_Quit();
 	}
 
@@ -92,20 +98,7 @@ namespace pl
 			SDL_RenderPresent(m_renderer);
 		}
 	}
-
-
-
-	SDL_Window *Instance::getWindow() const noexcept
-	{
-		return m_window;
-	}
-
-
-
-	SDL_Renderer *Instance::getRenderer() const noexcept
-	{
-		return m_renderer;
-	}
+	
 
 
 	void Instance::addSlide(pl::Slide *slide)
