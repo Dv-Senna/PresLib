@@ -38,15 +38,15 @@ endef
 ifeq ($(config),debug)
 OBJDIR = sandbox/obj/debug
 DEFINES += -DDEBUG -DPL_DEBUG -DPL_PLATEFORM_WINDOWS
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++20
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -Wall -Wextra
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -Wall -Wextra -std=c++20
 ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -Lvendors/SDL2/lib
 
 else ifeq ($(config),release)
 OBJDIR = sandbox/obj/release
 DEFINES += -DNDEBUG -DPL_NO_DEBUG -DPL_RELEASE -DPL_PLATEFORM_WINDOWS
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -std=c++20
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -Wall -Wextra
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -Wall -Wextra -std=c++20
 ALL_LDFLAGS += $(LDFLAGS) -Llib/bin -Lvendors/SDL2/lib -s
 
 endif

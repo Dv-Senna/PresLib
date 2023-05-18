@@ -9,6 +9,7 @@ project "lib"
 	targetdir "lib/bin"
 	objdir "lib/obj"
 	targetname "preslib"
+	warnings "Extra"
 
 	defines {"PL_BUILD_LIB"}
 
@@ -48,6 +49,7 @@ project "Sandbox"
 	targetdir "sandbox/bin"
 	objdir "sandbox/obj"
 	targetname "sandbox"
+	warnings "Extra"
 
 	files {
 		"sandbox/src/**.cpp",

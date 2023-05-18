@@ -12,7 +12,8 @@ namespace pl
 	Instance::Instance() : 
 		m_window {nullptr},
 		m_renderer {nullptr},
-		m_slides {}
+		m_slides {},
+		m_renderingCallback {nullptr}
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
@@ -38,7 +39,7 @@ namespace pl
 			throw std::runtime_error("PL : Can't create an SDL2 renderer : " + std::string(SDL_GetError()));
 
 		
-		if (SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_ADD) != 0)
+		if (SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND) != 0)
 			throw std::runtime_error("PL : Can't change renderer blend mode : " + std::string(SDL_GetError()));
 
 		if (SDL_RenderSetLogicalSize(m_renderer, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT) != 0)
@@ -85,6 +86,8 @@ namespace pl
 			for (auto slide : m_slides)
 				slide->render();
 
+			if (m_renderingCallback != nullptr)
+				m_renderingCallback(this);
 
 			SDL_RenderPresent(m_renderer);
 		}

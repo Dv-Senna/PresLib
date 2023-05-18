@@ -10,6 +10,11 @@ namespace pl
 {
 	using BlockID = uint32_t;
 
+	enum class DrawingType
+	{
+		outlined, filled
+	};
+
 	class Block
 	{
 		public:

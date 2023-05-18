@@ -1,5 +1,4 @@
 #include <cassert>
-#include <iostream>
 #include <stdexcept>
 
 #include "block/line.hpp"
@@ -26,8 +25,6 @@ namespace pl::block
 
 	void Line::render()
 	{
-		//std::cout << "RENDERING LINE " << m_start << ", " << m_end << std::endl;
-
 		if (SDL_SetRenderDrawColor(m_instance.getRenderer(), m_color.r, m_color.g, m_color.b, m_color.a) != 0)
 			throw std::runtime_error("PL : Can't set line's color : " + std::string(SDL_GetError()));
 
@@ -39,14 +36,14 @@ namespace pl::block
 
 	void Line::addChildren(pl::Block *block)
 	{
-		assert("PL : don't call addChildren on a line block");
+		assert(block && "PL : don't call addChildren on a line block");
 	}
 
 
 
 	void Line::removeChildren(pl::Block *block)
 	{
-		assert("PL : don't call removeChildren on a line block");
+		assert(block && "PL : don't call removeChildren on a line block");
 	}
 
 

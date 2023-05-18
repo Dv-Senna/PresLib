@@ -38,15 +38,15 @@ endef
 ifeq ($(config),debug)
 OBJDIR = lib/obj/debug
 DEFINES += -DPL_BUILD_LIB -DDEBUG -DPL_DEBUG -DPL_PLATEFORM_WINDOWS
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -std=c++20
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -g -Wall -Wextra
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -g -Wall -Wextra -std=c++20
 ALL_LDFLAGS += $(LDFLAGS)
 
 else ifeq ($(config),release)
 OBJDIR = lib/obj/release
 DEFINES += -DPL_BUILD_LIB -DNDEBUG -DPL_NO_DEBUG -DPL_RELEASE -DPL_PLATEFORM_WINDOWS
-ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2
-ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -std=c++20
+ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -O2 -Wall -Wextra
+ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -O2 -Wall -Wextra -std=c++20
 ALL_LDFLAGS += $(LDFLAGS) -s
 
 endif
@@ -65,11 +65,13 @@ GENERATED += $(OBJDIR)/block.o
 GENERATED += $(OBJDIR)/group.o
 GENERATED += $(OBJDIR)/instance.o
 GENERATED += $(OBJDIR)/line.o
+GENERATED += $(OBJDIR)/rectangle.o
 GENERATED += $(OBJDIR)/slide.o
 OBJECTS += $(OBJDIR)/block.o
 OBJECTS += $(OBJDIR)/group.o
 OBJECTS += $(OBJDIR)/instance.o
 OBJECTS += $(OBJDIR)/line.o
+OBJECTS += $(OBJDIR)/rectangle.o
 OBJECTS += $(OBJDIR)/slide.o
 
 # Rules
@@ -141,6 +143,9 @@ $(OBJDIR)/group.o: lib/src/block/group.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/line.o: lib/src/block/line.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/rectangle.o: lib/src/block/rectangle.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/instance.o: lib/src/instance.cpp
