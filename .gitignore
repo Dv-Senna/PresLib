@@ -41,7 +41,7 @@ vendors/*
 *.bat
 
 # Makefiles
-Makefiles
+Makefile
 *.make
 
 # Output
