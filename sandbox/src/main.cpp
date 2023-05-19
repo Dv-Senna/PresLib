@@ -31,15 +31,20 @@ int main(int argc, char *argv[])
 		pl::block::Ellipse circle {instance, {100, 100}, 30};
 		slide.addChildren(&circle);
 
+
+		pl::Slide slide2 {};
+		instance.addSlide(&slide2);
+		slide2.addChildren(&background);
+
 		pl::block::Ellipse ellipse {instance, {400, 400}, 20, 0.9f};
 		ellipse.flipWidthAndHeight();
-		slide.addChildren(&ellipse);
+		slide2.addChildren(&ellipse);
 
 		pl::block::Text text {instance, {500, 500}, "Hello World from PresLib !", "arial", 30};
-		slide.addChildren(&text);
+		slide2.addChildren(&text);
 
 		pl::block::Image image {instance, "image.png", {384, 583}, 2.0f};
-		slide.addChildren(&image);
+		slide2.addChildren(&image);
 
 		instance.run();
 	}

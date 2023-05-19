@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <list>
+#include <vector>
 
 #include <SDL2/SDL.h>
 
@@ -30,7 +30,6 @@ namespace pl
 			inline pl::FontManager &getFonts() noexcept {return *m_fontManager;}
 
 			void addSlide(pl::Slide *slide);
-			void removeSlide(pl::Slide *slide);
 
 			void setCustomRenderingCallback(pl::Instance::RenderingCallback renderingCallback);
 
@@ -39,7 +38,8 @@ namespace pl
 			SDL_Window *m_window;
 			SDL_Renderer *m_renderer;
 			pl::FontManager *m_fontManager;
-			std::list<pl::Slide*> m_slides;
+			std::vector<pl::Slide*> m_slides;
+			uint32_t m_currentSlide;
 			pl::Instance::RenderingCallback m_renderingCallback;
 	};
 

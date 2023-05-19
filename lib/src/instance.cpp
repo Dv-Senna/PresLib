@@ -16,6 +16,7 @@ namespace pl
 		m_renderer {nullptr},
 		m_fontManager {nullptr},
 		m_slides {},
+		m_currentSlide {0},
 		m_renderingCallback {nullptr}
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -85,7 +86,23 @@ namespace pl
 				switch (event.type)
 				{
 					case SDL_KEYDOWN:
-						if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+						if (
+							event.key.keysym.scancode == SDL_SCANCODE_SPACE ||
+							event.key.keysym.scancode == SDL_SCANCODE_RIGHT
+						)
+						{
+							m_currentSlide++;
+							if (m_currentSlide == m_slides.size())
+								running = false;
+						}
+
+						else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
+						{
+							if (m_currentSlide != 0)
+								m_currentSlide--;
+						}
+
+						else if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 							running = false;
 						break;
 
@@ -98,9 +115,9 @@ namespace pl
 			SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 			SDL_RenderClear(m_renderer);
 
+			if (m_currentSlide != m_slides.size())
+				m_slides[m_currentSlide]->render();
 
-			for (auto slide : m_slides)
-				slide->render();
 
 			if (m_renderingCallback != nullptr)
 				m_renderingCallback(this);
@@ -114,13 +131,6 @@ namespace pl
 	void Instance::addSlide(pl::Slide *slide)
 	{
 		m_slides.push_back(slide);
-	}
-
-
-
-	void Instance::removeSlide(pl::Slide *slide)
-	{
-		m_slides.remove(slide);
 	}
 
 
