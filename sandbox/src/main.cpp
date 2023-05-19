@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 		pl::block::Group background {instance};
 		slide.addChildren(&background);
 
-		pl::block::Rectangle rectangle {instance, {0, 0, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT}, {30, 30, 30}};
+		pl::block::Rectangle rectangle {instance, PL_ALL_VIEWPORT_RECT, {30, 30, 30}};
 		background.addChildren(&rectangle);
 
 		pl::block::Line line {instance, {10, 20}, {30, 40}};

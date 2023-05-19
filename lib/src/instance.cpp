@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include "instance.hpp"
+#include "utils/framerate.hpp"
 
 
 
@@ -79,6 +80,9 @@ namespace pl
 		bool running {true};
 		SDL_Event event {};
 
+		pl::utils::FPSManager fpsManager {60};
+
+
 		while (running)
 		{
 			while (SDL_PollEvent(&event))
@@ -123,6 +127,8 @@ namespace pl
 				m_renderingCallback(this);
 
 			SDL_RenderPresent(m_renderer);
+
+			fpsManager.cap();
 		}
 	}
 	

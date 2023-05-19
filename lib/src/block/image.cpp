@@ -1,4 +1,5 @@
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 
 #include <SDL2/SDL_image.h>
@@ -22,7 +23,11 @@ namespace pl::block
 	{
 		std::string fullPath = std::string(PL_IMAGES_DEFAULT_FOLDER) + "/" + path;
 
-		SDL_Surface *surface {IMG_Load(fullPath.c_str())};
+		auto surface = std::unique_ptr<
+			SDL_Surface,
+			decltype([](auto *ptr) {SDL_FreeSurface(ptr);})
+		> (IMG_Load(fullPath.c_str()));
+
 		if (surface == nullptr)
 			throw std::runtime_error("PL : Can't load image '" + fullPath + "' : " + std::string(IMG_GetError()));
 
@@ -31,11 +36,9 @@ namespace pl::block
 		m_renderRect.w = m_originalRect.w * scaleFactor;
 		m_renderRect.h = m_originalRect.h * scaleFactor;
 
-		m_texture = SDL_CreateTextureFromSurface(m_instance.getRenderer(), surface);
+		m_texture = SDL_CreateTextureFromSurface(m_instance.getRenderer(), surface.get());
 		if (m_texture == nullptr)
 			throw std::runtime_error("PL : Can't convert surface image to texture : " + std::string(IMG_GetError()));
-
-		SDL_FreeSurface(surface);
 	}
 
 

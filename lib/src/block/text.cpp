@@ -1,4 +1,5 @@
 #include <cassert>
+#include <memory>
 #include <stdexcept>
 
 #include <SDL2/SDL.h>
@@ -26,11 +27,14 @@ namespace pl::block
 		m_color {color},
 		m_texture {nullptr}
 	{
-		SDL_Surface *surface = TTF_RenderText_Solid(
+		auto surface = std::unique_ptr<
+			SDL_Surface,
+			decltype([](auto *ptr) {SDL_FreeSurface(ptr);})
+		> (TTF_RenderText_Solid(
 			m_instance.getFonts().getFont(m_font, size)->getFont(),
 			m_content.c_str(),
 			m_color
-		);
+		));
 
 		if (surface == nullptr)
 			throw std::runtime_error("PL : Can't load text : " + std::string(TTF_GetError()));
@@ -38,11 +42,9 @@ namespace pl::block
 		m_rect.w = surface->w;
 		m_rect.h = surface->h;
 
-		m_texture = SDL_CreateTextureFromSurface(m_instance.getRenderer(), surface);
+		m_texture = SDL_CreateTextureFromSurface(m_instance.getRenderer(), surface.get());
 		if (m_texture == nullptr)
 			throw std::runtime_error("PL : Can't convert text surface to texture : " + std::string(SDL_GetError()));
-
-		SDL_FreeSurface(surface);
 	}
 
 
