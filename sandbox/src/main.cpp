@@ -35,10 +35,11 @@ int main(int argc, char *argv[])
 		ellipse.flipWidthAndHeight();
 		slide.addChildren(&ellipse);
 
-
 		pl::block::Text text {instance, {500, 500}, "Hello World from PresLib !", "arial", 30};
 		slide.addChildren(&text);
 
+		pl::block::Image image {instance, "image.png", {384, 583}, 2.0f};
+		slide.addChildren(&image);
 
 		instance.run();
 	}

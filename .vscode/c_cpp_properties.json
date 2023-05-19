@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/vendors/SDL2_image/include"
+            ],
+            "windowsSdkVersion": "10.0.17763.0",
+            "intelliSenseMode": "windows-gcc-x64",
+            "cppStandard": "c++20"
+        }
+    ],
+    "version": 4
+}

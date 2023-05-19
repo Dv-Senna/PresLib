@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
 #include "instance.hpp"
@@ -19,6 +20,9 @@ namespace pl
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
+
+		if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) == 0)
+			throw std::runtime_error("PL : Can't init SDL2_image : " + std::string(IMG_GetError()));
 
 		if (TTF_Init() != 0)
 			throw std::runtime_error("PL : Can't init SDL2_ttf : " + std::string(TTF_GetError()));
@@ -63,6 +67,7 @@ namespace pl
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(m_window);
 		TTF_Quit();
+		IMG_Quit();
 		SDL_Quit();
 	}
 
