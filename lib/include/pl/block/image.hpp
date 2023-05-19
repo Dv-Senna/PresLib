@@ -14,9 +14,15 @@
 
 namespace pl::block
 {
+	/// @brief A block that handle image
 	class Image final : public pl::Block
 	{
 		public:
+			/// @brief Constructor
+			/// @param instance A pointer to the instance of PL
+			/// @param path The path to the image to use relative to PL_IMAGES_DEFAULT_FOLDER
+			/// @param position The position of the top left corner of the image
+			/// @param scaleFactor A factor by witch the original image size is multiplied
 			Image(
 				pl::Instance &instance,
 				const std::string &path,

@@ -7,9 +7,17 @@
 
 namespace pl::block
 {
+	/// @brief A primitive class that handle circle and ellipse blocks
 	class Ellipse final : public pl::Block
 	{
 		public:
+			/// @brief Constructor of ellipse
+			/// @param instance A pointer to the instance of pl
+			/// @param center The position of the center
+			/// @param size The radius of the circle OR the length of the largest radius
+			/// @param excentricity 0 for a circle, < 1.0f for an ellipse
+			/// @param color The color of the ellipse
+			/// @param drawingType Either pl::drawingType::filled or pl::drawingType::outlined
 			Ellipse(
 				pl::Instance &instance,
 				const pl::math::Vec2 &center,
@@ -20,6 +28,7 @@ namespace pl::block
 			);
 			virtual ~Ellipse() = default;
 
+			/// @brief Invert the width and the height of the ellipse
 			void flipWidthAndHeight();
 
 			virtual void render();
