@@ -1,7 +1,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <SDL2_gfx/SDL2_gfxPrimitives.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "block/ellipse.hpp"
 

@@ -39,3 +39,11 @@ vendors/*
 
 # Windows script
 *.bat
+
+# Makefiles
+Makefiles
+*.make
+
+# Output
+lib/bin/*
+sandbox/bin/*

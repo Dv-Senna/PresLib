@@ -53,7 +53,7 @@ namespace pl
 
 	pl::Font *FontManager::m_addNewFont(const std::string &name, const std::string &path, int size)
 	{
-		pl::Font *newFont = new pl::Font(m_paths[name], size);
+		pl::Font *newFont = new pl::Font(path, size);
 		m_fonts[name][size] = newFont;
 		return newFont;
 	}

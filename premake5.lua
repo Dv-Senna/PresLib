@@ -82,9 +82,11 @@ project "Sandbox"
 		"SDL2_ttf",
 		"SDL2",
 		"SDL2main",
-		"mingw32",
 	}
 
+
+	filter {"system:Windows", "toolset:gcc"}
+		links "mingw32"
 
 	filter "configurations:debug"
 		defines {"DEBUG", "PL_DEBUG"}

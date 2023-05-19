@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 #include <SDL2/SDL.h>
-#include <SDL2_ttf/SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "instance.hpp"
 
@@ -13,7 +13,7 @@ namespace pl
 	Instance::Instance() : 
 		m_window {nullptr},
 		m_renderer {nullptr},
-		m_fontManager {},
+		m_fontManager {nullptr},
 		m_slides {},
 		m_renderingCallback {nullptr}
 	{
@@ -49,12 +49,17 @@ namespace pl
 
 		if (SDL_RenderSetLogicalSize(m_renderer, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT) != 0)
 			throw std::runtime_error("PL : Can't set viewport size : " + std::string(SDL_GetError()));
+
+
+		m_fontManager = new pl::FontManager();
 	}
 
 
 
 	Instance::~Instance()
 	{
+		delete m_fontManager;
+
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(m_window);
 		TTF_Quit();
