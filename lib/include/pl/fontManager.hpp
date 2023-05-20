@@ -5,12 +5,12 @@
 
 #include "font.hpp"
 
-
-#define PL_DEFAULT_FONT_FOLDER "fonts"
+#include "defines.inl"
 
 
 namespace pl
 {
+	/// @brief A manager that handle pl::Font life-cycle and load font size on the fly
 	class FontManager final
 	{
 		public:
@@ -21,8 +21,15 @@ namespace pl
 			FontManager();
 			~FontManager();
 
+			/// @brief Register a new font. This function won't load anything into the ram
+			/// @param name The name of the font
+			/// @param path The path of the font relative to PL_DEFAULT_FONT_FOLDER
 			void addFont(const std::string &name, const std::string &path);
 
+			/// @brief Get register font. If name.size is not loaded, it automaticly load it
+			/// @param name The name of the font
+			/// @param size The size of the font
+			/// @return The newly loaded font
 			pl::Font *getFont(const std::string &name, int size);
 
 

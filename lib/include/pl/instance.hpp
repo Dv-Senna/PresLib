@@ -8,13 +8,12 @@
 #include "fontManager.hpp"
 #include "slide.hpp"
 
-
-#define PL_DEFAULT_VIEWPORT_WIDTH 1920
-#define PL_DEFAULT_VIEWPORT_HEIGHT 1080
+#include "defines.inl"
 
 
 namespace pl
 {
+	/// @brief Main instance of PL. Should be load only once
 	class Instance
 	{
 		public:
@@ -31,6 +30,8 @@ namespace pl
 
 			void addSlide(pl::Slide *slide);
 
+			/// @brief Set a custom rendering callback. Called after slide rendering and right before SDL_RenderPresent(...)
+			/// @param renderingCallback The callback. Take a pointer to the instance and return nothing
 			void setCustomRenderingCallback(pl::Instance::RenderingCallback renderingCallback);
 
 

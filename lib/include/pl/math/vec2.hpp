@@ -5,6 +5,7 @@
 
 namespace pl::math
 {
+	/// @brief A class that handle 2D vector
 	struct Vec2
 	{
 		float x, y;

@@ -7,9 +7,13 @@
 
 namespace pl
 {
+	/// @brief A class that handle font
 	class Font final
 	{
 		public:
+			/// @brief Constructor
+			/// @param path The path of the loaded font relative to PL_DEFAULT_FONT_FOLDER
+			/// @param size The size of the loaded font
 			Font(const std::string &path, int size);
 			~Font();
 

@@ -7,6 +7,7 @@
 
 namespace pl::math
 {
+	/// @brief A struct that handle rectangle datas
 	struct Rect
 	{
 		float x, y, w, h;

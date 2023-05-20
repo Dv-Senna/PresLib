@@ -20,7 +20,7 @@ namespace pl
 	{
 		public:
 			/// @brief Constructor
-			/// @param instance A pointer to the instance of pl
+			/// @param instance A reference to the instance of pl
 			Block(pl::Instance &instance);
 			virtual ~Block() = default;
 

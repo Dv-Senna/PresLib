@@ -12,7 +12,7 @@ namespace pl::block
 	{
 		public:
 			/// @brief Constructor of ellipse
-			/// @param instance A pointer to the instance of pl
+			/// @param instance A reference to the instance of pl
 			/// @param center The position of the center
 			/// @param size The radius of the circle OR the length of the largest radius
 			/// @param excentricity 0 for a circle, < 1.0f for an ellipse

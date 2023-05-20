@@ -7,6 +7,7 @@ namespace pl
 {
 	class Block;
 
+	/// @brief A class that handle slide
 	class Slide final
 	{
 		public:

@@ -8,8 +8,7 @@
 #include "../math/rect.hpp"
 #include "../math/vec2.hpp"
 
-
-#define PL_IMAGES_DEFAULT_FOLDER "images"
+#include "defines.inl"
 
 
 namespace pl::block
@@ -19,7 +18,7 @@ namespace pl::block
 	{
 		public:
 			/// @brief Constructor
-			/// @param instance A pointer to the instance of PL
+			/// @param instance A reference to the instance of PL
 			/// @param path The path to the image to use relative to PL_IMAGES_DEFAULT_FOLDER
 			/// @param position The position of the top left corner of the image
 			/// @param scaleFactor A factor by witch the original image size is multiplied

@@ -12,9 +12,17 @@
 
 namespace pl::block
 {
+	/// @brief A block that handle text
 	class Text final : public pl::Block
 	{
 		public:
+			/// @brief Constructor
+			/// @param instance A reference to the instance of PL
+			/// @param position The position of the top left corner of the text
+			/// @param content The content to be displayed
+			/// @param font The font used. Must have been register with instance.getFonts().addFont(...)
+			/// @param size The size of the font used
+			/// @param color The color of the text
 			Text(
 				pl::Instance &instance,
 				const pl::math::Vec2 &position,
