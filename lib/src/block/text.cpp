@@ -27,6 +27,10 @@ namespace pl::block
 		m_color {color},
 		m_texture {nullptr}
 	{
+		if (m_color.undefined)
+			m_color = m_instance.getColors().getScheme().text;
+
+
 		auto surface = std::unique_ptr<
 			SDL_Surface,
 			decltype([](auto *ptr) {SDL_FreeSurface(ptr);})

@@ -18,7 +18,8 @@ namespace pl::block
 		m_end {end},
 		m_color {color}
 	{
-
+		if (m_color.undefined)
+			m_color = m_instance.getColors().getScheme().object;
 	}
 
 

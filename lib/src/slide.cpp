@@ -5,7 +5,7 @@
 
 namespace pl
 {
-	Slide::Slide() : m_blocks {}
+	Slide::Slide(pl::SlideFlag flags) : m_flags {flags}, m_blocks {}
 	{
 
 	}

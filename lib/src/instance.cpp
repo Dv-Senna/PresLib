@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "block.hpp"
 #include "instance.hpp"
 #include "utils/framerate.hpp"
 
@@ -16,8 +17,11 @@ namespace pl
 		m_window {nullptr},
 		m_renderer {nullptr},
 		m_fontManager {nullptr},
+		m_colorManager {},
 		m_slides {},
 		m_currentSlide {0},
+		m_background {nullptr},
+		m_overlay {nullptr},
 		m_renderingCallback {nullptr}
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -49,12 +53,12 @@ namespace pl
 		if (m_renderer == nullptr)
 			throw std::runtime_error("PL : Can't create an SDL2 renderer : " + std::string(SDL_GetError()));
 
-		
-		if (SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND) != 0)
-			throw std::runtime_error("PL : Can't change renderer blend mode : " + std::string(SDL_GetError()));
 
 		if (SDL_RenderSetLogicalSize(m_renderer, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT) != 0)
 			throw std::runtime_error("PL : Can't set viewport size : " + std::string(SDL_GetError()));
+
+		if (SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND) != 0)
+			throw std::runtime_error("PL : Can't change renderer blend mode : " + std::string(SDL_GetError()));
 
 
 		m_fontManager = new pl::FontManager();
@@ -116,12 +120,26 @@ namespace pl
 				}
 			}
 
-			SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+			SDL_SetRenderDrawColor(
+				m_renderer,
+				m_colorManager.getScheme().background.r,
+				m_colorManager.getScheme().background.g,
+				m_colorManager.getScheme().background.b, 255
+			);
 			SDL_RenderClear(m_renderer);
 
 			if (m_currentSlide != m_slides.size())
+			{
+				if (m_background != nullptr && !(m_slides[m_currentSlide]->getFlags() & pl::SlideFlag::no_background))
+					m_background->render();
+
+
 				m_slides[m_currentSlide]->render();
 
+
+				if (m_overlay != nullptr && !(m_slides[m_currentSlide]->getFlags() & pl::SlideFlag::no_overlay))
+					m_overlay->render();
+			}
 
 			if (m_renderingCallback != nullptr)
 				m_renderingCallback(this);
@@ -138,6 +156,28 @@ namespace pl
 	{
 		m_slides.push_back(slide);
 	}
+
+
+
+	void Instance::setCustomRenderingCallback(pl::Instance::RenderingCallback renderingCallback)
+	{
+		m_renderingCallback = renderingCallback;
+	}
+
+
+
+	void Instance::setSharedBackground(pl::Block *background)
+	{
+		m_background = background;
+	}
+
+
+
+	void Instance::setSharedOverlay(pl::Block *overlay)
+	{
+		m_overlay = overlay;
+	}
+
 
 
 

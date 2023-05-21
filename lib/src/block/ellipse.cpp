@@ -31,6 +31,9 @@ namespace pl::block
 			m_size.x = m_size.x / m_excentricity;
 			m_size.y = m_size.y * m_size.y * (1 / (m_excentricity * m_excentricity) - 1);
 		}
+
+		if (m_color.undefined)
+			m_color = m_instance.getColors().getScheme().object;
 	}
 
 

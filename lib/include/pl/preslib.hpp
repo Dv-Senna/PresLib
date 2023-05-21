@@ -10,6 +10,7 @@
 #include "block/line.hpp"
 #include "block/rectangle.hpp"
 #include "block/text.hpp"
+#include "block/triangle.hpp"
 #include "slide.hpp"
 #include "font.hpp"
 

@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "pl/preslib.hpp"
+#include "pl/themes/modern.hpp"
 
 
 
@@ -12,18 +13,16 @@ int main(int argc, char *argv[])
 	{
 		pl::Instance instance {};
 
+		pl::themes::Modern theme {instance};
+		theme.use();
+
+
 		instance.getFonts().addFont("arial", "arial.ttf");
 
 
 
-		pl::Slide slide {};
+		pl::Slide slide {pl::SlideFlag::no_background | pl::SlideFlag::no_overlay};
 		instance.addSlide(&slide);
-
-		pl::block::Group background {instance};
-		slide.addChildren(&background);
-
-		pl::block::Rectangle rectangle {instance, PL_ALL_VIEWPORT_RECT, {30, 30, 30}};
-		background.addChildren(&rectangle);
 
 		pl::block::Line line {instance, {10, 20}, {30, 40}};
 		slide.addChildren(&line);
@@ -34,7 +33,6 @@ int main(int argc, char *argv[])
 
 		pl::Slide slide2 {};
 		instance.addSlide(&slide2);
-		slide2.addChildren(&background);
 
 		pl::block::Ellipse ellipse {instance, {400, 400}, 20, 0.9f};
 		ellipse.flipWidthAndHeight();
@@ -45,6 +43,21 @@ int main(int argc, char *argv[])
 
 		pl::block::Image image {instance, "image.png", {384, 583}, 2.0f};
 		slide2.addChildren(&image);
+
+		pl::block::Triangle triangle {
+			instance,
+			{pl::math::Vec2(100.0f, 100.0f), pl::math::Vec2(150.0f, 150.0f), pl::math::Vec2(150.0f, 100.0f)},
+			pl::utils::colorUndefined,
+			pl::DrawingType::outlined
+		};
+		slide2.addChildren(&triangle);
+
+
+
+		pl::Slide themeSlide {};
+		instance.addSlide(&themeSlide);
+
+	
 
 		instance.run();
 	}

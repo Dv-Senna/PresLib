@@ -19,7 +19,8 @@ namespace pl::block
 		m_color {color},
 		m_drawingType {drawingType}
 	{
-
+		if (m_color.undefined)
+			m_color = m_instance.getColors().getScheme().object;
 	}
 
 

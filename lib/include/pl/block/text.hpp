@@ -13,7 +13,7 @@
 namespace pl::block
 {
 	/// @brief A block that handle text
-	class Text final : public pl::Block
+	class Text : public pl::Block
 	{
 		public:
 			/// @brief Constructor
@@ -29,7 +29,7 @@ namespace pl::block
 				const std::string &content,
 				const std::string &font,
 				int size,
-				const pl::utils::Color &color = pl::utils::white
+				const pl::utils::Color &color = pl::utils::colorUndefined
 			);
 			virtual ~Text();
 

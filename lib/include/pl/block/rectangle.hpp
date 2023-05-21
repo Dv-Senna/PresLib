@@ -19,7 +19,7 @@ namespace pl::block
 			Rectangle(
 				pl::Instance &instance,
 				const pl::math::Rect &rect,
-				const pl::utils::Color &color = pl::utils::white,
+				const pl::utils::Color &color = pl::utils::colorUndefined,
 				pl::DrawingType drawingType = pl::DrawingType::filled
 			);
 			~Rectangle() = default;

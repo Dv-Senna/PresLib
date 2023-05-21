@@ -11,6 +11,7 @@ namespace pl::utils
 	struct Color
 	{
 		uint8_t r, g, b, a = 255;
+		bool undefined = false;
 
 		inline operator SDL_Color()
 		{
@@ -20,10 +21,21 @@ namespace pl::utils
 
 	inline std::ostream &operator<<(std::ostream &stream, const pl::utils::Color &color)
 	{
-		stream << "r = " << color.r << ", g = " << color.g << ", b" << color.b << ", a" << color.a;
+		if (!color.undefined)
+		{
+			stream << "r = " << static_cast<int> (color.r) 
+				<< ", g = " << static_cast<int> (color.g)
+				<< ", b = " << static_cast<int> (color.b)
+				<< ", a = " << static_cast<int> (color.a);
+		}
+
+		else
+			stream << "'color undefined'";
+
 		return stream;
 	}
 
+	inline const pl::utils::Color colorUndefined {0, 0, 0, 0, true};
 	inline const pl::utils::Color white {255, 255, 255};
 	inline const pl::utils::Color black {0, 0, 0};
 	inline const pl::utils::Color red {255, 0, 0};

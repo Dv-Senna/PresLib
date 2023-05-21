@@ -8,7 +8,7 @@
 #include "../math/rect.hpp"
 #include "../math/vec2.hpp"
 
-#include "defines.inl"
+#include "../defines.inl"
 
 
 namespace pl::block

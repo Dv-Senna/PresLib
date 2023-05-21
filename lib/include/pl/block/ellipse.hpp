@@ -23,7 +23,7 @@ namespace pl::block
 				const pl::math::Vec2 &center,
 				float size,
 				float excentricity = 0.0f,
-				const pl::utils::Color &color = pl::utils::white,
+				const pl::utils::Color &color = pl::utils::colorUndefined,
 				pl::DrawingType drawingType = pl::DrawingType::filled
 			);
 			virtual ~Ellipse() = default;
