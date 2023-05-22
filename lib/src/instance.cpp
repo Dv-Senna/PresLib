@@ -87,6 +87,8 @@ namespace pl
 		bool running {true};
 		SDL_Event event {};
 
+		//SDL_Rect background {0, 0, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT};
+
 		pl::utils::FPSManager fpsManager {60};
 
 
@@ -123,13 +125,16 @@ namespace pl
 				}
 			}
 
+			SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+			SDL_RenderClear(m_renderer);
+
 			SDL_SetRenderDrawColor(
 				m_renderer,
 				m_colorManager.getScheme().background.r,
 				m_colorManager.getScheme().background.g,
 				m_colorManager.getScheme().background.b, 255
 			);
-			SDL_RenderClear(m_renderer);
+			SDL_RenderFillRect(m_renderer, nullptr);
 
 			if (m_currentSlide != m_slides.size())
 			{

@@ -62,7 +62,7 @@ namespace pl::block
 
 			else if (m_drawingType == pl::DrawingType::outlined)
 			{
-				if (circleRGBA(
+				if (aacircleRGBA(
 					m_instance.getRenderer(),
 					m_center.x, m_center.y, m_size.x,
 					m_color.r, m_color.g, m_color.b, m_color.a) != 0)
@@ -83,7 +83,7 @@ namespace pl::block
 
 			else if (m_drawingType == pl::DrawingType::outlined)
 			{
-				if (ellipseRGBA(
+				if (aaellipseRGBA(
 					m_instance.getRenderer(),
 					m_center.x, m_center.y, m_size.x, m_size.y,
 					m_color.r, m_color.g, m_color.b, m_color.a) != 0)

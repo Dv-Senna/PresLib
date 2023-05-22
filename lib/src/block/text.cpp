@@ -37,11 +37,12 @@ namespace pl::block
 		auto surface = std::unique_ptr<
 			SDL_Surface,
 			decltype([](auto *ptr) {SDL_FreeSurface(ptr);})
-		> (TTF_RenderText_Solid(
+		> (TTF_RenderText_Blended(
 			m_instance.getFonts().getFont(m_font, size)->getFont(),
 			m_content.c_str(),
 			m_color
 		));
+
 
 		if (surface == nullptr)
 			throw std::runtime_error("PL : Can't load text : " + std::string(TTF_GetError()));
@@ -65,7 +66,7 @@ namespace pl::block
 
 	void Text::render()
 	{
-		static SDL_Rect rect = m_rect;
+		SDL_Rect rect = m_rect;
 
 		if (SDL_RenderCopy(m_instance.getRenderer(), m_texture, nullptr, &rect) != 0)
 			throw std::runtime_error("PL : Can't render text : " + std::string(SDL_GetError()));

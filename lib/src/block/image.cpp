@@ -52,7 +52,7 @@ namespace pl::block
 
 	void Image::render()
 	{
-		static SDL_Rect rect = m_renderRect;
+		SDL_Rect rect = m_renderRect;
 
 		if (SDL_RenderCopy(m_instance.getRenderer(), m_texture, nullptr, &rect) != 0)
 			throw std::runtime_error("PL : Can't render image : " + std::string(SDL_GetError()));

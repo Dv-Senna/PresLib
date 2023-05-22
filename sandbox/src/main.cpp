@@ -18,7 +18,6 @@ int main(int argc, char *argv[])
 
 
 		instance.getFonts().addFont("arial", "arial.ttf");
-		instance.getFonts().addFont("title-font", "arial.ttf");
 
 		std::cout << instance.getTitlePosition() << std::endl;
 
@@ -30,7 +29,7 @@ int main(int argc, char *argv[])
 		pl::block::Line line {instance, {10, 20}, {30, 40}};
 		slide.addChildren(&line);
 
-		pl::block::Ellipse circle {instance, {100, 100}, 30};
+		pl::block::Ellipse circle {instance, {100, 100}, 30, 0.0f, pl::utils::colorUndefined, pl::DrawingType::outlined};
 		slide.addChildren(&circle);
 
 

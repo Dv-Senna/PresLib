@@ -14,6 +14,8 @@ namespace pl::themes
 		m_instance.getColors().addColor("main-color", {0, 100, 255});
 		m_instance.getColors().addColor("second-color", {70, 70, 70});
 		m_instance.getColors().addColor("third-color", {255, 255, 255});
+
+		instance.getFonts().addFont("title-font", "roboto/Roboto-Black.ttf");
 		
 		m_scheme = {
 			.text = {0, 0, 0},
@@ -81,8 +83,12 @@ namespace pl::themes
 		);
 		m_background->addChildren(m_titleRectangles[1].get());
 
-		m_titlePosition = {PL_DEFAULT_VIEWPORT_WIDTH - 1150, 20};
-		m_titleFontSize = 30;
+		#define FONT_SIZE 50
+
+		m_titlePosition = {PL_DEFAULT_VIEWPORT_WIDTH - 1150, 30};
+		m_titleFontSize = FONT_SIZE;
+
+		#undef FONT_SIZE
 	}
 
 	
