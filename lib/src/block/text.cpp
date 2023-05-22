@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 
@@ -29,6 +30,8 @@ namespace pl::block
 	{
 		if (m_color.undefined)
 			m_color = m_instance.getColors().getScheme().text;
+
+		std::cout << "Text pos : " << position << std::endl;
 
 
 		auto surface = std::unique_ptr<

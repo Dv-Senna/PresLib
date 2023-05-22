@@ -18,10 +18,13 @@ int main(int argc, char *argv[])
 
 
 		instance.getFonts().addFont("arial", "arial.ttf");
+		instance.getFonts().addFont("title-font", "arial.ttf");
+
+		std::cout << instance.getTitlePosition() << std::endl;
 
 
 
-		pl::Slide slide {pl::SlideFlag::no_background | pl::SlideFlag::no_overlay};
+		pl::Slide slide {instance, pl::SlideFlag::no_background | pl::SlideFlag::no_overlay};
 		instance.addSlide(&slide);
 
 		pl::block::Line line {instance, {10, 20}, {30, 40}};
@@ -31,15 +34,18 @@ int main(int argc, char *argv[])
 		slide.addChildren(&circle);
 
 
-		pl::Slide slide2 {};
+		pl::Slide slide2 {instance};
 		instance.addSlide(&slide2);
 
 		pl::block::Ellipse ellipse {instance, {400, 400}, 20, 0.9f};
 		ellipse.flipWidthAndHeight();
 		slide2.addChildren(&ellipse);
 
-		pl::block::Text text {instance, {500, 500}, "Hello World from PresLib !", "arial", 30};
+		pl::block::Text text {instance, {500, 500}, "Hello World from PresLib !", "arial", 20};
 		slide2.addChildren(&text);
+
+		pl::block::Text text1 {instance, {500, 600}, "Hello Body from PresLib !", "arial", 50};
+		slide2.addChildren(&text1);
 
 		pl::block::Image image {instance, "image.png", {384, 583}, 2.0f};
 		slide2.addChildren(&image);
@@ -54,9 +60,9 @@ int main(int argc, char *argv[])
 
 
 
-		pl::Slide themeSlide {};
+		pl::Slide themeSlide {instance};
 		instance.addSlide(&themeSlide);
-
+		themeSlide.setTitle("Un titre incroyable | modern");
 	
 
 		instance.run();

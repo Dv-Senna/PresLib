@@ -80,6 +80,9 @@ namespace pl::themes
 			m_instance.getColors().getColor("second-color")
 		);
 		m_background->addChildren(m_titleRectangles[1].get());
+
+		m_titlePosition = {PL_DEFAULT_VIEWPORT_WIDTH - 1150, 20};
+		m_titleFontSize = 30;
 	}
 
 	

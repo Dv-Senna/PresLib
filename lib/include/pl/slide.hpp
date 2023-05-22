@@ -1,6 +1,10 @@
 #pragma once
 
 #include <list>
+#include <memory>
+#include <string>
+
+#include "block/text.hpp"
 
 
 namespace pl
@@ -38,7 +42,7 @@ namespace pl
 		public:
 			/// @brief Constructor
 			/// @param flags Flags you want to add to the slide separate by | operator
-			Slide(pl::SlideFlag flags = pl::SlideFlag::none);
+			Slide(pl::Instance &instance, pl::SlideFlag flags = pl::SlideFlag::none);
 			~Slide() = default;
 
 			void render();
@@ -46,12 +50,16 @@ namespace pl
 			void addChildren(pl::Block *block);
 			void removeChildren(pl::Block *block);
 
+			void setTitle(const std::string &title);
+
 			inline pl::SlideFlag getFlags() const noexcept {return m_flags;}
 
 
 		private:
+			pl::Instance &m_instance;
 			pl::SlideFlag m_flags;
 			std::list<pl::Block *> m_blocks;
+			std::unique_ptr<pl::block::Text> m_title;
 	};
 
 

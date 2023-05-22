@@ -22,6 +22,8 @@ namespace pl
 			pl::Instance &m_instance;
 			std::unique_ptr<pl::block::Group> m_background, m_overlay;
 			pl::ColorScheme m_scheme;
+			pl::math::Vec2 m_titlePosition;
+			int m_titleFontSize;
 	};
 
 } // namespace pl

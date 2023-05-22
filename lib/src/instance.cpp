@@ -7,6 +7,7 @@
 
 #include "block.hpp"
 #include "instance.hpp"
+#include "slide.hpp"
 #include "utils/framerate.hpp"
 
 
@@ -22,6 +23,8 @@ namespace pl
 		m_currentSlide {0},
 		m_background {nullptr},
 		m_overlay {nullptr},
+		m_titlePosition {},
+		m_titleFontSize {},
 		m_renderingCallback {nullptr}
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -179,6 +182,18 @@ namespace pl
 	}
 
 
+
+	void Instance::setTitlePosition(const pl::math::Vec2 &position)
+	{
+		m_titlePosition = position;
+	}
+
+
+
+	void Instance::setTitleFontSize(int fontSize)
+	{
+		m_titleFontSize = fontSize;
+	}
 
 
 

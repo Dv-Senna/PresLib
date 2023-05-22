@@ -5,7 +5,11 @@
 
 namespace pl
 {
-	Slide::Slide(pl::SlideFlag flags) : m_flags {flags}, m_blocks {}
+	Slide::Slide(pl::Instance &instance, pl::SlideFlag flags) : 
+		m_instance {instance},
+		m_flags {flags},
+		m_blocks {},
+		m_title {nullptr}
 	{
 
 	}
@@ -33,6 +37,20 @@ namespace pl
 	}
 
 
+
+	void Slide::setTitle(const std::string &title)
+	{
+		m_title = std::make_unique<pl::block::Text> (
+			m_instance,
+			m_instance.getTitlePosition(),
+			title,
+			"title-font",
+			m_instance.getTitleFontSize(),
+			m_instance.getColors().getScheme().title
+		);
+
+		this->addChildren(m_title.get());
+	}
 
 
 

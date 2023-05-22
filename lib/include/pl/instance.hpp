@@ -5,15 +5,18 @@
 
 #include <SDL2/SDL.h>
 
+#include "math/vec2.hpp"
 #include "colorManager.hpp"
 #include "fontManager.hpp"
-#include "slide.hpp"
 
 #include "defines.inl"
 
 
 namespace pl
 {
+	class Slide;
+	class Block;
+
 	/// @brief Main instance of PL. Should be load only once
 	class Instance
 	{
@@ -41,6 +44,11 @@ namespace pl
 			/// @brief Set a custom overlay that would be shared by each slides. Add flag pl::SlideFlag::no_overlay to remove it on one specific slide.
 			/// @param overlay The shared overlay
 			void setSharedOverlay(pl::Block *overlay);
+			void setTitlePosition(const pl::math::Vec2 &position);
+			void setTitleFontSize(int fontSize);
+
+			inline const pl::math::Vec2 &getTitlePosition() const noexcept {return m_titlePosition;}
+			inline int getTitleFontSize() const noexcept {return m_titleFontSize;}
 
 
 		private:
@@ -51,6 +59,8 @@ namespace pl
 			std::vector<pl::Slide*> m_slides;
 			uint32_t m_currentSlide;
 			pl::Block *m_background, *m_overlay;
+			pl::math::Vec2 m_titlePosition;
+			int m_titleFontSize;
 			pl::Instance::RenderingCallback m_renderingCallback;
 	};
 
