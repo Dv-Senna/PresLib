@@ -47,3 +47,6 @@ Makefile
 # Output
 lib/bin/*
 sandbox/bin/*
+
+# LaTeX
+latex/*

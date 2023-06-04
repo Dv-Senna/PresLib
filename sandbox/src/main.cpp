@@ -57,6 +57,9 @@ int main(int argc, char *argv[])
 		};
 		slide2.addChildren(&triangle);
 
+		pl::block::Math equation {instance, "\\mathscr{L} = \\dfrac{1}{2}\\partial_\\mu\\phi\\partial^\\mu\\phi - \\dfrac{1}{2}m^2\\phi^2", {50, 50}};
+		slide2.addChildren(&equation);
+
 
 
 		pl::Slide themeSlide {instance};

@@ -8,6 +8,7 @@
 #include "block/group.hpp"
 #include "block/image.hpp"
 #include "block/line.hpp"
+#include "block/math.hpp"
 #include "block/rectangle.hpp"
 #include "block/text.hpp"
 #include "block/triangle.hpp"
