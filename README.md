@@ -18,7 +18,7 @@ A C++ presentation library with LaTeX support (one day)
  	```ps
 	git clone https://github.com/Dv-Senna/PresLib.git
 	```
- - Download and compiled (or get directly binaries) [SDL2](https://github.com/libsdl-org/SDL), [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf), [SDL2_image](https://github.com/libsdl-org/SDL_image) and [SDL2_gfx](https://github.com/ferzkopp/SDL_gfx)
+ - Download and compiled (or get directly binaries) [SDL2](https://github.com/libsdl-org/SDL), [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf), [SDL2_image](https://github.com/libsdl-org/SDL_image), [SDL2_latex](https://github.com/Dv-Senna/SDL_latex) and [SDL2_gfx](https://github.com/ferzkopp/SDL_gfx)
 	- Put each one into vendors/{name_of_the_dep}
 	- Put headers in an include/SDL2 folder
 	- Put libraries in a lib folder
