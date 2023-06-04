@@ -7,5 +7,5 @@
 #define PL_IMAGES_DEFAULT_FOLDER "images"
 
 #define PL_VERSION_MAJOR 0
-#define PL_VERSION_MINOR 1
+#define PL_VERSION_MINOR 2
 #define PL_VERSION_PATCH 0
