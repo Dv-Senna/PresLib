@@ -1,4 +1,4 @@
-# PresLib
+# <img src="./logo.png" width="300px" alt="PresLib" />
 
 <p align="center">
 	<img src="https://img.shields.io/badge/version-0.1.0-informational" />
