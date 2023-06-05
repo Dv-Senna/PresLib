@@ -15,6 +15,7 @@ namespace pl::block
 		pl::Instance &instance,
 		const std::string &latex,
 		const pl::math::Vec2 &pos,
+		const pl::utils::Color &color,
 		float scaleFactor
 	) :
 		pl::Block(instance),
@@ -38,6 +39,12 @@ namespace pl::block
 		m_texture = SDL_CreateTextureFromSurface(m_instance.getRenderer(), surface.get());
 		if (m_texture == nullptr)
 			throw std::runtime_error("PL : Can't convert surface latex to texture : " + std::string(SDL_GetError()));
+
+		if (SDL_SetTextureColorMod(m_texture, color.r, color.g, color.b) != 0)
+			throw std::runtime_error("PL : Can't change color of latex text : " + std::string(SDL_GetError()));
+
+		if (SDL_SetTextureAlphaMod(m_texture, color.a) != 0)
+			throw std::runtime_error("PL : Can't change alpha of latex text : " + std::string(SDL_GetError()));
 	}
 
 
