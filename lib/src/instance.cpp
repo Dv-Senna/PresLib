@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -16,9 +17,10 @@ namespace pl
 {
 	Instance::Instance() : 
 		m_window {nullptr},
-		m_renderer {nullptr},
+		m_openglContext {nullptr},
 		m_fontManager {nullptr},
 		m_colorManager {},
+		m_shaderManager {nullptr},
 		m_slides {},
 		m_currentSlide {0},
 		m_background {nullptr},
@@ -36,6 +38,18 @@ namespace pl
 		if (TTF_Init() != 0)
 			throw std::runtime_error("PL : Can't init SDL2_ttf : " + std::string(TTF_GetError()));
 
+
+
+		if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3) != 0)
+			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'major version' : " + std::string(SDL_GetError()));
+		if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3) != 0)
+			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'minor version' : " + std::string(SDL_GetError()));
+		if (SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24) != 0)
+			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'depth size' : " + std::string(SDL_GetError()));
+		if (SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) != 0)
+			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'double buffer' : " + std::string(SDL_GetError()));
+
+
 		m_window = SDL_CreateWindow(
 			"Presentation",
 			SDL_WINDOWPOS_CENTERED,
@@ -51,29 +65,28 @@ namespace pl
 		if (SDL_SetWindowFullscreen(m_window, SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
 			throw std::runtime_error("PL : Can't set window to fullscreen : " + std::string(SDL_GetError()));
 
-
-		m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
-		if (m_renderer == nullptr)
-			throw std::runtime_error("PL : Can't create an SDL2 renderer : " + std::string(SDL_GetError()));
-
-
-		if (SDL_RenderSetLogicalSize(m_renderer, PL_DEFAULT_VIEWPORT_WIDTH, PL_DEFAULT_VIEWPORT_HEIGHT) != 0)
-			throw std::runtime_error("PL : Can't set viewport size : " + std::string(SDL_GetError()));
-
-		if (SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND) != 0)
-			throw std::runtime_error("PL : Can't change renderer blend mode : " + std::string(SDL_GetError()));
+		m_openglContext = SDL_GL_CreateContext(m_window);
+		if (m_openglContext == nullptr)
+			throw std::runtime_error("PL : Can't create an SDL OpenGL context : " + std::string(SDL_GetError()));
 
 
+		GLenum glewRet {glewInit()};
+		if (glewRet != GLEW_OK)
+			throw std::runtime_error("PL : Can't init GLEW : " + std::string((const char*)glewGetErrorString(glewRet)));
+
+		
 		m_fontManager = new pl::FontManager();
+		m_shaderManager = new pl::ShaderManager();
 	}
 
 
 
 	Instance::~Instance()
 	{
+		delete m_shaderManager;
 		delete m_fontManager;
 
-		SDL_DestroyRenderer(m_renderer);
+		SDL_GL_DeleteContext(m_openglContext);
 		SDL_DestroyWindow(m_window);
 		TTF_Quit();
 		IMG_Quit();
@@ -125,16 +138,9 @@ namespace pl
 				}
 			}
 
-			SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-			SDL_RenderClear(m_renderer);
 
-			SDL_SetRenderDrawColor(
-				m_renderer,
-				m_colorManager.getScheme().background.r,
-				m_colorManager.getScheme().background.g,
-				m_colorManager.getScheme().background.b, 255
-			);
-			SDL_RenderFillRect(m_renderer, nullptr);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 			if (m_currentSlide != m_slides.size())
 			{
@@ -152,7 +158,8 @@ namespace pl
 			if (m_renderingCallback != nullptr)
 				m_renderingCallback(this);
 
-			SDL_RenderPresent(m_renderer);
+
+			SDL_GL_SwapWindow(m_window);
 
 			fpsManager.cap();
 		}

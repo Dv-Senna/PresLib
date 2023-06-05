@@ -21,7 +21,7 @@ namespace pl::block
 		m_originalRect {position.x, position.y, 0, 0},
 		m_renderRect {position.x, position.y, 0, 0}
 	{
-		std::string fullPath = std::string(PL_IMAGES_DEFAULT_FOLDER) + "/" + path;
+		std::string fullPath = std::string(PL_DEFAULT_IMAGES_FOLDER) + "/" + path;
 
 		auto surface = std::unique_ptr<
 			SDL_Surface,

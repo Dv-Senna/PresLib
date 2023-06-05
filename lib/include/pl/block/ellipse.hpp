@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "../block.hpp"
 #include "../math/vec2.hpp"
 #include "../utils/color.hpp"
@@ -29,15 +31,18 @@ namespace pl::block
 			virtual ~Ellipse() = default;
 
 			/// @brief Invert the width and the height of the ellipse
-			void flipWidthAndHeight();
+			void flipWidthAndHeight(bool flip = true);
 
 			virtual void render();
 
 		private:
+			static std::array<float, 12> s_vertices;
+
 			pl::math::Vec2 m_center, m_size;
 			float m_excentricity;
 			pl::utils::Color m_color;
 			pl::DrawingType m_drawingType;
+			bool m_flipWidthAndheight;
 	};
 
 } // namespace pl::block
