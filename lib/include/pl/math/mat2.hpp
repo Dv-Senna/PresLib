@@ -84,6 +84,6 @@ namespace pl::math
 	float det(const pl::math::Mat2 &matrix);
 	pl::math::Mat2 inverse(const pl::math::Mat2 &matrix);
 
-
+	#define identity2 Mat2(1, 0, 0, 1)
 
 } // namespace pl::math

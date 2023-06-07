@@ -2,7 +2,7 @@
 
 uniform vec4 color;
 uniform vec2 center;
-/uniform int radius;
+uniform int radius;
 
 int vec2 fragPos;
 

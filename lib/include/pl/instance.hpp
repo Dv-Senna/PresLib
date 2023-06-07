@@ -5,6 +5,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "math/mat2.hpp"
 #include "math/vec2.hpp"
 #include "colorManager.hpp"
 #include "fontManager.hpp"
@@ -48,6 +49,8 @@ namespace pl
 			void setTitlePosition(const pl::math::Vec2 &position);
 			void setTitleFontSize(int fontSize);
 
+			inline pl::math::Mat2 &getTransform() noexcept {return m_transform;}
+			inline void resetTransform() noexcept {m_transform = pl::math::identity2;}
 			inline const pl::math::Vec2 &getTitlePosition() const noexcept {return m_titlePosition;}
 			inline int getTitleFontSize() const noexcept {return m_titleFontSize;}
 
@@ -61,6 +64,7 @@ namespace pl
 			std::vector<pl::Slide*> m_slides;
 			uint32_t m_currentSlide;
 			pl::Block *m_background, *m_overlay;
+			pl::math::Mat2 m_transform;
 			pl::math::Vec2 m_titlePosition;
 			int m_titleFontSize;
 			pl::Instance::RenderingCallback m_renderingCallback;

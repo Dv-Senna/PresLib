@@ -25,6 +25,7 @@ namespace pl
 		m_currentSlide {0},
 		m_background {nullptr},
 		m_overlay {nullptr},
+		m_transform {pl::math::identity2},
 		m_titlePosition {},
 		m_titleFontSize {},
 		m_renderingCallback {nullptr}
