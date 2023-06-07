@@ -66,6 +66,11 @@ namespace pl::math
 		return a;
 	}
 
+	inline bool operator==(const pl::math::Mat2 &a, const pl::math::Mat2 &b)
+	{
+		return a.get()[0] == b.get()[0] && a.get()[1] == b.get()[1] && a.get()[2] == b.get()[2] && a.get()[3] == b.get()[3];
+	}
+
 
 	inline std::ostream &operator<<(std::ostream &stream, const pl::math::Mat2 &matrix)
 	{

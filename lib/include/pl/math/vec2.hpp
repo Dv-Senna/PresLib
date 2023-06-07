@@ -23,6 +23,13 @@ namespace pl::math
 			this->y -= vec.y;
 			return *this;
 		}
+
+		inline pl::math::Vec2 &operator*=(float data)
+		{
+			this->x *= data;
+			this->y *= data;
+			return *this;
+		}
 	};
 
 	inline pl::math::Vec2 operator+(pl::math::Vec2 vec1, const pl::math::Vec2 &vec2)
@@ -35,6 +42,17 @@ namespace pl::math
 	{
 		vec1 -= vec2;
 		return vec1;
+	}
+
+	inline pl::math::Vec2 operator*(pl::math::Vec2 vec, float data)
+	{
+		vec *= data;
+		return vec;
+	}
+
+	inline bool operator==(const pl::math::Vec2 &vec1, const pl::math::Vec2 &vec2)
+	{
+		return vec1.x == vec2.x && vec1.y == vec2.y;
 	}
 
 
