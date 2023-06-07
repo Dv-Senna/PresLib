@@ -15,4 +15,8 @@
 #include "slide.hpp"
 #include "font.hpp"
 
+#include "math/mat2.hpp"
+#include "math/rect.hpp"
+#include "math/vec2.hpp"
+
 #include "defines.inl"
