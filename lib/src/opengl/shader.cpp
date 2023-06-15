@@ -1,12 +1,12 @@
 #include <array>
 
 #include "defines.inl"
-#include "shader.hpp"
+#include "opengl/shader.hpp"
 #include "utils/file.hpp"
 
 
 
-namespace pl
+namespace pl::opengl
 {
 	Shader::Shader(const std::string &path) : m_vertex {}, m_fragment {}, m_program {}
 	{
@@ -67,10 +67,34 @@ namespace pl
 
 
 
+	void Shader::sendData(const std::string &name, const pl::math::Mat2 &data)
+	{
+		glUniformMatrix2fv(
+			glGetAttribLocation(m_program, name.c_str()),
+			1, GL_FALSE,
+			data.get().data()
+		);
+	}
+
+
+
+	void Shader::sendData(const std::string &name, const pl::utils::Color &color)
+	{
+		glUniform4f(glGetAttribLocation(m_program, name.c_str()), 
+			static_cast<float> (color.r) / 255.0f,
+			static_cast<float> (color.g) / 255.0f,
+			static_cast<float> (color.b) / 255.0f,
+			static_cast<float> (color.a) / 255.0f
+		);
+	}
+
+
+
 	GLuint Shader::s_loadShader(const std::string &path, GLenum type)
 	{
 		std::ifstream file {pl::utils::loadReadFile(std::string(PL_DEFAULT_SHADER_FOLDER) + "/" + path)};
-		std::array<const char*, 1> content {pl::utils::readContentFromFile(file).c_str()};
+		std::unique_ptr<char> contentPtr {pl::utils::readContentFromFile(file)};
+		std::array<const char *, 1> content {contentPtr.get()};
 
 		GLuint shader {glCreateShader(type)};
 		glShaderSource(shader, 1, content.data(), nullptr);

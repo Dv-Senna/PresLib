@@ -1,3 +1,5 @@
+#include <string>
+
 #include "utils/file.hpp"
 
 
@@ -26,7 +28,7 @@ namespace pl::utils
 
 
 
-	std::string readContentFromFile(std::ifstream &file)
+	std::unique_ptr<char> readContentFromFile(std::ifstream &file)
 	{
 		std::string content {};
 		std::string line {};
@@ -34,7 +36,10 @@ namespace pl::utils
 		while (std::getline(file, line))
 			content += line + "\n";
 
-		return content;
+		std::unique_ptr<char> contentPtr {new char[content.size() + 1]};
+		memcpy(contentPtr.get(), content.data(), content.size() + 1);
+
+		return contentPtr;
 	}
 
 

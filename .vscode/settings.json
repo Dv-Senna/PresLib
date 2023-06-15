@@ -77,6 +77,13 @@
 		"xstring": "cpp",
 		"xtr1common": "cpp",
 		"xutility": "cpp",
-		"fstream": "cpp"
+		"fstream": "cpp",
+		"bitset": "cpp",
+		"condition_variable": "cpp",
+		"map": "cpp",
+		"set": "cpp",
+		"regex": "cpp",
+		"future": "cpp",
+		"variant": "cpp"
 	}
 }

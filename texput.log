@@ -1,0 +1,25 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (MiKTeX 21.8) (preloaded format=latex 2022.3.24)  14 JUN 2023 22:17
+entering extended mode
+**\makeatletter\def\HCode{\futurelet\HCode\HChar}\def\HChar{\ifx\HCode\def\HCod
+e##1{\Link##1}\expandafter\HCode\else\expandafter\Link\fi}\def\Link#1.a.b.c.{\g
+@addto@macro\@documentclasshook{\RequirePackage[#1,html]{tex4ht}}\let\HCode\doc
+umentstyle\def\documentstyle{\let\documentstyle\HCode\expandafter\def\csname te
+x4ht\endcsname{#1,html}\def\HCode####1{\documentstyle[tex4ht,}\@ifnextchar[{\HC
+ode}{\documentstyle[tex4ht]}}}\makeatother\HCode .a.b.c.\input  
+
+*
+! Emergency stop.
+<*> ...ex4ht]}}}\makeatother\HCode .a.b.c.\input  
+                                                  
+End of file on the terminal!
+
+ 
+Here is how much of TeX's memory you used:
+ 16 strings out of 478928
+ 316 string characters out of 2862418
+ 290169 words of memory out of 3000000
+ 17981 multiletter control sequences out of 15000+600000
+ 403430 words of font info for 27 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 12i,0n,12p,488b,10s stack positions out of 5000i,500n,10000p,200000b,80000s
+No pages of output.

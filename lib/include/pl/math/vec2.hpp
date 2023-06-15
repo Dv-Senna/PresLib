@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include <ostream>
 
 
@@ -29,6 +30,12 @@ namespace pl::math
 			this->x *= data;
 			this->y *= data;
 			return *this;
+		}
+
+
+		inline float length()
+		{
+			return sqrt(x * x + y * y);
 		}
 	};
 

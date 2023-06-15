@@ -4,10 +4,12 @@
 
 #include <GL/glew.h>
 
-#include "math/vec2.hpp"
+#include "../math/mat2.hpp"
+#include "../math/vec2.hpp"
+#include "../utils/color.hpp"
 
 
-namespace pl
+namespace pl::opengl
 {
 	class Shader final
 	{
@@ -20,6 +22,8 @@ namespace pl
 
 			void sendData(const std::string &name, float data);
 			void sendData(const std::string &name, const pl::math::Vec2 &data);
+			void sendData(const std::string &name, const pl::math::Mat2 &data);
+			void sendData(const std::string &name, const pl::utils::Color &color);
 
 		
 		private:

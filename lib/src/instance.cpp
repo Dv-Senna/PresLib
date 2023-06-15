@@ -21,6 +21,7 @@ namespace pl
 		m_fontManager {nullptr},
 		m_colorManager {},
 		m_shaderManager {nullptr},
+		m_vertexManager {nullptr},
 		m_slides {},
 		m_currentSlide {0},
 		m_background {nullptr},
@@ -57,7 +58,7 @@ namespace pl
 			SDL_WINDOWPOS_CENTERED,
 			PL_DEFAULT_VIEWPORT_WIDTH,
 			PL_DEFAULT_VIEWPORT_HEIGHT,
-			SDL_WINDOW_SHOWN
+			SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
 		);
 
 		if (m_window == nullptr)
@@ -71,6 +72,7 @@ namespace pl
 			throw std::runtime_error("PL : Can't create an SDL OpenGL context : " + std::string(SDL_GetError()));
 
 
+		glewExperimental = GL_TRUE;
 		GLenum glewRet {glewInit()};
 		if (glewRet != GLEW_OK)
 			throw std::runtime_error("PL : Can't init GLEW : " + std::string((const char*)glewGetErrorString(glewRet)));
@@ -78,12 +80,14 @@ namespace pl
 		
 		m_fontManager = new pl::FontManager();
 		m_shaderManager = new pl::ShaderManager();
+		m_vertexManager = new pl::VertexManager();
 	}
 
 
 
 	Instance::~Instance()
 	{
+		delete m_vertexManager;
 		delete m_shaderManager;
 		delete m_fontManager;
 
@@ -140,7 +144,13 @@ namespace pl
 			}
 
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glClearColor(
+				static_cast<float> (m_colorManager.getScheme().background.r) / 255.0f,
+				static_cast<float> (m_colorManager.getScheme().background.g) / 255.0f,
+				static_cast<float> (m_colorManager.getScheme().background.b) / 255.0f,
+				1.0f
+			);
 
 
 			if (m_currentSlide != m_slides.size())
@@ -164,6 +174,13 @@ namespace pl
 
 			fpsManager.cap();
 		}
+	}
+
+
+
+	void Instance::sendTransform()
+	{
+		m_shaderManager->getCurrent().sendData("pl_Transform", m_transform);
 	}
 	
 

@@ -115,6 +115,15 @@ namespace pl::math
 
 
 
+	pl::math::Vec2 operator*(const pl::math::Mat2 &matrix, const pl::math::Vec2 &vector)
+	{
+		pl::math::Vec2 result {};
+		result.x = matrix.get()[0] * vector.x + matrix.get()[1] * vector.y;
+		result.y = matrix.get()[2] * vector.x + matrix.get()[3] * vector.y;
+
+		return result;
+	}
+
 
 } // namespace pl::math
 

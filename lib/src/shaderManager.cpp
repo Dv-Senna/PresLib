@@ -4,9 +4,10 @@
 
 namespace pl
 {
-	ShaderManager::ShaderManager() : m_shaders {}
+	ShaderManager::ShaderManager() : m_shaders {}, m_current {nullptr}
 	{
-
+		this->addShader("line", "line");
+		this->addShader("circle", "circle");
 	}
 
 
@@ -20,12 +21,12 @@ namespace pl
 
 	void ShaderManager::addShader(const std::string &name, const std::string &path)
 	{
-		m_shaders[name] = std::make_unique<pl::Shader> (path);
+		m_shaders[name] = std::make_unique<pl::opengl::Shader> (path);
 	}
 
 
 
-	pl::Shader &ShaderManager::getShader(const std::string &name)
+	pl::opengl::Shader &ShaderManager::getShader(const std::string &name)
 	{
 		auto it {m_shaders.find(name)};
 		if (it == m_shaders.end())
@@ -33,6 +34,31 @@ namespace pl
 
 		return *it->second;
 	}
+
+
+
+	void ShaderManager::use(const std::string &name)
+	{
+		auto it {m_shaders.find(name)};
+		if (it == m_shaders.end())
+			throw std::runtime_error("PL : Can't use shader '" + name + "' in shader manager");
+
+		it->second->use();
+		m_current = it->second.get();
+	}
+
+
+
+	pl::opengl::Shader &ShaderManager::getCurrent()
+	{
+		if (m_current == nullptr)
+			throw std::runtime_error("PL : there is no shader currently use");
+
+		return *m_current;
+	}
+
+
+
 
 
 

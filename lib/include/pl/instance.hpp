@@ -10,6 +10,7 @@
 #include "colorManager.hpp"
 #include "fontManager.hpp"
 #include "shaderManager.hpp"
+#include "vertexManager.hpp"
 
 #include "defines.inl"
 
@@ -30,10 +31,13 @@ namespace pl
 
 			void run();
 
+			void sendTransform();
+
 			inline SDL_Window *getWindow() const noexcept {return m_window;}
 			inline pl::FontManager &getFonts() noexcept {return *m_fontManager;}
 			inline pl::ColorManager &getColors() noexcept {return m_colorManager;}
 			inline pl::ShaderManager &getShaders() noexcept {return *m_shaderManager;}
+			inline pl::VertexManager &getVertices() noexcept {return *m_vertexManager;}
 
 			void addSlide(pl::Slide *slide);
 
@@ -61,6 +65,7 @@ namespace pl
 			pl::FontManager *m_fontManager;
 			pl::ColorManager m_colorManager;
 			pl::ShaderManager *m_shaderManager;
+			pl::VertexManager *m_vertexManager;
 			std::vector<pl::Slide*> m_slides;
 			uint32_t m_currentSlide;
 			pl::Block *m_background, *m_overlay;

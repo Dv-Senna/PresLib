@@ -15,10 +15,10 @@ namespace pl
 
 
 	inline const pl::ColorScheme defaultColorScheme {
-		.text={0, 0, 0},
-		.title={0, 0, 0},
-		.object={255, 130, 0},
-		.background={255, 255, 255}
+		.text = {0, 0, 0},
+		.title = {0, 0, 0},
+		.object = {255, 130, 0},
+		.background = {255, 255, 255}
 	};
 
 

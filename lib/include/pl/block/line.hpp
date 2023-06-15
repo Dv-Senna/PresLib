@@ -1,7 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include "../block.hpp"
 #include "../math/vec2.hpp"
+#include "../opengl/vertex.hpp"
 #include "../utils/color.hpp"
 
 
@@ -25,13 +28,12 @@ namespace pl::block
 			~Line() = default;
 
 			virtual void render();
-			virtual void addChildren(pl::Block *block);
-			virtual void removeChildren(pl::Block *block);
 
 
 		private:
-			pl::math::Vec2 m_start, m_end;
+			pl::math::Vec2 m_start;
 			pl::utils::Color m_color;
+			pl::math::Mat2 m_transform;
 	};
 
 } // namespace pl::block

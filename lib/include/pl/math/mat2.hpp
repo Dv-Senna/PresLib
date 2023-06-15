@@ -3,6 +3,8 @@
 #include <array>
 #include <ostream>
 
+#include "vec2.hpp"
+
 
 namespace pl::math
 {
@@ -80,10 +82,12 @@ namespace pl::math
 	}
 
 
+	pl::math::Vec2 operator*(const pl::math::Mat2 &matrix, const pl::math::Vec2 &vector);
+
 
 	float det(const pl::math::Mat2 &matrix);
 	pl::math::Mat2 inverse(const pl::math::Mat2 &matrix);
 
-	#define identity2 Mat2(1, 0, 0, 1)
+	inline const pl::math::Mat2 identity2 {1, 0, 0, 1};
 
 } // namespace pl::math

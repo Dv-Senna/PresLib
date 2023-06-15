@@ -1,7 +1,8 @@
-#include <cassert>
-#include <stdexcept>
+#include <cmath>
+#include <iostream>
 
 #include "block/line.hpp"
+#include "math/transform.hpp"
 
 
 
@@ -12,42 +13,40 @@ namespace pl::block
 		pl::math::Vec2 start,
 		pl::math::Vec2 end,
 		const pl::utils::Color color
-	) :
+	) : 
 		pl::Block(instance),
 		m_start {start},
-		m_end {end},
-		m_color {color}
+		m_color {color},
+		m_transform {pl::math::identity2}
 	{
 		if (m_color.undefined)
 			m_color = m_instance.getColors().getScheme().object;
+
+		std::cout << "Line's color : " << m_color << std::endl;
+
+		float angle {atan2(end.y - m_start.y, end.x - m_start.x)};
+		float length = (end - m_start).length();
+
+		m_transform = length * pl::math::rotate(m_transform, angle);
+
+		std::cout << "Line : " << m_start << ", " << m_transform * pl::math::Vec2(1, 0) + m_start << std::endl;
 	}
 
 
 
 	void Line::render()
 	{
-		if (SDL_SetRenderDrawColor(m_instance.getRenderer(), m_color.r, m_color.g, m_color.b, m_color.a) != 0)
-			throw std::runtime_error("PL : Can't set line's color : " + std::string(SDL_GetError()));
+		m_instance.getTransform() = m_transform * m_instance.getTransform();
+		m_instance.getShaders().use("line");
+		m_instance.sendTransform();
 
-		if (SDL_RenderDrawLine(m_instance.getRenderer(), m_start.x, m_start.y, m_end.x, m_end.y) != 0)
-			throw std::runtime_error("PL : Can't draw a line : " + std::string(SDL_GetError()));
+		m_instance.getShaders().getCurrent().sendData("upos", m_start);
+		m_instance.getShaders().getCurrent().sendData("ucolor", m_color);
+
+		m_instance.getVertices().get("line").draw();
+
+		m_instance.resetTransform();
 	}
-
-
-
-	void Line::addChildren(pl::Block *block)
-	{
-		assert(block && "PL : don't call addChildren on a line block");
-	}
-
-
-
-	void Line::removeChildren(pl::Block *block)
-	{
-		assert(block && "PL : don't call removeChildren on a line block");
-	}
-
-
 
 
 
