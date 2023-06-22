@@ -42,13 +42,15 @@ namespace pl
 
 
 
-		if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3) != 0)
+		if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4) != 0)
 			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'major version' : " + std::string(SDL_GetError()));
 		if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3) != 0)
 			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'minor version' : " + std::string(SDL_GetError()));
 		if (SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24) != 0)
 			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'depth size' : " + std::string(SDL_GetError()));
 		if (SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1) != 0)
+			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'double buffer' : " + std::string(SDL_GetError()));
+		if (SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE) != 0)
 			throw std::runtime_error("PL : Can't set SDL OpenGL context attribute 'double buffer' : " + std::string(SDL_GetError()));
 
 
@@ -81,6 +83,79 @@ namespace pl
 		m_fontManager = new pl::FontManager();
 		m_shaderManager = new pl::ShaderManager();
 		m_vertexManager = new pl::VertexManager();
+
+		this->resetTransform();
+		std::cout << "Transform matrix : " << m_transform << std::endl;
+
+		glEnable(GL_DEPTH);
+		glDepthFunc(GL_ALWAYS);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+		#ifndef NDEBUG
+
+			glEnable(GL_DEBUG_OUTPUT);
+
+			glDebugMessageCallback([](
+				GLenum source,
+				GLenum,
+				GLuint,
+				GLenum severity,
+				GLsizei,
+				const GLchar *message,
+				const void *
+			){
+				std::string severityTag {}, sourceTag {};
+
+				switch (source)
+				{
+					case GL_DEBUG_SOURCE_API:
+						sourceTag = "API";
+						break;
+					case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+						sourceTag = "WINDOW SYSTEM";
+						break;
+					case GL_DEBUG_SOURCE_SHADER_COMPILER:
+						sourceTag = "SHADER COMPILER";
+						break;
+					case GL_DEBUG_SOURCE_THIRD_PARTY:
+						sourceTag = "THIRD PARTY";
+						break;
+					case GL_DEBUG_SOURCE_APPLICATION:
+						sourceTag = "APPLICATION";
+						break;
+					default:
+						sourceTag = "OTHER";
+						break;
+				}
+
+				switch (severity)
+				{
+					case GL_DEBUG_SEVERITY_HIGH:
+						severityTag = "HIGH";
+						break;
+					case GL_DEBUG_SEVERITY_MEDIUM:
+						severityTag = "MEDIUM";
+						break;
+					case GL_DEBUG_SEVERITY_LOW:
+						severityTag = "LOW";
+						break;
+					case GL_DEBUG_SEVERITY_NOTIFICATION:
+						severityTag = "NOTIFICATION";
+						break;
+					default:
+						severityTag = "UNDEFINED";
+						break;
+				}
+
+				//std::cout << "OpenGL debug : " << severityTag << " : " << message << std::endl;
+				printf("OpenGL debug (from %s) : %s : %s\n", sourceTag.c_str(), severityTag.c_str(), message);
+				
+			}, nullptr);
+
+		#endif
 	}
 
 
@@ -144,7 +219,7 @@ namespace pl
 			}
 
 
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(
 				static_cast<float> (m_colorManager.getScheme().background.r) / 255.0f,
 				static_cast<float> (m_colorManager.getScheme().background.g) / 255.0f,
@@ -223,6 +298,15 @@ namespace pl
 	void Instance::setTitleFontSize(int fontSize)
 	{
 		m_titleFontSize = fontSize;
+	}
+
+
+
+	void Instance::resetTransform() noexcept
+	{
+		int width {}, height {};
+		SDL_GetWindowSizeInPixels(m_window, &width, &height);
+		m_transform = pl::math::Mat2(1.0f / static_cast<float> (width), 0, 0, 1.0f / static_cast<float> (height));
 	}
 
 

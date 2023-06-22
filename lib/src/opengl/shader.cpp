@@ -55,14 +55,14 @@ namespace pl::opengl
 
 	void Shader::sendData(const std::string &name, float data)
 	{
-		glUniform1f(glGetAttribLocation(m_program, name.c_str()), data);
+		glUniform1f(glGetUniformLocation(m_program, name.c_str()), data);
 	}
 
 
 
 	void Shader::sendData(const std::string &name, const pl::math::Vec2 &data)
 	{
-		glUniform2f(glGetAttribLocation(m_program, name.c_str()), data.x, data.y);
+		glUniform2f(glGetUniformLocation(m_program, name.c_str()), data.x, data.y);
 	}
 
 
@@ -70,7 +70,7 @@ namespace pl::opengl
 	void Shader::sendData(const std::string &name, const pl::math::Mat2 &data)
 	{
 		glUniformMatrix2fv(
-			glGetAttribLocation(m_program, name.c_str()),
+			glGetUniformLocation(m_program, name.c_str()),
 			1, GL_FALSE,
 			data.get().data()
 		);
@@ -80,7 +80,7 @@ namespace pl::opengl
 
 	void Shader::sendData(const std::string &name, const pl::utils::Color &color)
 	{
-		glUniform4f(glGetAttribLocation(m_program, name.c_str()), 
+		glUniform4f(glGetUniformLocation(m_program, name.c_str()), 
 			static_cast<float> (color.r) / 255.0f,
 			static_cast<float> (color.g) / 255.0f,
 			static_cast<float> (color.b) / 255.0f,

@@ -10,7 +10,7 @@ namespace pl::opengl
 	enum class DrawType
 	{
 		triangle = GL_TRIANGLES,
-		line = GL_LINE
+		line = GL_LINES
 	};
 
 

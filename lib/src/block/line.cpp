@@ -30,13 +30,17 @@ namespace pl::block
 		m_transform = length * pl::math::rotate(m_transform, angle);
 
 		std::cout << "Line : " << m_start << ", " << m_transform * pl::math::Vec2(1, 0) + m_start << std::endl;
+
+		m_start = m_instance.getTransform() * m_start - pl::math::Vec2(0.5f, -0.5f);
+
+		std::cout << "Line's start : " << m_start << std::endl;
 	}
 
 
 
 	void Line::render()
 	{
-		m_instance.getTransform() = m_transform * m_instance.getTransform();
+		m_instance.getTransform() = m_instance.getTransform() * m_transform;
 		m_instance.getShaders().use("line");
 		m_instance.sendTransform();
 

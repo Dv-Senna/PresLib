@@ -54,7 +54,7 @@ namespace pl
 			void setTitleFontSize(int fontSize);
 
 			inline pl::math::Mat2 &getTransform() noexcept {return m_transform;}
-			inline void resetTransform() noexcept {m_transform = pl::math::identity2;}
+			void resetTransform() noexcept;
 			inline const pl::math::Vec2 &getTitlePosition() const noexcept {return m_titlePosition;}
 			inline int getTitleFontSize() const noexcept {return m_titleFontSize;}
 

@@ -7,7 +7,7 @@
 
 
 
-int main(int argc, char *argv[])
+int main(int, char *[])
 {
 	try
 	{
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		pl::Slide slide {instance, pl::SlideFlag::no_background | pl::SlideFlag::no_overlay};
 		instance.addSlide(&slide);
 
-		pl::block::Line line {instance, {0.10, 0.20}, {0.30, 0.40}};
+		pl::block::Line line {instance, {10, 20}, {30, 40}};
 		slide.addChildren(&line);
 
 		//pl::block::Ellipse circle {instance, {100, 100}, 30, 0.0f, pl::utils::colorUndefined, pl::DrawingType::outlined};
@@ -67,23 +67,6 @@ int main(int argc, char *argv[])
 		//pl::Slide themeSlide {instance};
 		//instance.addSlide(&themeSlide);
 		//themeSlide.setTitle("Un titre incroyable | modern");
-	
-		pl::opengl::Vertex circle {{
-			0.5f, 0.5f,   -0.5f, 0.5f,    -0.5f, -0.5f,
-			0.5f, 0.5f,   0.5f, -0.5f,    -0.5f, -0.5f,
-		}};
-
-		instance.setCustomRenderingCallback([&circle] (pl::Instance *instance)
-		{
-			instance->getShaders().use("circle");
-			instance->sendTransform();
-			instance->getShaders().getCurrent().sendData("center", pl::math::Vec2(0, 0));
-			instance->getShaders().getCurrent().sendData("radius", 0.5f);
-			instance->getShaders().getCurrent().sendData("color", {255, 255, 255});
-
-			circle.draw();
-		});
-
 
 		instance.run();
 	}
