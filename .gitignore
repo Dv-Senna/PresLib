@@ -35,7 +35,7 @@
 vendors/*
 
 # vs code
-.vs-code/*
+.vscode/*
 
 # Windows script
 *.bat

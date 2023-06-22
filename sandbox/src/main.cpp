@@ -6,11 +6,13 @@
 
 
 
-int main(int argc, char *argv[])
+int main(int, char *[])
 {
 	try
 	{
-		
+		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
+
+		instance.run();
 	}
 
 	catch (const std::exception &exception)
