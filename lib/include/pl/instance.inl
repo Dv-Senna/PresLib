@@ -68,4 +68,20 @@ namespace pl
 
 
 
+	template <pl::GraphicsApi API>
+	pl::impl::Instance *Instance<API>::getImplementation() const noexcept
+	{
+		return m_impl;
+	}
+
+
+
+	template <pl::GraphicsApi API>
+	void Instance<API>::addChildren(pl::Block<API> *child)
+	{
+		m_impl->addChildren(child->getImplementation());
+	}
+
+
+
 } // namespace pl

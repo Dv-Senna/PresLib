@@ -7,7 +7,11 @@
 namespace pl
 {
 	template <pl::GraphicsApi API>
-	class Instance
+	class Block;
+	
+
+	template <pl::GraphicsApi API>
+	class Instance final
 	{
 		public:
 			PL_CLASS_NO_COPY_MOVE(Instance);
@@ -22,6 +26,9 @@ namespace pl
 
 			inline SDL_Window *getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
+			inline pl::impl::Instance *getImplementation() const noexcept;
+
+			inline void addChildren(pl::Block<API> *child);
 
 
 		private:

@@ -1,3 +1,4 @@
+#include "block.hpp"
 #include "impl/SDL2_renderer/instance.hpp"
 
 
@@ -34,6 +35,14 @@ namespace pl::impl::SDL2_renderer
 				if (event.type == SDL_QUIT)
 					return;
 			}
+
+
+			SDL_SetRenderDrawColor(m_handler, 0, 0, 0, 255);
+			SDL_RenderClear(m_handler);
+
+			SDL_SetRenderDrawColor(m_handler, 255, 255, 255, 255);
+			for (auto child : m_children)
+				child->render();
 
 			SDL_RenderPresent(m_handler);
 		}

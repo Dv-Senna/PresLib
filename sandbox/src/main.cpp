@@ -12,6 +12,9 @@ int main(int, char *[])
 	{
 		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
 
+		pl::blocks::Line line {instance, 10, 20, 30, 40};
+		instance.addChildren(&line);
+
 		instance.run();
 	}
 

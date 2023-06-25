@@ -2,6 +2,7 @@
 
 #include <any>
 #include <functional>
+#include <list>
 
 #include <SDL2/SDL.h>
 
@@ -11,6 +12,8 @@
 
 namespace pl::impl
 {
+	class Block;
+
 	class Instance
 	{
 		public:
@@ -29,6 +32,8 @@ namespace pl::impl
 			inline SDL_Window *getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 
+			inline void addChildren(pl::impl::Block *child);
+
 
 		protected:
 			inline void m_createWindow();
@@ -36,6 +41,7 @@ namespace pl::impl
 			SDL_Window *m_window;
 			pl::utils::WindowInfos m_windowInfos;
 			pl::impl::Instance::RenderingCallback m_renderingCallback;
+			std::list<pl::impl::Block *> m_children;
 	};
 } // namespace pl::impl
 
