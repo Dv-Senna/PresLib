@@ -12,7 +12,8 @@ namespace pl::impl
 		m_window {nullptr},
 		m_windowInfos {},
 		m_renderingCallback {nullptr},
-		m_children {}
+		m_slides {},
+		m_currentSlide {m_slides.begin()}
 	{
 		m_windowInfos.width = 16 * 70;//1920;
 		m_windowInfos.height = 9 * 70;//1080;
@@ -54,6 +55,16 @@ namespace pl::impl
 
 
 
+	void Instance::addSlide(pl::Slide *slide)
+	{
+		m_slides.push_back(slide);
+
+		if (m_slides.size() == 1)
+			m_currentSlide = m_slides.begin();
+	}
+
+
+
 	void Instance::m_createWindow()
 	{
 		m_window = SDL_CreateWindow(
@@ -64,13 +75,6 @@ namespace pl::impl
 		);
 		if (m_window == nullptr)
 			throw std::runtime_error("PL : Can't create an SDL2 window : " + std::string(SDL_GetError()));
-	}
-
-
-
-	void Instance::addChildren(pl::impl::Block *child)
-	{
-		m_children.push_back(child);
 	}
 
 

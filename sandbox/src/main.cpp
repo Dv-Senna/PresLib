@@ -11,9 +11,10 @@ int main(int, char *[])
 	try
 	{
 		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
+		pl::Slide slide {instance};
 
 		pl::blocks::Line line {instance, 10, 20, 30, 40};
-		instance.addChildren(&line);
+		slide.addBlock(&line);
 
 		instance.run();
 	}

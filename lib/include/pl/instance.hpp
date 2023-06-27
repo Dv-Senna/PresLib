@@ -2,6 +2,7 @@
 
 #include "graphicsApi.inl"
 #include "impl/instance.hpp"
+#include "slide.hpp"
 
 
 namespace pl
@@ -28,7 +29,7 @@ namespace pl
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 			inline pl::impl::Instance *getImplementation() const noexcept;
 
-			inline void addChildren(pl::Block<API> *child);
+			inline void addSlide(pl::Slide *slide);
 
 
 		private:

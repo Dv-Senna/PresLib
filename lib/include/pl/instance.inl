@@ -77,9 +77,9 @@ namespace pl
 
 
 	template <pl::GraphicsApi API>
-	void Instance<API>::addChildren(pl::Block<API> *child)
+	void Instance<API>::addSlide(pl::Slide *slide)
 	{
-		m_impl->addChildren(child->getImplementation());
+		m_impl->addSlide(slide);
 	}
 
 

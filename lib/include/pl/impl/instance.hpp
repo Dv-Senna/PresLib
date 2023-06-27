@@ -10,6 +10,12 @@
 #include "../utils/windowInfos.hpp"
 
 
+namespace pl
+{
+	class Slide;
+}
+
+
 namespace pl::impl
 {
 	class Block;
@@ -32,16 +38,19 @@ namespace pl::impl
 			inline SDL_Window *getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 
-			inline void addChildren(pl::impl::Block *child);
+			inline void addSlide(pl::Slide *slide);
 
 
 		protected:
 			inline void m_createWindow();
+			bool m_handleEvent();
+			void m_render();
 
 			SDL_Window *m_window;
 			pl::utils::WindowInfos m_windowInfos;
 			pl::impl::Instance::RenderingCallback m_renderingCallback;
-			std::list<pl::impl::Block *> m_children;
+			std::list<pl::Slide *> m_slides;
+			std::list<pl::Slide *>::iterator m_currentSlide;
 	};
 } // namespace pl::impl
 

@@ -26,23 +26,18 @@ namespace pl::impl::SDL2_renderer
 
 	void Instance::run()
 	{
-		SDL_Event event {};
-
 		while (true)
 		{
-			while (SDL_PollEvent(&event))
-			{
-				if (event.type == SDL_QUIT)
-					return;
-			}
+			if (!this->m_handleEvent())
+				return;
 
 
 			SDL_SetRenderDrawColor(m_handler, 0, 0, 0, 255);
 			SDL_RenderClear(m_handler);
 
 			SDL_SetRenderDrawColor(m_handler, 255, 255, 255, 255);
-			for (auto child : m_children)
-				child->render();
+			
+			this->m_render();
 
 			SDL_RenderPresent(m_handler);
 		}
