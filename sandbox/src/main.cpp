@@ -10,6 +10,18 @@ int main(int, char *[])
 {
 	try
 	{
+		pl::math::Vec2<float> vec {1, 2};
+
+		std::cout << vec << std::endl;
+
+		vec += {2, 3};
+		std::cout << vec << std::endl;
+
+		vec -= {1, 2};
+		std::cout << vec << std::endl;
+
+		std::cout << pl::math::length(vec) << std::endl;
+
 		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
 		pl::Slide slide {instance};
 
