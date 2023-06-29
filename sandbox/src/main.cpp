@@ -10,14 +10,14 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::math::Vec2<float> vec {1, 2};
+		pl::math::Vec2<float> vec {1.0f, 2.0f};
 
 		std::cout << vec << std::endl;
 
-		vec += {2, 3};
+		vec += {2.f, 3.f};
 		std::cout << vec << std::endl;
 
-		vec -= {1, 2};
+		vec -= {1.f, 2.f};
 		std::cout << vec << std::endl;
 
 		std::cout << pl::math::length(vec) << std::endl;

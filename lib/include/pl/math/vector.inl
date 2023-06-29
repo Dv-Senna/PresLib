@@ -29,7 +29,7 @@ namespace pl::math
 	template <class ...Args>
 	Vector<T, D>::Vector(T first, Args ...args) : Vector<T, D> ()
 	{
-		m_datas = std::array<T, D> ({first, static_cast<T...> (args)...});
+		m_datas = std::array<T, D> ({first, args...});
 	}
 
 
