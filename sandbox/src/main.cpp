@@ -22,6 +22,11 @@ int main(int, char *[])
 
 		std::cout << pl::math::length(vec) << std::endl;
 
+		vec.x = 3.5f;
+		vec.y = 2.5f;
+
+		std::cout << vec << std::endl;
+
 		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
 		pl::Slide slide {instance};
 

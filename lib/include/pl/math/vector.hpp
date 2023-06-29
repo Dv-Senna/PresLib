@@ -76,3 +76,4 @@ namespace pl::math
 #include "vector.inl"
 
 #include "vec2.hpp"
+#include "vec3.hpp"
