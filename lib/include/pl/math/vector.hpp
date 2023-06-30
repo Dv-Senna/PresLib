@@ -15,7 +15,7 @@ namespace pl::math
 			Vector(T value);
 			template <class ...Args>
 			Vector(T first, Args ...args);
-			~Vector() = default;
+			virtual ~Vector() = default;
 
 			Vector(const pl::math::Vector<T, D> &vec);
 			const pl::math::Vector<T, D> &operator=(const pl::math::Vector<T, D> &vec);
@@ -23,10 +23,10 @@ namespace pl::math
 			Vector(pl::math::Vector<T, D> &&vec) noexcept;
 			const pl::math::Vector<T, D> &operator=(pl::math::Vector<T, D> &&vec) noexcept;
 
-			T &operator[](size_t index);
-			const T &operator[](size_t index) const noexcept;
+			inline T &operator[](size_t index);
+			inline const T &operator[](size_t index) const noexcept;
 
-			std::array<T, D> &get() noexcept;
+			inline std::array<T, D> &get() noexcept;
 
 			const pl::math::Vector<T, D> &operator+=(const pl::math::Vector<T, D> &b);
 			const pl::math::Vector<T, D> &operator-=(const pl::math::Vector<T, D> &b);
