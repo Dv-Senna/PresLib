@@ -4,9 +4,10 @@
 
 namespace pl::impl::SDL2_renderer::blocks
 {
-	Line::Line(pl::impl::Instance *instance, int startx, int starty, int endx, int endy) : 
+	Line::Line(pl::impl::Instance *instance, const pl::math::Vec2f &start, const pl::math::Vec2f &end) : 
 		pl::impl::Block(instance),
-		m_startx {startx}, m_starty {starty}, m_endx {endx}, m_endy {endy}
+		m_start {start},
+		m_end {end}
 	{
 
 	}
@@ -22,7 +23,12 @@ namespace pl::impl::SDL2_renderer::blocks
 
 	void Line::render()
 	{
-		SDL_RenderDrawLine(std::any_cast<SDL_Renderer*> (m_instance->getHandler()), m_startx, m_starty, m_endx, m_endy);
+		SDL_RenderDrawLine(std::any_cast<SDL_Renderer*> (m_instance->getHandler()), 
+			static_cast<int> (m_start.x),
+			static_cast<int> (m_start.y),
+			static_cast<int> (m_end.x),
+			static_cast<int> (m_end.y)
+		);
 	}
 
 

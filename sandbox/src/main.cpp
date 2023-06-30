@@ -10,39 +10,10 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::math::Vec2<float> vec {1.0f, 2.0f};
-
-		std::cout << vec << std::endl;
-
-		vec += {2.f, 3.f};
-		std::cout << vec << std::endl;
-
-		vec -= {1.f, 2.f};
-		std::cout << vec << std::endl;
-
-		std::cout << pl::math::length(vec) << std::endl;
-
-		vec.x = 3.5f;
-		vec.y = 2.5f;
-
-		std::cout << vec << std::endl;
-
-		pl::math::Mat2i matrix {1};
-		std::cout << matrix << std::endl;
-
-		matrix += {1, 2, 3, 4};
-		std::cout << matrix << std::endl;
-
-		matrix *= 2;
-		std::cout << matrix << std::endl;
-
-		std::cout << matrix * pl::math::Mat2i (1, 0, 0, 1) << std::endl;
-		std::cout << pl::math::transpose(matrix) << std::endl;
-
 		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
 		pl::Slide slide {instance};
 
-		pl::blocks::Line line {instance, 10, 20, 30, 40};
+		pl::blocks::Line line {instance, {10, 20}, {30, 40}};
 		slide.addBlock(&line);
 
 		instance.run();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../block.hpp"
+#include "../../../math/vector.hpp"
 
 
 namespace pl::impl::SDL2_renderer::blocks
@@ -8,13 +9,13 @@ namespace pl::impl::SDL2_renderer::blocks
 	class Line final : public pl::impl::Block
 	{
 		public:
-			Line(pl::impl::Instance *instance, int startx, int starty, int endx, int endy);
+			Line(pl::impl::Instance *instance, const pl::math::Vec2f &start, const pl::math::Vec2f &end);
 			virtual ~Line();
 
 			virtual void render();
 
 		private:
-			int m_startx, m_starty, m_endx, m_endy;
+			pl::math::Vec2f m_start, m_end;
 	};
 
 } // namespace pl::impl::SDL2_renderer::blocks
