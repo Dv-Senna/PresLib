@@ -4,6 +4,7 @@
 #include "instance.hpp"
 #include "block.hpp"
 #include "blocks/line.hpp"
+#include "blocks/rectangle.hpp"
 #include "math/matrix.hpp"
 #include "math/vector.hpp"
 

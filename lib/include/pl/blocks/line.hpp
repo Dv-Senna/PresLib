@@ -3,6 +3,7 @@
 #include "../block.hpp"
 #include "../impl/SDL2_renderer/blocks/line.hpp"
 #include "../math/vector.hpp"
+#include "../utils/color.hpp"
 
 
 namespace pl::blocks
@@ -11,10 +12,15 @@ namespace pl::blocks
 	class Line final : public pl::Block<API>
 	{
 		public:
-			Line(pl::Instance<API> &instance, const pl::math::Vec2f &start, const pl::math::Vec2f &end) : pl::Block<API> ()
+			Line(
+				pl::Instance<API> &instance,
+				const pl::math::Vec2f &start,
+				const pl::math::Vec2f &end,
+				const pl::utils::Color &color = pl::utils::white
+			) : pl::Block<API> ()
 			{
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
-					this->m_impl = new pl::impl::SDL2_renderer::blocks::Line(instance.getImplementation(), start, end);
+					this->m_impl = new pl::impl::SDL2_renderer::blocks::Line(instance.getImplementation(), start, end, color);
 			}
 	};
 

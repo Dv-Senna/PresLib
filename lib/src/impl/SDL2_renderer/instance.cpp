@@ -34,8 +34,6 @@ namespace pl::impl::SDL2_renderer
 
 			SDL_SetRenderDrawColor(m_handler, 0, 0, 0, 255);
 			SDL_RenderClear(m_handler);
-
-			SDL_SetRenderDrawColor(m_handler, 255, 255, 255, 255);
 			
 			this->m_render();
 
