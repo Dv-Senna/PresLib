@@ -28,25 +28,26 @@ namespace pl::impl
 			using RenderingCallback = std::function<void(const pl::impl::Instance *instance)>;
 
 			inline Instance();
-			inline virtual ~Instance();
+			inline virtual ~Instance() = default;
 
 			virtual void run() = 0;
 			virtual inline std::any getHandler() const noexcept = 0;
 
 			inline void setRenderingCallback(pl::impl::Instance::RenderingCallback callback) noexcept;
 
-			inline SDL_Window *getWindow() const noexcept;
+			inline std::any getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 
 			inline void addSlide(pl::Slide *slide);
 
 
 		protected:
-			inline void m_createWindow();
+			inline void m_initSDL2();
+			inline void m_quitSDL2();
 			bool m_handleEvent();
 			void m_render();
 
-			SDL_Window *m_window;
+			std::any m_window;
 			pl::utils::WindowInfos m_windowInfos;
 			pl::impl::Instance::RenderingCallback m_renderingCallback;
 			std::list<pl::Slide *> m_slides;

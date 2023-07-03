@@ -7,9 +7,9 @@ namespace pl::impl::SDL2_renderer
 {
 	Instance::Instance() : impl::Instance(), m_handler {nullptr}
 	{
-		this->m_createWindow();
+		this->m_initSDL2();
 
-		m_handler = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED);
+		m_handler = SDL_CreateRenderer(std::any_cast<SDL_Window*> (m_window), -1, SDL_RENDERER_ACCELERATED);
 		if (m_handler == nullptr)
 			throw std::runtime_error("PL : Can't create an SDL2 renderer : " + std::string(SDL_GetError()));
 	}
@@ -19,6 +19,7 @@ namespace pl::impl::SDL2_renderer
 	Instance::~Instance()
 	{
 		SDL_DestroyRenderer(m_handler);
+		this->m_quitSDL2();
 		impl::Instance::~Instance();
 	}
 

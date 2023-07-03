@@ -27,6 +27,7 @@ project "lib"
 		"vendors/SDL2_ttf/include",
 		"vendors/SDL2_image/include",
 		"vendors/SDL2_latex/include",
+		"vendors/SDL2_gpu/include",
 	}
 
 	filter "configurations:debug"
@@ -71,6 +72,7 @@ project "Sandbox"
 		"vendors/SDL2_ttf/include",
 		"vendors/SDL2_image/include",
 		"vendors/SDL2_latex/include",
+		"vendors/SDL2_gpu/include",
 	}
 
 	libdirs {
@@ -80,6 +82,7 @@ project "Sandbox"
 		"vendors/SDL2_ttf/lib",
 		"vendors/SDL2_image/lib",
 		"vendors/SDL2_latex/lib",
+		"vendors/SDL2_gpu/lib",
 	}
 
 	links {
@@ -88,6 +91,7 @@ project "Sandbox"
 		"SDL2_ttf",
 		"SDL2_latex",
 		"SDL2_image",
+		"SDL2_gpu",
 		"SDL2",
 		"SDL2main",
 	}

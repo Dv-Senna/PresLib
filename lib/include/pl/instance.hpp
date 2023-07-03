@@ -25,7 +25,7 @@ namespace pl
 
 			inline void setRenderingCallback(pl::impl::Instance::RenderingCallback callback) noexcept;
 
-			inline SDL_Window *getWindow() const noexcept;
+			inline std::any getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 			inline pl::impl::Instance *getImplementation() const noexcept;
 

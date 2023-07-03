@@ -3,12 +3,20 @@
 #include <cinttypes>
 #include <ostream>
 
+#include <SDL2/SDL.h>
+
 
 namespace pl::utils
 {
 	struct Color
 	{
 		uint8_t r, g, b, a = 255;
+
+		operator SDL_Color()
+		{
+			SDL_Color color {r, g, b, a};
+			return color;
+		}
 	};
 
 

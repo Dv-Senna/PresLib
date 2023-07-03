@@ -19,17 +19,6 @@ namespace pl::impl
 		m_windowInfos.height = 9 * 70;//1080;
 		m_windowInfos.title = "PresLib";
 		m_windowInfos.flags = SDL_WINDOW_SHOWN;
-
-		if (SDL_Init(SDL_INIT_VIDEO) != 0)
-			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
-	}
-
-
-
-	Instance::~Instance()
-	{
-		SDL_DestroyWindow(m_window);
-		SDL_Quit();
 	}
 
 
@@ -41,7 +30,7 @@ namespace pl::impl
 
 
 
-	SDL_Window *Instance::getWindow() const noexcept
+	std::any Instance::getWindow() const noexcept
 	{
 		return m_window;
 	}
@@ -65,16 +54,27 @@ namespace pl::impl
 
 
 
-	void Instance::m_createWindow()
+	void Instance::m_initSDL2()
 	{
+		if (SDL_Init(SDL_INIT_VIDEO) != 0)
+			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
+
 		m_window = SDL_CreateWindow(
 			m_windowInfos.title.c_str(),
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 			m_windowInfos.width, m_windowInfos.height,
 			m_windowInfos.flags
 		);
-		if (m_window == nullptr)
+		if (std::any_cast<SDL_Window*> (m_window) == nullptr)
 			throw std::runtime_error("PL : Can't create an SDL2 window : " + std::string(SDL_GetError()));
+	}
+
+
+
+	void Instance::m_quitSDL2()
+	{
+		SDL_DestroyWindow(std::any_cast<SDL_Window*> (m_window));
+		SDL_Quit();
 	}
 
 
