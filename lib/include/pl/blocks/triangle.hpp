@@ -2,7 +2,6 @@
 
 #include "../block.hpp"
 #include "../impl/SDL2_renderer/blocks/triangle.hpp"
-#include "../impl/SDL2_gpu/blocks/triangle.hpp"
 #include "../math/vector.hpp"
 #include "../utils/color.hpp"
 #include "../renderMethod.hpp"
@@ -25,9 +24,6 @@ namespace pl::blocks
 			{
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
 					this->m_impl = new pl::impl::SDL2_renderer::blocks::Triangle(instance.getImplementation(), a, b, c, color, method);
-
-				else if constexpr (API == pl::GraphicsApi::SDL2_gpu)
-					this->m_impl = new pl::impl::SDL2_gpu::blocks::Triangle(instance.getImplementation(), a, b, c, color, method);
 
 
 				if (this->m_impl == nullptr)

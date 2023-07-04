@@ -1,5 +1,6 @@
 #pragma once
 
+#include "fontManager.hpp"
 #include "graphicsApi.inl"
 #include "impl/instance.hpp"
 #include "slide.hpp"
@@ -28,6 +29,7 @@ namespace pl
 			inline std::any getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 			inline pl::impl::Instance *getImplementation() const noexcept;
+			inline pl::FontManager &getFonts() noexcept;
 
 			inline void addSlide(pl::Slide *slide);
 

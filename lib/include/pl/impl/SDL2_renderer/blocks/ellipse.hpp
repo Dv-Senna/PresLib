@@ -6,26 +6,29 @@
 #include "../../../renderMethod.hpp"
 
 
-namespace pl::impl::SDL2_gpu::blocks
+namespace pl::impl::SDL2_renderer::blocks
 {
-	class Rectangle final : public pl::impl::Block
+	class Ellipse final : public pl::impl::Block
 	{
 		public:
-			Rectangle(
+			Ellipse(
 				pl::impl::Instance *instance,
-				const pl::math::Vec2f &pos,
-				const pl::math::Vec2f &size,
+				const pl::math::Vec2f &center,
+				float radius,
+				float excentricity,
+				float angle,
 				const pl::utils::Color &color,
 				pl::RenderMethod method
 			);
-			virtual ~Rectangle();
+			virtual ~Ellipse();
 
 			virtual void render();
 
 		private:
-			pl::math::Vec2f m_pos, m_size;
+			pl::math::Vec2f m_center, m_size;
+			float m_angle;
 			pl::utils::Color m_color;
 			pl::RenderMethod m_method;
 	};
 
-} // namespace pl::impl::SDL2_gpu::blocks
+} // namespace pl::impl::SDL2_renderer::blocks

@@ -2,7 +2,6 @@
 
 #include "instance.hpp"
 #include "impl/SDL2_renderer/instance.hpp"
-#include "impl/SDL2_gpu/instance.hpp"
 
 
 namespace pl
@@ -12,8 +11,6 @@ namespace pl
 	{
 		if constexpr (API == pl::GraphicsApi::SDL2_renderer)
 			m_impl = new pl::impl::SDL2_renderer::Instance();
-		else if constexpr (API == pl::GraphicsApi::SDL2_gpu)
-			m_impl = new pl::impl::SDL2_gpu::Instance();
 		else if constexpr (API == pl::GraphicsApi::OpenGL)
 			static_assert(!(API == pl::GraphicsApi::OpenGL), "PL : OpenGL isn't supported for the moment (but is planned to be)");
 		else if constexpr (API == pl::GraphicsApi::Vulkan)
@@ -75,6 +72,14 @@ namespace pl
 	pl::impl::Instance *Instance<API>::getImplementation() const noexcept
 	{
 		return m_impl;
+	}
+
+
+
+	template <pl::GraphicsApi API>
+	pl::FontManager &Instance<API>::getFonts() noexcept
+	{
+		return m_impl->getFonts();
 	}
 
 

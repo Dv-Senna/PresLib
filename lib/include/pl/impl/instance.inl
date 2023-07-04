@@ -2,6 +2,9 @@
 
 #include <stdexcept>
 
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
 #include "instance.hpp"
 
 
@@ -13,7 +16,8 @@ namespace pl::impl
 		m_windowInfos {},
 		m_renderingCallback {nullptr},
 		m_slides {},
-		m_currentSlide {m_slides.begin()}
+		m_currentSlide {m_slides.begin()},
+		m_fontManager {}
 	{
 		m_windowInfos.width = 16 * 70;//1920;
 		m_windowInfos.height = 9 * 70;//1080;
@@ -44,6 +48,13 @@ namespace pl::impl
 
 
 
+	pl::FontManager &Instance::getFonts() noexcept
+	{
+		return m_fontManager;
+	}
+
+
+
 	void Instance::addSlide(pl::Slide *slide)
 	{
 		m_slides.push_back(slide);
@@ -58,6 +69,12 @@ namespace pl::impl
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			throw std::runtime_error("PL : Can't init SDL2 : " + std::string(SDL_GetError()));
+
+		if (IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG) != (IMG_INIT_JPG | IMG_INIT_PNG))
+			throw std::runtime_error("PL : Can't init SDL2_image : " + std::string(IMG_GetError()));
+
+		if (TTF_Init() != 0)
+			throw std::runtime_error("PL : Can't init SDL_ttf : " + std::string(TTF_GetError()));
 
 		m_window = SDL_CreateWindow(
 			m_windowInfos.title.c_str(),
@@ -74,6 +91,8 @@ namespace pl::impl
 	void Instance::m_quitSDL2()
 	{
 		SDL_DestroyWindow(std::any_cast<SDL_Window*> (m_window));
+		TTF_Quit();
+		IMG_Quit();
 		SDL_Quit();
 	}
 

@@ -10,7 +10,9 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::Instance<pl::GraphicsApi::SDL2_gpu> instance {};
+		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
+		instance.getFonts().add("arial", "arial.ttf");
+
 		pl::Slide slide {instance};
 		pl::Slide slide2 {instance};
 
@@ -22,11 +24,30 @@ int main(int, char *[])
 		pl::blocks::Rectangle rectBorder {instance, {200, 300}, {298, 72}, pl::utils::green, pl::RenderMethod::border};
 		slide.addBlock(&rectBorder);
 
+		pl::blocks::Ellipse circleFill {instance, {200, 200}, 50.0f};
+		slide.addBlock(&circleFill);
+		pl::blocks::Ellipse circleBorder {instance, {300, 200}, 50.0f, 0.0f, 0.0f, pl::utils::white, pl::RenderMethod::border};
+		slide.addBlock(&circleBorder);
+
+		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, 0.5f};
+		slide.addBlock(&ellipseFill);
+		pl::blocks::Ellipse ellipseBorder {instance, {600, 200}, 50.0f, 0.5f, 45.0f, pl::utils::white, pl::RenderMethod::border};
+		slide.addBlock(&ellipseBorder);
+
+
 		pl::blocks::Triangle triFill {instance, {400, 400}, {450, 450}, {400, 450}, {255, 120, 0}};
 		slide2.addBlock(&triFill);
 		pl::blocks::Triangle triBorder {instance, {300, 300}, {320, 350}, {350, 310}, pl::utils::blue, pl::RenderMethod::border};
 		slide2.addBlock(&triBorder);
 
+		pl::blocks::Image image {instance, "image.png", {100, 100}, 2.0f};
+		slide2.addBlock(&image);
+
+		pl::blocks::Text text {instance, "Hello World from PresLib !", {600, 500}, "arial", 50};
+		slide2.addBlock(&text);
+
+		pl::blocks::Math math {instance, "E = mc^2", {0, 300}, 40};
+		slide2.addBlock(&math);
 
 
 		instance.run();

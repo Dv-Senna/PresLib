@@ -2,7 +2,6 @@
 
 #include "../block.hpp"
 #include "../impl/SDL2_renderer/blocks/line.hpp"
-#include "../impl/SDL2_gpu/blocks/line.hpp"
 #include "../math/vector.hpp"
 #include "../utils/color.hpp"
 
@@ -22,9 +21,6 @@ namespace pl::blocks
 			{
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
 					this->m_impl = new pl::impl::SDL2_renderer::blocks::Line(instance.getImplementation(), start, end, color);
-
-				else if constexpr (API == pl::GraphicsApi::SDL2_gpu)
-					this->m_impl = new pl::impl::SDL2_gpu::blocks::Line(instance.getImplementation(), start, end, color);
 
 
 				if (this->m_impl == nullptr)

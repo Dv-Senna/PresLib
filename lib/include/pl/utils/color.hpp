@@ -12,6 +12,12 @@ namespace pl::utils
 	{
 		uint8_t r, g, b, a = 255;
 
+		operator SDL_Color() const
+		{
+			SDL_Color color {r, g, b, a};
+			return color;
+		}
+
 		operator SDL_Color()
 		{
 			SDL_Color color {r, g, b, a};

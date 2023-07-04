@@ -6,6 +6,7 @@
 
 #include <SDL2/SDL.h>
 
+#include "../fontManager.hpp"
 #include "../macros.inl"
 #include "../utils/windowInfos.hpp"
 
@@ -37,6 +38,7 @@ namespace pl::impl
 
 			inline std::any getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
+			inline pl::FontManager &getFonts() noexcept;
 
 			inline void addSlide(pl::Slide *slide);
 
@@ -52,6 +54,7 @@ namespace pl::impl
 			pl::impl::Instance::RenderingCallback m_renderingCallback;
 			std::list<pl::Slide *> m_slides;
 			std::list<pl::Slide *>::iterator m_currentSlide;
+			pl::FontManager m_fontManager;
 	};
 } // namespace pl::impl
 
