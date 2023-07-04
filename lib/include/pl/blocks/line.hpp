@@ -25,6 +25,10 @@ namespace pl::blocks
 
 				else if constexpr (API == pl::GraphicsApi::SDL2_gpu)
 					this->m_impl = new pl::impl::SDL2_gpu::blocks::Line(instance.getImplementation(), start, end, color);
+
+
+				if (this->m_impl == nullptr)
+					throw std::runtime_error("PL : line's implementation's creation failed");
 			}
 	};
 

@@ -38,17 +38,19 @@ namespace pl::impl::SDL2_gpu::blocks
 	void Triangle::render()
 	{
 		if (m_method == pl::RenderMethod::border)
-		{		
+		{
+			GPU_Tri(
+				std::any_cast<GPU_Target*> (m_instance->getHandler()),
+				m_a.x, m_a.y, m_b.x, m_b.y, m_c.x, m_c.y, m_color
+			);
+
 			return;
 		}
-		
-		float vertices[6] {
-			m_a.x, m_a.y,
-			m_b.x, m_b.y,
-			m_c.x, m_c.y
-		};
 
-		GPU_TriangleBatch(nullptr, std::any_cast<GPU_Target*> (m_instance->getHandler()), 3, vertices, 0, nullptr, GPU_USE_DEFAULT_POSITIONS);
+		GPU_TriFilled(
+			std::any_cast<GPU_Target*> (m_instance->getHandler()),
+			m_a.x, m_a.y, m_b.x, m_b.y, m_c.x, m_c.y, m_color
+		);
 	}
 
 

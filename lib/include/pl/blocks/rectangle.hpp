@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "../block.hpp"
 #include "../impl/SDL2_renderer/blocks/rectangle.hpp"
 #include "../impl/SDL2_gpu/blocks/rectangle.hpp"
@@ -25,8 +27,12 @@ namespace pl::blocks
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
 					this->m_impl = new pl::impl::SDL2_renderer::blocks::Rectangle(instance.getImplementation(), pos, size, color, method);
 				
-				else if constexpr (API == pl::GraphicsApi::SDL2_renderer)
+				else if constexpr (API == pl::GraphicsApi::SDL2_gpu)
 					this->m_impl = new pl::impl::SDL2_gpu::blocks::Rectangle(instance.getImplementation(), pos, size, color, method);
+
+
+				if (this->m_impl == nullptr)
+					throw std::runtime_error("PL : rectangle's implementation's creation failed");
 			}
 	};
 

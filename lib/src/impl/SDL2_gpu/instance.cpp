@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <SDL2/SDL_gpu.h>
 
 #include "block.hpp"
@@ -32,14 +34,11 @@ namespace pl::impl::SDL2_gpu
 				return;
 
 
-			//SDL_SetRenderDrawColor(m_handler, 0, 0, 0, 255);
-			//SDL_RenderClear(m_handler);
 			GPU_ClearRGB(std::any_cast<GPU_Target*> (m_window), 0, 0, 0);
 			
 			this->m_render();
 
 			GPU_Flip(std::any_cast<GPU_Target*> (m_window));
-			//SDL_RenderPresent(m_handler);
 		}
 	}
 
