@@ -8,6 +8,8 @@
 
 #include "../fontManager.hpp"
 #include "../macros.inl"
+#include "../theme.hpp"
+#include "../utils/color.hpp"
 #include "../utils/windowInfos.hpp"
 
 
@@ -39,8 +41,10 @@ namespace pl::impl
 			inline std::any getWindow() const noexcept;
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 			inline pl::FontManager &getFonts() noexcept;
+			inline const pl::Theme &getTheme() const noexcept;
 
 			inline void addSlide(pl::Slide *slide);
+			inline void setTheme(const pl::Theme &theme);
 
 
 		protected:
@@ -54,7 +58,8 @@ namespace pl::impl
 			pl::impl::Instance::RenderingCallback m_renderingCallback;
 			std::list<pl::Slide *> m_slides;
 			std::list<pl::Slide *>::iterator m_currentSlide;
-			pl::FontManager m_fontManager;
+			pl::FontManager *m_fontManager;
+			const pl::Theme *m_theme;
 	};
 } // namespace pl::impl
 

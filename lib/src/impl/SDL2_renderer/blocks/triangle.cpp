@@ -61,6 +61,9 @@ namespace pl::impl::SDL2_renderer::blocks
 			nullptr, vertices, 3, nullptr, 0
 		) != 0)
 			throw std::runtime_error("PL : Can't render fill triangle : " + std::string(SDL_GetError()));
+
+
+		this->m_renderChildren();
 	}
 
 

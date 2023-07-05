@@ -20,6 +20,19 @@ namespace pl::math
 				y = _y;
 			}
 
+			Vec2(const pl::math::Vec2<T> &vector) : Vec2(vector.x, vector.y)
+			{
+
+			}
+
+			const pl::math::Vec2<T> &operator=(const pl::math::Vec2<T> &vector)
+			{
+				x = vector.x;
+				y = vector.y;
+
+				return *this;
+			}
+
 			~Vec2() = default;
 
 			T &x, &y;

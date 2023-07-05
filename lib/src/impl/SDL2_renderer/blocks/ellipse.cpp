@@ -83,6 +83,9 @@ namespace pl::impl::SDL2_renderer::blocks
 				m_center.x, m_center.y, m_size.x, m_size.y, m_color.r, m_color.g, m_color.b, m_color.a
 			) != 0)
 				throw std::runtime_error("PL : Can't render filled ellipse : " + std::string(SDL_GetError()));
+
+
+		this->m_renderChildren();
 	}
 
 

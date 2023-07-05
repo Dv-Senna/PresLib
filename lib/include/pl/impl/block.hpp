@@ -1,5 +1,7 @@
 #pragma once
 
+#include <list>
+
 #include "instance.hpp"
 
 
@@ -13,8 +15,15 @@ namespace pl::impl
 
 			virtual void render() = 0;
 
+			inline void addChild(pl::impl::Block *block);
+
 		protected:
+			inline void m_renderChildren();
+			
 			pl::impl::Instance *m_instance;
+
+		private:
+			std::list<pl::impl::Block *> m_children;
 	};
 
 } // namespace pl::impl

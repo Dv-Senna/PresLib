@@ -19,10 +19,13 @@ namespace pl::blocks
 				float radius,
 				float excentricity = 0.0f,
 				float angle = 0.0f,
-				const pl::utils::Color &color = pl::utils::white,
+				pl::utils::Color color = pl::utils::undefined,
 				pl::RenderMethod method = pl::RenderMethod::fill
 			) : pl::Block<API> ()
 			{
+				if (color == pl::utils::undefined)
+					color = instance.getTheme().style.objectColor;
+
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
 					this->m_impl = new pl::impl::SDL2_renderer::blocks::Ellipse(
 						instance.getImplementation(),

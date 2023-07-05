@@ -20,9 +20,12 @@ namespace pl::blocks
 				const std::string &equation,
 				const pl::math::Vec2f &pos,
 				float size,
-				const pl::utils::Color &color = pl::utils::white
+				pl::utils::Color color = pl::utils::undefined
 			) : pl::Block<API> ()
 			{
+				if (color == pl::utils::undefined)
+					color = instance.getTheme().style.textColor;
+
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
 					this->m_impl = new pl::impl::SDL2_renderer::blocks::Math(instance.getImplementation(), equation, pos, size, color);
 				

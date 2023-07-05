@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "pl/preslib.hpp"
+#include "pl/themes/modern.hpp"
 
 
 
@@ -11,10 +12,14 @@ int main(int, char *[])
 	try
 	{
 		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
+		pl::themes::Modern modern {instance};
 		instance.getFonts().add("arial", "arial.ttf");
 
+
 		pl::Slide slide {instance};
-		pl::Slide slide2 {instance};
+		pl::blocks::Title slideTitle {instance, "An amazing title", slide};
+		pl::Slide slide2 {instance, pl::SlideFlag::noBackground};
+		pl::blocks::Title slideTitle2 {instance, "The new style | modern", slide2};
 
 		pl::blocks::Line line {instance, {10, 20}, {30, 40}, pl::utils::red};
 		slide.addBlock(&line);
@@ -40,13 +45,13 @@ int main(int, char *[])
 		pl::blocks::Triangle triBorder {instance, {300, 300}, {320, 350}, {350, 310}, pl::utils::blue, pl::RenderMethod::border};
 		slide2.addBlock(&triBorder);
 
-		pl::blocks::Image image {instance, "image.png", {100, 100}, 2.0f};
+		pl::blocks::Image image {instance, "image.png", {100, 100}, 1.0f};
 		slide2.addBlock(&image);
 
-		pl::blocks::Text text {instance, "Hello World from PresLib !", {600, 500}, "arial", 50};
+		pl::blocks::Text text {instance, "Hello World from PresLib !", {600, 500}, "arial", 30};
 		slide2.addBlock(&text);
 
-		pl::blocks::Math math {instance, "E = mc^2", {0, 300}, 40};
+		pl::blocks::Math math {instance, "E = mc^2", {0, 300}, 15};
 		slide2.addBlock(&math);
 
 
@@ -56,7 +61,8 @@ int main(int, char *[])
 	catch (const std::exception &exception)
 	{
 		std::cerr << "ERROR : " << exception.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

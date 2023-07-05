@@ -54,6 +54,8 @@ namespace pl::impl::SDL2_renderer::blocks
 			m_texture, nullptr, &rect
 		) != 0)
 			throw std::runtime_error("PL : Can't render image : " + std::string(SDL_GetError()));
+
+		this->m_renderChildren();
 	}
 
 

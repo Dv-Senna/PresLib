@@ -5,7 +5,7 @@
 namespace pl
 {
 	template <pl::GraphicsApi API>
-	Slide::Slide(pl::Instance<API> &instance) : m_blocks {}
+	Slide::Slide(pl::Instance<API> &instance, pl::SlideFlags flags) : m_blocks {}, m_flags {flags}
 	{
 		instance.addSlide(this);
 	}
@@ -16,6 +16,13 @@ namespace pl
 	void Slide::addBlock(pl::Block<API> *block)
 	{
 		m_blocks.push_back(block->getImplementation());
+	}
+
+
+
+	pl::SlideFlags Slide::getFlags() const noexcept
+	{
+		return m_flags;
 	}
 
 

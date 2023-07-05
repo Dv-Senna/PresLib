@@ -85,9 +85,25 @@ namespace pl
 
 
 	template <pl::GraphicsApi API>
+	const pl::Theme &Instance<API>::getTheme() const noexcept
+	{
+		return m_impl->getTheme();
+	}
+
+
+
+	template <pl::GraphicsApi API>
 	void Instance<API>::addSlide(pl::Slide *slide)
 	{
 		m_impl->addSlide(slide);
+	}
+
+
+
+	template <pl::GraphicsApi API>
+	void Instance<API>::setTheme(const pl::Theme &theme)
+	{
+		m_impl->setTheme(theme);
 	}
 
 

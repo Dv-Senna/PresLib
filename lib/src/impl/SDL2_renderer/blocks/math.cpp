@@ -22,7 +22,7 @@ namespace pl::impl::SDL2_renderer::blocks
 		m_texture {nullptr}
 	{
 		std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface {
-			TEX_ParseLaTeX(equation.c_str(), SDL_TRUE),
+			TEX_ParseLaTeX(equation.c_str(), SDL_TRUE, size),
 			SDL_FreeSurface
 		};
 		if (surface.get() == nullptr)
@@ -37,8 +37,8 @@ namespace pl::impl::SDL2_renderer::blocks
 		if (SDL_SetTextureColorMod(m_texture, color.r, color.g, color.b) != 0)
 			throw std::runtime_error("PL : Can't change math color : " + std::string(SDL_GetError()));
 
-		m_size.x = surface->w * size / surface->h;
-		m_size.y = size;
+		m_size.x = surface->w;
+		m_size.y = surface->h;
 	}
 
 
@@ -59,6 +59,8 @@ namespace pl::impl::SDL2_renderer::blocks
 			m_texture, nullptr, &rect
 		) != 0)
 			throw std::runtime_error("PL : Can't render math : " + std::string(SDL_GetError()));
+
+		this->m_renderChildren();
 	}
 
 

@@ -6,7 +6,7 @@
 namespace pl
 {
 	template <pl::GraphicsApi API>
-	Block<API>::Block() : m_impl {nullptr}, m_children {}
+	Block<API>::Block() : m_impl {nullptr}
 	{
 
 	}
@@ -25,9 +25,6 @@ namespace pl
 	template <pl::GraphicsApi API>
 	void Block<API>::render()
 	{
-		for (auto child : m_children)
-			child->render();
-
 		if (m_impl != nullptr)
 			m_impl->render();
 	}
@@ -37,7 +34,7 @@ namespace pl
 	template <pl::GraphicsApi API>
 	void Block<API>::addChild(pl::Block<API> *child)
 	{
-		m_children.push_back(child);
+		m_impl->addChild(child->getImplementation());
 	}
 
 

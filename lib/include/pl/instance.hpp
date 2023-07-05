@@ -4,6 +4,7 @@
 #include "graphicsApi.inl"
 #include "impl/instance.hpp"
 #include "slide.hpp"
+#include "theme.hpp"
 
 
 namespace pl
@@ -30,8 +31,10 @@ namespace pl
 			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
 			inline pl::impl::Instance *getImplementation() const noexcept;
 			inline pl::FontManager &getFonts() noexcept;
+			inline const pl::Theme &getTheme() const noexcept;
 
 			inline void addSlide(pl::Slide *slide);
+			inline void setTheme(const pl::Theme &theme);
 
 
 		private:

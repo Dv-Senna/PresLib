@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "../defines.inl"
 #include "instance.hpp"
 
 
@@ -17,12 +18,15 @@ namespace pl::impl
 		m_renderingCallback {nullptr},
 		m_slides {},
 		m_currentSlide {m_slides.begin()},
-		m_fontManager {}
+		m_fontManager {nullptr},
+		m_theme {&pl::defaultTheme()}
 	{
-		m_windowInfos.width = 16 * 70;//1920;
-		m_windowInfos.height = 9 * 70;//1080;
+		m_windowInfos.width = PL_DEFAULT_VIEWPORT_WIDTH;
+		m_windowInfos.height = PL_DEFAULT_VIEWPORT_HEIGHT;
 		m_windowInfos.title = "PresLib";
-		m_windowInfos.flags = SDL_WINDOW_SHOWN;
+		m_windowInfos.flags = SDL_WINDOW_SHOWN | SDL_WINDOW_FULLSCREEN_DESKTOP;
+
+		m_fontManager = new pl::FontManager();
 	}
 
 
@@ -50,7 +54,14 @@ namespace pl::impl
 
 	pl::FontManager &Instance::getFonts() noexcept
 	{
-		return m_fontManager;
+		return *m_fontManager;
+	}
+
+
+
+	const pl::Theme &Instance::getTheme() const noexcept
+	{
+		return *m_theme;
 	}
 
 
@@ -61,6 +72,13 @@ namespace pl::impl
 
 		if (m_slides.size() == 1)
 			m_currentSlide = m_slides.begin();
+	}
+
+
+
+	void Instance::setTheme(const pl::Theme &theme)
+	{
+		m_theme = &theme;
 	}
 
 
@@ -90,6 +108,8 @@ namespace pl::impl
 
 	void Instance::m_quitSDL2()
 	{
+		delete m_fontManager;
+
 		SDL_DestroyWindow(std::any_cast<SDL_Window*> (m_window));
 		TTF_Quit();
 		IMG_Quit();

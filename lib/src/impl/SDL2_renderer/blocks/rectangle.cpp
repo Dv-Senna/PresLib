@@ -50,6 +50,8 @@ namespace pl::impl::SDL2_renderer::blocks
 		
 		if (SDL_RenderFillRectF(std::any_cast<SDL_Renderer*> (m_instance->getHandler()), &rect) != 0)
 			throw std::runtime_error("PL : Can't render fill rect : " + std::string(SDL_GetError()));
+
+		this->m_renderChildren();
 	}
 
 

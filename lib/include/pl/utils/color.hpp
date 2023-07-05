@@ -11,6 +11,12 @@ namespace pl::utils
 	struct Color
 	{
 		uint8_t r, g, b, a = 255;
+		bool undefined = false;
+
+		bool operator==(const pl::utils::Color &color) const noexcept
+		{
+			return r == color.r && g == color.g && b == color.b && a == color.a && undefined == color.undefined;
+		}
 
 		operator SDL_Color() const
 		{
@@ -38,7 +44,13 @@ namespace pl::utils
 	inline pl::utils::Color blue {0, 0, 255};
 	inline pl::utils::Color white {255, 255, 255};
 	inline pl::utils::Color black {255, 255, 255};
+	inline pl::utils::Color yellow {255, 255, 0};
+	inline pl::utils::Color aqua {0, 255, 255};
+	inline pl::utils::Color magenta {255, 0, 255};
+	inline pl::utils::Color orange {255, 125, 0};
+	inline pl::utils::Color purple {125, 0, 255};
 	inline pl::utils::Color transparent {0, 0, 0, 0};
+	inline pl::utils::Color undefined {0, 0, 0, 0, true};
 
 
 } // namespace pl::utils

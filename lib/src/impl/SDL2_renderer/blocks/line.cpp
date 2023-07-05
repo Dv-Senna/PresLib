@@ -40,6 +40,8 @@ namespace pl::impl::SDL2_renderer::blocks
 				m_start.x, m_start.y, m_end.x, m_end.y
 			))
 			throw std::runtime_error("PL : Can't draw line : " + std::string(SDL_GetError()));
+
+		this->m_renderChildren();
 	}
 
 
