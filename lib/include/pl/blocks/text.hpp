@@ -11,10 +11,19 @@
 
 namespace pl::blocks
 {
+	/// @brief A block to write text to the screen
+	/// @tparam API The graphics api used
 	template <pl::GraphicsApi API>
 	class Text final : public pl::Block<API>
 	{
 		public:
+			/// @brief A block to write text to the screen
+			/// @param instance The current instance of PresLib
+			/// @param text The text to write to the screen
+			/// @param pos The position of the text
+			/// @param font The name of the font used. Must have been register in the font manager before use
+			/// @param size The size of the font in px
+			/// @param color The color of the text
 			Text(
 				pl::Instance<API> &instance,
 				const std::string &text,

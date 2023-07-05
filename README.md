@@ -8,7 +8,13 @@
 	<img src="https://img.shields.io/badge/automated-working on-ff0000" />
 </p>
 
-A C++ presentation library with LaTeX support (one day)
+A C++ presentation library with LaTeX support.
+
+## Features
+ - Draw primitives (circle, rectangle, triangle, line, ellipse) filled and outlined
+ - Render text with custom font
+ - Handle LaTeX equation (make use of pdflatex and convert of ImageMagick)
+ - Handle creation of custom themes (color, font, title position, background, ...)
 
 
 ## Installation

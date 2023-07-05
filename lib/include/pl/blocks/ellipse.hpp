@@ -9,10 +9,20 @@
 
 namespace pl::blocks
 {
+	/// @brief A block to create ellipses and circles
+	/// @tparam API The graphics api used
 	template <pl::GraphicsApi API>
 	class Ellipse final : public pl::Block<API>
 	{
 		public:
+			/// @brief A block to create ellipses and circle
+			/// @param instance The current instance of PresLib
+			/// @param center The position of the center of the ellipse
+			/// @param radius The largest radius of the ellipse
+			/// @param excentricity `0.0f` for circle, `< 1.0f` for ellipse. Bigger values mean less 'round' ellipses
+			/// @param angle The rotation angle (doesn't work for the moment, here only for futur APIs)
+			/// @param color The color of the ellipse
+			/// @param method `pl::RenderMethod::fill` for filled ellipse, `pl::RenderMethod::border` for outlined ellipse
 			Ellipse(
 				pl::Instance<API> &instance,
 				const pl::math::Vec2f &center,

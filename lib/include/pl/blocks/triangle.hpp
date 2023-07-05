@@ -9,10 +9,19 @@
 
 namespace pl::blocks
 {
+	/// @brief A block to create triangles
+	/// @tparam API The graphics api used
 	template <pl::GraphicsApi API>
 	class Triangle final : public pl::Block<API>
 	{
 		public:
+			/// @brief A block to create triangle
+			/// @param instance The current instance of PresLib
+			/// @param a The first corner of the triangle
+			/// @param b The second corner of the triangle
+			/// @param c The third corner of the triangle
+			/// @param color The color of the triangle
+			/// @param method `pl::RenderMethod::fill` for filled triangle, `pl::RenderMethod::border` for outlined triangle
 			Triangle(
 				pl::Instance<API> &instance,
 				const pl::math::Vec2f &a,

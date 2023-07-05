@@ -11,10 +11,18 @@
 
 namespace pl::blocks
 {
+	/// @brief A block to create rectangles
+	/// @tparam API The graphics api used
 	template <pl::GraphicsApi API>
 	class Rectangle final : public pl::Block<API>
 	{
 		public:
+			/// @brief A block to create rectangles
+			/// @param instance The current instance of PresLib
+			/// @param pos The top-left corner of the rectangle
+			/// @param size The size of the rectangle
+			/// @param color The color of the rectangle
+			/// @param method `pl::RenderMethod::fill` for filled rectangle, `pl::RenderMethod::border` for outlined rectangle
 			Rectangle(
 				pl::Instance<API> &instance,
 				const pl::math::Vec2f &pos,

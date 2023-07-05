@@ -11,10 +11,19 @@
 
 namespace pl::blocks
 {
+	/// @brief A block to render LaTeX equations
+	/// @tparam API The graphics api used
 	template <pl::GraphicsApi API>
 	class Math final : public pl::Block<API>
 	{
 		public:
+			/// @brief A block to render LaTeX equations
+			/// @param instance The current instance of PresLib
+			/// @param equation The equation in LaTeX format
+			/// @param pos The position of the equation (note : the equation will be offset to the right because of unwanted margin in the pdf)
+			/// @param size The size of the font in pt
+			/// @param color The color of the equation
+			/// @warning Replace `\ \ ` by `\ ` in your equation !
 			Math(
 				pl::Instance<API> &instance,
 				const std::string &equation,

@@ -8,10 +8,17 @@
 
 namespace pl::blocks
 {
+	/// @brief A block to create lines
+	/// @tparam API The graphics api used
 	template <pl::GraphicsApi API>
 	class Line final : public pl::Block<API>
 	{
 		public:
+			/// @brief A block to create lines
+			/// @param instance The current instance of PresLib
+			/// @param start The position of the start of the line
+			/// @param end The position of the end of the line
+			/// @param color The color of the line
 			Line(
 				pl::Instance<API> &instance,
 				const pl::math::Vec2f &start,
