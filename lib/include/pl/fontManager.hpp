@@ -5,39 +5,29 @@
 
 #include "font.hpp"
 
-#include "defines.inl"
-
 
 namespace pl
 {
-	/// @brief A manager that handle pl::Font life-cycle and load font size on the fly
 	class FontManager final
 	{
 		public:
-			using SizedFonts = std::unordered_map<int, pl::Font*>;
-			using NamedSizedFonts = std::unordered_map<std::string, pl::FontManager::SizedFonts>;
-			using FontsPath = std::unordered_map<std::string, std::string>;
-
 			FontManager();
 			~FontManager();
 
-			/// @brief Register a new font. This function won't load anything into the ram
+			/// @brief Register a new font in the manager
 			/// @param name The name of the font
-			/// @param path The path of the font relative to PL_DEFAULT_FONT_FOLDER
-			void addFont(const std::string &name, const std::string &path);
-
-			/// @brief Get register font. If name.size is not loaded, it automaticly load it
-			/// @param name The name of the font
-			/// @param size The size of the font
-			/// @return The newly loaded font
-			pl::Font *getFont(const std::string &name, int size);
+			/// @param path The path to the font relative to `PL_DEFAULT_FONT_FOLDER_PATH`
+			void add(const std::string &name, const std::string &path);
+			/// @brief Get the wanted font with the wanted size. Lazy load the wanted configuration
+			/// @param name The name used when the font was registered
+			/// @param size The size of the font in px
+			/// @return The font in a format readable by SDL_ttf
+			TTF_Font *get(const std::string &name, int size);
 
 
 		private:
-			pl::Font *m_addNewFont(const std::string &name, const std::string &path, int size);
-		
-			pl::FontManager::NamedSizedFonts m_fonts;
-			pl::FontManager::FontsPath m_paths;
+			std::unordered_map<std::string, std::string> m_registereds;
+			std::unordered_map<std::string, std::unordered_map<int, pl::Font*>> m_fonts;
 	};
 
 } // namespace pl

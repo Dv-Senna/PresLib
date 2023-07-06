@@ -1,18 +1,18 @@
 #pragma once
 
 
-
 #include "instance.hpp"
 #include "block.hpp"
-#include "block/ellipse.hpp"
-#include "block/group.hpp"
-#include "block/image.hpp"
-#include "block/line.hpp"
-#include "block/math.hpp"
-#include "block/rectangle.hpp"
-#include "block/text.hpp"
-#include "block/triangle.hpp"
-#include "slide.hpp"
-#include "font.hpp"
+#include "blocks/ellipse.hpp"
+#include "blocks/group.hpp"
+#include "blocks/image.hpp"
+#include "blocks/line.hpp"
+#include "blocks/math.hpp"
+#include "blocks/rectangle.hpp"
+#include "blocks/text.hpp"
+#include "blocks/title.hpp"
+#include "blocks/triangle.hpp"
+#include "math/matrix.hpp"
+#include "math/vector.hpp"
 
 #include "defines.inl"

@@ -1,67 +1,58 @@
 #pragma once
 
-#include <functional>
-#include <vector>
-
-#include <SDL2/SDL.h>
-
-#include "math/vec2.hpp"
-#include "colorManager.hpp"
 #include "fontManager.hpp"
-
-#include "defines.inl"
+#include "graphicsApi.inl"
+#include "impl/instance.hpp"
+#include "slide.hpp"
+#include "theme.hpp"
 
 
 namespace pl
 {
-	class Slide;
+	template <pl::GraphicsApi API>
 	class Block;
+	
 
-	/// @brief Main instance of PL. Should be load only once
-	class Instance
+	/// @brief The class that handle the life-cycle of the whole library
+	/// @tparam API The graphics api used
+	template <pl::GraphicsApi API>
+	class Instance final
 	{
 		public:
-			using RenderingCallback = std::function<void(pl::Instance *instance)>;
+			PL_CLASS_NO_COPY_MOVE(Instance);
 
 			Instance();
 			~Instance();
 
-			void run();
+			/// @brief Run the program main loop. All wanted slides and blocks must have been created before this call and destroyed after
+			inline void run();
+			/// @brief Get a handler specific to the pl::GraphicsApi used
+			/// @return The handler used by the graphics api
+			inline std::any getHandler() const noexcept;
 
-			inline SDL_Window *getWindow() const noexcept {return m_window;}
-			inline SDL_Renderer *getRenderer() const noexcept {return m_renderer;}
-			inline pl::FontManager &getFonts() noexcept {return *m_fontManager;}
-			inline pl::ColorManager &getColors() noexcept {return m_colorManager;}
+			/// @brief Add a custom rendering callback where you can make custom things. Call right before refreshing the screen
+			/// @param callback The custom rendering callback
+			inline void setRenderingCallback(pl::impl::Instance::RenderingCallback callback) noexcept;
 
-			void addSlide(pl::Slide *slide);
+			inline std::any getWindow() const noexcept;
+			inline const pl::utils::WindowInfos &getWindowInfos() const noexcept;
+			inline pl::impl::Instance *getImplementation() const noexcept;
+			inline pl::FontManager &getFonts() noexcept;
+			inline const pl::Theme &getTheme() const noexcept;
 
-			/// @brief Set a custom rendering callback. Called after slide rendering and right before SDL_RenderPresent(...)
-			/// @param renderingCallback The callback. Take a pointer to the instance and return nothing
-			void setCustomRenderingCallback(pl::Instance::RenderingCallback renderingCallback);
-			/// @brief Set a custom background that would be shared by each slides. You can customise one specific slide by drawing on the whole screen or remove the shared background with flag pl::SlideFlag::no_background
-			/// @param background The new shared background
-			void setSharedBackground(pl::Block *background);
-			/// @brief Set a custom overlay that would be shared by each slides. Add flag pl::SlideFlag::no_overlay to remove it on one specific slide.
-			/// @param overlay The shared overlay
-			void setSharedOverlay(pl::Block *overlay);
-			void setTitlePosition(const pl::math::Vec2 &position);
-			void setTitleFontSize(int fontSize);
-
-			inline const pl::math::Vec2 &getTitlePosition() const noexcept {return m_titlePosition;}
-			inline int getTitleFontSize() const noexcept {return m_titleFontSize;}
+			/// @brief Register a new slide to the instance. Slides's order is the registration order
+			/// @param slide The slide to register
+			inline void addSlide(pl::Slide *slide);
+			/// @brief Set the current theme. Know that if you created blocks before this call, they would still use the colors, fonts, ..., of the previously loaded theme
+			/// @param theme The new theme to load
+			inline void setTheme(const pl::Theme &theme);
 
 
 		private:
-			SDL_Window *m_window;
-			SDL_Renderer *m_renderer;
-			pl::FontManager *m_fontManager;
-			pl::ColorManager m_colorManager;
-			std::vector<pl::Slide*> m_slides;
-			uint32_t m_currentSlide;
-			pl::Block *m_background, *m_overlay;
-			pl::math::Vec2 m_titlePosition;
-			int m_titleFontSize;
-			pl::Instance::RenderingCallback m_renderingCallback;
+			pl::impl::Instance *m_impl;
 	};
 
 } // namespace pl
+
+
+#include "instance.inl"

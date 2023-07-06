@@ -1,16 +1,17 @@
 #include <stdexcept>
 
+#include "defines.inl"
 #include "font.hpp"
 
 
 
 namespace pl
 {
-	Font::Font(const std::string &path, int size) : m_font {nullptr}, m_size {size}
+	Font::Font(const std::string &path, int size) : m_font {nullptr}
 	{
-		m_font = TTF_OpenFont(path.c_str(), m_size);
+		m_font = TTF_OpenFont((PL_DEFAULT_FONT_FOLDER_PATH + path).c_str(), size);
 		if (m_font == nullptr)
-			throw std::runtime_error("PL : Can't open font '" + path + "' : " + std::string(TTF_GetError()));
+			throw std::runtime_error("PL : Can't load font '" + path + "' : " + std::string(TTF_GetError()));
 	}
 
 
@@ -18,10 +19,7 @@ namespace pl
 	Font::~Font()
 	{
 		if (m_font != nullptr)
-		{
 			TTF_CloseFont(m_font);
-			m_font = nullptr;
-		}
 	}
 
 

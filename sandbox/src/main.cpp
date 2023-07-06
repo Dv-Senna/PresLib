@@ -7,67 +7,53 @@
 
 
 
-int main(int argc, char *argv[])
+int main(int, char *[])
 {
 	try
 	{
-		pl::Instance instance {};
-
-		pl::themes::Modern theme {instance};
-		theme.use();
-
-
-		instance.getFonts().addFont("arial", "arial.ttf");
-
-		std::cout << instance.getTitlePosition() << std::endl;
+		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
+		pl::themes::Modern modern {instance};
+		instance.getFonts().add("arial", "arial.ttf");
 
 
+		pl::Slide slide {instance};
+		pl::blocks::Title slideTitle {instance, "An amazing title", slide};
+		pl::Slide slide2 {instance, pl::SlideFlag::noBackground};
+		pl::blocks::Title slideTitle2 {instance, "The new style | modern", slide2};
 
-		pl::Slide slide {instance, pl::SlideFlag::no_background | pl::SlideFlag::no_overlay};
-		instance.addSlide(&slide);
+		pl::blocks::Line line {instance, {10, 20}, {30, 40}, pl::utils::red};
+		slide.addBlock(&line);
 
-		pl::block::Line line {instance, {10, 20}, {30, 40}};
-		slide.addChildren(&line);
+		pl::blocks::Rectangle rectFill {instance, {100, 100}, {100, 50}};
+		slide.addBlock(&rectFill);
+		pl::blocks::Rectangle rectBorder {instance, {200, 300}, {298, 72}, pl::utils::green, pl::RenderMethod::border};
+		slide.addBlock(&rectBorder);
 
-		pl::block::Ellipse circle {instance, {100, 100}, 30, 0.0f, pl::utils::colorUndefined, pl::DrawingType::outlined};
-		slide.addChildren(&circle);
+		pl::blocks::Ellipse circleFill {instance, {200, 200}, 50.0f};
+		slide.addBlock(&circleFill);
+		pl::blocks::Ellipse circleBorder {instance, {300, 200}, 50.0f, 0.0f, 0.0f, pl::utils::white, pl::RenderMethod::border};
+		slide.addBlock(&circleBorder);
 
-
-		pl::Slide slide2 {instance};
-		instance.addSlide(&slide2);
-
-		pl::block::Ellipse ellipse {instance, {400, 400}, 20, 0.9f};
-		ellipse.flipWidthAndHeight();
-		slide2.addChildren(&ellipse);
-
-		pl::block::Text text {instance, {500, 500}, "Hello World from PresLib !", "arial", 20};
-		slide2.addChildren(&text);
-
-		pl::block::Text text1 {instance, {500, 600}, "Hello Body from PresLib !", "arial", 50};
-		slide2.addChildren(&text1);
-
-		pl::block::Image image {instance, "image.png", {384, 583}, 2.0f};
-		slide2.addChildren(&image);
-
-		pl::block::Triangle triangle {
-			instance,
-			{pl::math::Vec2(100.0f, 100.0f), pl::math::Vec2(150.0f, 150.0f), pl::math::Vec2(150.0f, 100.0f)},
-			pl::utils::colorUndefined,
-			pl::DrawingType::outlined
-		};
-		slide2.addChildren(&triangle);
-
-		pl::block::Math equation {instance,
-			"\\mathscr{L} = \\dfrac{1}{2}\\partial_\\mu\\phi\\partial^\\mu\\phi - \\dfrac{1}{2}m^2\\phi^2",
-			{50, 50}, {255, 150, 0}};
-		slide2.addChildren(&equation);
+		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, 0.5f};
+		slide.addBlock(&ellipseFill);
+		pl::blocks::Ellipse ellipseBorder {instance, {600, 200}, 50.0f, 0.5f, 45.0f, pl::utils::white, pl::RenderMethod::border};
+		slide.addBlock(&ellipseBorder);
 
 
+		pl::blocks::Triangle triFill {instance, {400, 400}, {450, 450}, {400, 450}, {255, 120, 0}};
+		slide2.addBlock(&triFill);
+		pl::blocks::Triangle triBorder {instance, {300, 300}, {320, 350}, {350, 310}, pl::utils::blue, pl::RenderMethod::border};
+		slide2.addBlock(&triBorder);
 
-		pl::Slide themeSlide {instance};
-		instance.addSlide(&themeSlide);
-		themeSlide.setTitle("Un titre incroyable | modern");
-	
+		pl::blocks::Image image {instance, "image.png", {100, 100}, 1.0f};
+		slide2.addBlock(&image);
+
+		pl::blocks::Text text {instance, "Hello World from PresLib !", {600, 500}, "arial", 30};
+		slide2.addBlock(&text);
+
+		pl::blocks::Math math {instance, "E = mc^2", {0, 300}, 15};
+		slide2.addBlock(&math);
+
 
 		instance.run();
 	}
@@ -75,7 +61,8 @@ int main(int argc, char *argv[])
 	catch (const std::exception &exception)
 	{
 		std::cerr << "ERROR : " << exception.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }

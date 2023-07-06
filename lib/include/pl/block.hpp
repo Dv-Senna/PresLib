@@ -1,50 +1,33 @@
 #pragma once
 
-#include <cinttypes>
-#include <list>
-
+#include "impl/block.hpp"
 #include "instance.hpp"
 
 
 namespace pl
 {
-	using BlockID = uint32_t;
-
-	enum class DrawingType
-	{
-		outlined, filled
-	};
-
-	/// @brief The base class of all blocks
+	template <pl::GraphicsApi API>
 	class Block
 	{
 		public:
-			/// @brief Constructor
-			/// @param instance A reference to the instance of pl
-			Block(pl::Instance &instance);
-			virtual ~Block() = default;
+			inline Block();
+			virtual ~Block();
 
-			/// @brief Render the block and its children
-			virtual void render();
+			inline void render();
+			inline void addChild(pl::Block<API> *child);
 
-			/// @brief Add a child block to the current block.
-			/// @param block The block to add as child
-			/// @warning Can contain assert depending on the implementation !
-			virtual void addChildren(pl::Block *block);
-			/// @brief Remove a child block to the current block
-			/// @param block The block to remove as child
-			/// @warning Can contain assert depending on the implementation !
-			virtual void removeChildren(pl::Block *block);
+			inline pl::impl::Block *getImplementation() const noexcept;
 
-		
+
 		protected:
-			pl::Instance &m_instance;
-
+			pl::impl::Block *m_impl;
+		
 		private:
-			std::list<pl::Block *> m_children;
-			pl::BlockID m_id;
-
-			static pl::BlockID s_id();
+			std::list<pl::Block<API> *> m_children;
 	};
 
 } // namespace pl
+
+
+
+#include "block.inl"

@@ -3,23 +3,29 @@
 #include <array>
 #include <memory>
 
-#include "../block/rectangle.hpp"
-#include "../block/triangle.hpp"
+#include "../blocks/group.hpp"
+#include "../blocks/rectangle.hpp"
+#include "../blocks/triangle.hpp"
 #include "../theme.hpp"
 
 
 namespace pl::themes
 {
+	template <pl::GraphicsApi API>
 	class Modern final : public pl::Theme
 	{
 		public:
-			Modern(pl::Instance &instance);
+			Modern(pl::Instance<API> &instance);
 			~Modern();
 
 
 		private:
-			std::array<std::unique_ptr<pl::block::Triangle>, 3> m_backgroundTriangles;
-			std::array<std::unique_ptr<pl::block::Rectangle>, 2> m_titleRectangles;
+			std::unique_ptr<pl::blocks::Group<API>> m_background;
+			std::array<std::unique_ptr<pl::blocks::Triangle<API>>, 3> m_backgroundTriangles;
+			std::array<std::unique_ptr<pl::blocks::Rectangle<API>>, 2> m_titleRectangles;
 	};
 
 } // namespace pl::themes
+
+
+#include "modern.inl"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <cinttypes>
 #include <ostream>
 
 #include <SDL2/SDL.h>
@@ -13,36 +13,45 @@ namespace pl::utils
 		uint8_t r, g, b, a = 255;
 		bool undefined = false;
 
-		inline operator SDL_Color()
+		bool operator==(const pl::utils::Color &color) const noexcept
 		{
-			return {this->r, this->g, this->b, this->a};
+			return r == color.r && g == color.g && b == color.b && a == color.a && undefined == color.undefined;
+		}
+
+		operator SDL_Color() const
+		{
+			SDL_Color color {r, g, b, a};
+			return color;
+		}
+
+		operator SDL_Color()
+		{
+			SDL_Color color {r, g, b, a};
+			return color;
 		}
 	};
 
+
 	inline std::ostream &operator<<(std::ostream &stream, const pl::utils::Color &color)
 	{
-		if (!color.undefined)
-		{
-			stream << "r = " << static_cast<int> (color.r) 
-				<< ", g = " << static_cast<int> (color.g)
-				<< ", b = " << static_cast<int> (color.b)
-				<< ", a = " << static_cast<int> (color.a);
-		}
-
-		else
-			stream << "'color undefined'";
-
+		stream << "(r = " << color.r << ", g = " << color.g << ", b = " << color.b << ", a = " << color.a << ")";
 		return stream;
 	}
 
-	inline const pl::utils::Color colorUndefined {0, 0, 0, 0, true};
-	inline const pl::utils::Color white {255, 255, 255};
-	inline const pl::utils::Color black {0, 0, 0};
-	inline const pl::utils::Color red {255, 0, 0};
-	inline const pl::utils::Color green {0, 255, 0};
-	inline const pl::utils::Color blue {0, 0, 255};
-	inline const pl::utils::Color yellow {255, 255, 0};
-	inline const pl::utils::Color pink {255, 0, 255};
-	inline const pl::utils::Color turquoise {0, 255, 255};
+
+	inline pl::utils::Color red {255, 0, 0};
+	inline pl::utils::Color green {0, 255, 0};
+	inline pl::utils::Color blue {0, 0, 255};
+	inline pl::utils::Color white {255, 255, 255};
+	inline pl::utils::Color black {255, 255, 255};
+	inline pl::utils::Color yellow {255, 255, 0};
+	inline pl::utils::Color aqua {0, 255, 255};
+	inline pl::utils::Color magenta {255, 0, 255};
+	inline pl::utils::Color orange {255, 125, 0};
+	inline pl::utils::Color purple {125, 0, 255};
+	inline pl::utils::Color transparent {0, 0, 0, 0};
+	inline pl::utils::Color undefined {0, 0, 0, 0, true};
+
 
 } // namespace pl::utils
+

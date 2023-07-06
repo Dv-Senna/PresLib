@@ -6,7 +6,7 @@
 
 namespace pl
 {
-	FontManager::FontManager() : m_fonts {}, m_paths {}
+	FontManager::FontManager() : m_registereds {}, m_fonts {}
 	{
 
 	}
@@ -15,47 +15,36 @@ namespace pl
 
 	FontManager::~FontManager()
 	{
-		for (auto sizedFont : m_fonts)
+		for (auto fonts : m_fonts)
 		{
-			for (auto font : sizedFont.second)
+			for (auto font : fonts.second)
 				delete font.second;
 		}
 	}
 
 
 
-	void FontManager::addFont(const std::string &name, const std::string &path)
+	void FontManager::add(const std::string &name, const std::string &path)
 	{
-		m_paths[name] = std::string(PL_DEFAULT_FONT_FOLDER) + "/" + path;
+		m_registereds[name] = path;
 	}
 
 
 
-	pl::Font *FontManager::getFont(const std::string &name, int size)
+	TTF_Font *FontManager::get(const std::string &name, int size)
 	{
-		auto fontPath {m_paths.find(name)};
-			if (fontPath == m_paths.end())
-				throw std::runtime_error("PL : Font '" + name + "' doesn't exist");
+		auto it {m_registereds.find(name)};
+		if (it == m_registereds.end())
+			throw std::runtime_error("PL : Font '" + name + "' isn't registered");
 
-		auto sizedFont {m_fonts.find(name)};
-		if (sizedFont == m_fonts.end())
-			return m_addNewFont(name, fontPath->second, size);
+		auto font {m_fonts[name].find(size)};
+		if (font == m_fonts[name].end())
+		{
+			m_fonts[name][size] = new pl::Font(m_registereds[name], size);
+			return m_fonts[name][size]->get();
+		}
 
-
-		auto font {sizedFont->second.find(size)};
-		if (font == sizedFont->second.end())
-			return m_addNewFont(name, fontPath->second, size);
-
-		return font->second;
-	}
-
-
-
-	pl::Font *FontManager::m_addNewFont(const std::string &name, const std::string &path, int size)
-	{
-		pl::Font *newFont = new pl::Font(path, size);
-		m_fonts[name][size] = newFont;
-		return newFont;
+		return font->second->get();
 	}
 
 

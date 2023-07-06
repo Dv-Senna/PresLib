@@ -1,29 +1,22 @@
 #pragma once
 
-#include <memory>
-
-#include "block/group.hpp"
-#include "colorManager.hpp"
+#include "style.hpp"
 
 
 namespace pl
 {
-	class Instance;
-
 	class Theme
 	{
 		public:
-			Theme(pl::Instance &instance);
-			virtual ~Theme();
+			Theme();
+			virtual ~Theme() = default;
 
-			void use();
-
-		protected:
-			pl::Instance &m_instance;
-			std::unique_ptr<pl::block::Group> m_background, m_overlay;
-			pl::ColorScheme m_scheme;
-			pl::math::Vec2 m_titlePosition;
-			int m_titleFontSize;
+			pl::Style style;
 	};
 
+
+	inline const pl::Theme &defaultTheme();
+
 } // namespace pl
+
+#include "theme.inl"

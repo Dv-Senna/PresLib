@@ -1,66 +1,65 @@
 #pragma once
 
 #include <list>
-#include <memory>
-#include <string>
 
-#include "block/text.hpp"
+#include "graphicsApi.inl"
 
 
 namespace pl
 {
-	/// @brief Flag specific to pl::Slide. Add multiple with | operator
-	enum class SlideFlag
-	{
-		none = 0b00000000,
-		no_overlay = 0b00000001,
-		no_background = 0b00000010,
-	};
+	template <pl::GraphicsApi API>
+	class Instance;
 
-	inline pl::SlideFlag operator&(pl::SlideFlag flag1, pl::SlideFlag flag2)
-	{
-		return static_cast<pl::SlideFlag> (static_cast<int>(flag1) & static_cast<int>(flag2));
-	}
-
-	inline pl::SlideFlag operator|(pl::SlideFlag flag1, pl::SlideFlag flag2)
-	{
-		return static_cast<pl::SlideFlag> (static_cast<int>(flag1) | static_cast<int>(flag2));
-	}
-
-	inline bool operator!(pl::SlideFlag flags)
-	{
-		return !static_cast<int> (flags);
-	}
-
-
-
+	template <pl::GraphicsApi API>
 	class Block;
 
-	/// @brief A class that handle slide
+	namespace impl
+	{
+		class Block;
+	}
+
+
+	using SlideFlags = uint8_t;
+
+	namespace SlideFlag
+	{
+		inline pl::SlideFlags noFlag {0};
+		inline pl::SlideFlags noBackground {0b00000001};
+		inline pl::SlideFlags noForeground {0b00000010};
+	};
+
+
+	/// @brief A class to handle slide
 	class Slide final
 	{
 		public:
-			/// @brief Constructor
-			/// @param flags Flags you want to add to the slide separate by | operator
-			Slide(pl::Instance &instance, pl::SlideFlag flags = pl::SlideFlag::none);
+			/// @brief A class to handle slide
+			/// @tparam API The graphics api used
+			/// @param instance The current instance of PresLib
+			/// @param flags Some pl::SlideFlag separated by `|`
+			/// @note The constructor register himself directly to the instance. You mustn't call instance.addSlide(...)
+			template <pl::GraphicsApi API>
+			Slide(pl::Instance<API> &instance, pl::SlideFlags flags = pl::SlideFlag::noFlag);
 			~Slide() = default;
 
+			/// @brief Render the content of the slide
 			void render();
 
-			void addChildren(pl::Block *block);
-			void removeChildren(pl::Block *block);
+			/// @brief Register a new block into the slide. Block's drawing order is the order of registration
+			/// @tparam API The graphics api used
+			/// @param block The block to register
+			template <pl::GraphicsApi API>
+			void addBlock(pl::Block<API> *block);
 
-			void setTitle(const std::string &title);
+			inline pl::SlideFlags getFlags() const noexcept;
 
-			inline pl::SlideFlag getFlags() const noexcept {return m_flags;}
-
-
+		
 		private:
-			pl::Instance &m_instance;
-			pl::SlideFlag m_flags;
-			std::list<pl::Block *> m_blocks;
-			std::unique_ptr<pl::block::Text> m_title;
+			std::list<pl::impl::Block *> m_blocks;
+			pl::SlideFlags m_flags;
 	};
 
-
 } // namespace pl
+
+
+#include "slide.inl"
