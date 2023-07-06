@@ -4,7 +4,7 @@
 	<img src="https://img.shields.io/badge/version-0.3.0-informational" />
 	<img src="https://img.shields.io/badge/Windows-success-success" />
 	<img src="https://img.shields.io/badge/Linux-not tested-important" />
-	<img src="https://img.shields.io/badge/MacOS M1-success-success" />
+	<img src="https://img.shields.io/badge/MacOS-not tested-important" />
 	<img src="https://img.shields.io/badge/automated-working on-ff0000" />
 </p>
 
