@@ -20,9 +20,6 @@ namespace pl::impl::SDL2_renderer::blocks
 
 	void Ellipse::render()
 	{
-		if (m_texture == nullptr)
-			return;
-
 		SDL_FRect rect {
 			m_state.center.x - m_size.x, m_state.center.y - m_size.y,
 			m_size.x * 2.0f, m_size.y * 2.0f
@@ -43,6 +40,11 @@ namespace pl::impl::SDL2_renderer::blocks
 
 	void Ellipse::m_load()
 	{
+		m_size = {m_state.radius, m_state.radius * sqrt(1 - m_state.excentricity * m_state.excentricity)};
+
+		if (m_state.color == pl::utils::undefined)
+			m_state.color = m_instance->getTheme().style.objectColor;
+
 		const pl::math::Vec2f innerBorder {m_size.x - m_state.borderThickness, m_size.y - m_state.borderThickness};
 
 		std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface {SDL_CreateRGBSurfaceWithFormat(
@@ -79,7 +81,8 @@ namespace pl::impl::SDL2_renderer::blocks
 
 	void Ellipse::m_unload() noexcept
 	{
-		SDL_DestroyTexture(m_texture);
+		if (m_texture != nullptr)
+			SDL_DestroyTexture(m_texture);
 	}
 
 

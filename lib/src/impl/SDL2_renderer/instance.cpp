@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "block.hpp"
 #include "impl/SDL2_renderer/instance.hpp"
 
@@ -18,6 +20,15 @@ namespace pl::impl::SDL2_renderer
 
 		if (SDL_SetRenderDrawBlendMode(m_handler, SDL_BLENDMODE_BLEND) != 0)
 			throw std::runtime_error("PL : Can't change SDL2_Renderer* blend mode : " + std::string(SDL_GetError()));
+
+		bool result {SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best")};
+
+		#ifndef NDEBUG
+
+			if (!result)
+				std::cout << "Antialiasing was not enabled" << std::endl;
+
+		#endif
 	}
 
 

@@ -4,36 +4,35 @@
 
 #include "../args/args.hpp"
 #include "../math/vector.hpp"
+#include "../utils/color.hpp"
+
 
 
 namespace pl::states
 {
-	struct Image
+	struct Math
 	{
-		std::string path;
+		std::string equation;
 		pl::math::Vec2f position;
-		float scale = 1.f;
+		float size;
+		pl::utils::Color color = pl::utils::undefined;
 		float angle = 0.f;
-		float opacity = 1.f;
 		pl::math::Vec2f distortion {1.f, 1.f};
 
 
 
 		template <class ...Args>
-		static pl::states::Image createStateFromTemplates(const std::string &path, const pl::math::Vec2f &pos, Args ...args)
+		static pl::states::Math createStateFromTemplates(const std::string &equation, const pl::math::Vec2f &pos, float size, Args ...args)
 		{
-			pl::states::Image state {path, pos};
+			pl::states::Math state {equation, pos, size};
 
 			([&]()
 			{
-				if constexpr (std::is_same_v<Args, pl::args::scale>)
-					state.scale = args.value;
+				if constexpr (std::is_same_v<Args, pl::args::color>)
+					state.color = args.value;
 
 				else if constexpr (std::is_same_v<Args, pl::args::angle>)
 					state.angle = args.value;
-
-				else if constexpr (std::is_same_v<Args, pl::args::opacity>)
-					state.opacity = args.value;
 
 				else if constexpr (std::is_same_v<Args, pl::args::distortion>)
 					state.distortion = args.value;
@@ -42,7 +41,4 @@ namespace pl::states
 			return state;
 		}
 	};
-
-
-
 } // namespace pl::states

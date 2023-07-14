@@ -21,13 +21,13 @@ namespace pl::impl::SDL2_renderer::blocks
 
 			virtual void render();
 
-			virtual inline void setState(const std::any &);
+			virtual inline void setState(const std::any &state);
 
 			virtual inline std::any getState() const noexcept;
 
 		private:
-			void s_load();
-			void s_unload();
+			void m_load();
+			void m_unload();
 
 			pl::math::Vec2f m_size;
 			pl::states::Image m_state;
