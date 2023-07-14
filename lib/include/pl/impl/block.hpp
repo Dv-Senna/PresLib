@@ -17,6 +17,10 @@ namespace pl::impl
 
 			inline void addChild(pl::impl::Block *block);
 
+			virtual inline void setState(const std::any &) {}
+
+			virtual inline std::any getState() const noexcept {return m_instance;}
+
 		protected:
 			inline void m_renderChildren();
 			

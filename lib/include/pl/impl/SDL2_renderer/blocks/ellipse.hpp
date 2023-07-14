@@ -23,6 +23,10 @@ namespace pl::impl::SDL2_renderer::blocks
 
 			virtual void render();
 
+			virtual inline void setState(const std::any &state);
+
+			virtual inline std::any getState() const noexcept;
+
 		private:
 			void m_load();
 			void m_unload() noexcept;

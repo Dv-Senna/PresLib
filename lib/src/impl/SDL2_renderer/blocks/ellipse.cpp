@@ -43,8 +43,7 @@ namespace pl::impl::SDL2_renderer::blocks
 
 	void Ellipse::m_load()
 	{
-		constexpr float borderSize = 4.f;
-		const pl::math::Vec2f innerBorder {m_size.x - borderSize, m_size.y - borderSize};
+		const pl::math::Vec2f innerBorder {m_size.x - m_state.borderThickness, m_size.y - m_state.borderThickness};
 
 		std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface {SDL_CreateRGBSurfaceWithFormat(
 				0, m_size.x * 2, m_size.y * 2, 8, SDL_PIXELFORMAT_RGBA8888

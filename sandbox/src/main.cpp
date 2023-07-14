@@ -31,7 +31,9 @@ int main(int, char *[])
 
 		pl::blocks::Ellipse circleFill {instance, {200, 200}, 50.0f};
 		slide.addBlock(&circleFill);
-		pl::blocks::Ellipse circleBorder {instance, {300, 200}, 50.0f, pl::args::color(pl::utils::white), pl::args::drawingMethod(pl::RenderMethod::border)};
+		pl::blocks::Ellipse circleBorder {
+			instance, {300, 200}, 50.0f,
+			pl::args::color(pl::utils::white), pl::args::drawingMethod(pl::RenderMethod::border), pl::args::borderThickness(10.f)};
 		slide.addBlock(&circleBorder);
 
 		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, pl::args::excentricity(0.5f)};

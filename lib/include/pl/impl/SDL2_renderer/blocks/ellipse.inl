@@ -27,4 +27,20 @@ namespace pl::impl::SDL2_renderer::blocks
 
 
 
+	void Ellipse::setState(const std::any &state)
+	{
+		this->m_unload();
+		m_state = std::any_cast<pl::states::Ellipse> (state);
+		this->m_load();
+	}
+
+
+
+	std::any Ellipse::getState() const noexcept
+	{
+		return m_state;
+	}
+
+
+
 } // namespace pl::impl::SDL2_renderer::blocks

@@ -3,8 +3,9 @@
 #include "../block.hpp"
 #include "../impl/SDL2_renderer/blocks/ellipse.hpp"
 #include "../math/vector.hpp"
-#include "../utils/color.hpp"
 #include "../renderMethod.hpp"
+#include "../states/ellipse.hpp"
+#include "../utils/color.hpp"
 
 
 namespace pl::blocks
