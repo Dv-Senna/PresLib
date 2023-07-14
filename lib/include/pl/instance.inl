@@ -108,4 +108,20 @@ namespace pl
 
 
 
+	template <pl::GraphicsApi API>
+	void Instance<API>::setCustomBackground(pl::Block<API> *background)
+	{
+		m_impl->setCustomBackground(background->getImplementation());
+	}
+
+
+
+	template <pl::GraphicsApi API>
+	void Instance<API>::setCustomForeground(pl::Block<API> *foreground)
+	{
+		m_impl->setCustomForeground(foreground->getImplementation());
+	}
+
+
+
 } // namespace pl

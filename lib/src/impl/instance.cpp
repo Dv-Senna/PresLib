@@ -63,12 +63,18 @@ namespace pl::impl
 	{
 		if (m_currentSlide != m_slides.end())
 		{
-			if (!((*m_currentSlide)->getFlags() & pl::SlideFlag::noBackground) && m_theme->style.background != nullptr)
+			if (!((*m_currentSlide)->getFlags() & pl::SlideFlag::noBackground) && m_background != nullptr)
+				m_background->render();
+
+			else if (!((*m_currentSlide)->getFlags() & pl::SlideFlag::noBackground) && m_theme->style.background != nullptr)
 				m_theme->style.background->render();
 
 			(*m_currentSlide)->render();
 
-			if (!((*m_currentSlide)->getFlags() & pl::SlideFlag::noForeground) && m_theme->style.foreground != nullptr)
+			if (!((*m_currentSlide)->getFlags() & pl::SlideFlag::noForeground) && m_foreground != nullptr)
+				m_foreground->render();
+
+			else if (!((*m_currentSlide)->getFlags() & pl::SlideFlag::noForeground) && m_theme->style.foreground != nullptr)
 				m_theme->style.foreground->render();
 		}
 

@@ -19,7 +19,9 @@ namespace pl::impl
 		m_slides {},
 		m_currentSlide {m_slides.begin()},
 		m_fontManager {nullptr},
-		m_theme {&pl::defaultTheme()}
+		m_theme {&pl::defaultTheme()},
+		m_background {nullptr},
+		m_foreground {nullptr}
 	{
 		m_windowInfos.width = PL_DEFAULT_VIEWPORT_WIDTH;
 		m_windowInfos.height = PL_DEFAULT_VIEWPORT_HEIGHT;
@@ -79,6 +81,20 @@ namespace pl::impl
 	void Instance::setTheme(const pl::Theme &theme)
 	{
 		m_theme = &theme;
+	}
+
+
+
+	void Instance::setCustomBackground(pl::impl::Block *background)
+	{
+		m_background = background;
+	}
+
+
+
+	void Instance::setCustomForeground(pl::impl::Block *foreground)
+	{
+		m_foreground = foreground;
 	}
 
 

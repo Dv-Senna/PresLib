@@ -16,6 +16,15 @@ int main(int, char *[])
 		instance.getFonts().add("arial", "arial.ttf");
 
 
+		pl::blocks::Text foreground {
+			instance, "© Dv-Senna64",
+			{PL_DEFAULT_VIEWPORT_WIDTH - 150, PL_DEFAULT_VIEWPORT_HEIGHT - 40},
+			"arial", 20,
+			pl::args::color(pl::utils::white)
+		};
+		instance.setCustomForeground(&foreground);
+
+
 		pl::Slide slide {instance};
 		pl::blocks::Title slideTitle {instance, "An amazing title", slide};
 		pl::Slide slide2 {instance, pl::SlideFlag::noBackground};

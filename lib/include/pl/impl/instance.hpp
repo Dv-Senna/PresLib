@@ -45,6 +45,8 @@ namespace pl::impl
 
 			inline void addSlide(pl::Slide *slide);
 			inline void setTheme(const pl::Theme &theme);
+			inline void setCustomBackground(pl::impl::Block *background);
+			inline void setCustomForeground(pl::impl::Block *foreground);
 
 
 		protected:
@@ -60,6 +62,8 @@ namespace pl::impl
 			std::list<pl::Slide *>::iterator m_currentSlide;
 			pl::FontManager *m_fontManager;
 			const pl::Theme *m_theme;
+			pl::impl::Block *m_background;
+			pl::impl::Block *m_foreground;
 	};
 } // namespace pl::impl
 
