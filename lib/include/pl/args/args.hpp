@@ -12,5 +12,7 @@ namespace pl::args
 	struct color {pl::utils::Color value;};
 	struct drawingMethod {pl::RenderMethod value;};
 	struct borderThickness {float value;};
+	struct scale {float value;};
+	struct distortion {pl::math::Vec2f value;};
 
 } // namespace pl::args

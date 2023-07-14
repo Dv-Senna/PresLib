@@ -49,7 +49,7 @@ int main(int, char *[])
 		pl::blocks::Triangle triBorder {instance, {300, 300}, {320, 350}, {350, 310}, pl::utils::blue, pl::RenderMethod::border};
 		slide2.addBlock(&triBorder);
 
-		pl::blocks::Image image {instance, "image.png", {100, 100}, 1.0f};
+		pl::blocks::Image image {instance, "image.png", {100, 100}};
 		slide2.addBlock(&image);
 
 		pl::blocks::Text text {instance, "Hello World from PresLib !", {600, 500}, "arial", 30};

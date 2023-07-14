@@ -10,44 +10,16 @@
 
 namespace pl::impl::SDL2_renderer::blocks
 {
-	Image::Image(
-		pl::impl::Instance *instance,
-		const std::string &path,
-		const pl::math::Vec2f &pos,
-		float scale
-	) : 
-		pl::impl::Block(instance),
-		m_pos {pos},
-		m_size {},
-		m_texture {nullptr}
-	{
-		std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface {
-			IMG_Load((PL_DEFAULT_IMAGE_FOLDER_PATH + path).c_str()), SDL_FreeSurface
-		};
-		if (surface.get() == nullptr)
-			throw std::runtime_error("PL : Can't load image '" + path + "' : " + std::string(IMG_GetError()));
-
-		m_size.x = surface->w * scale;
-		m_size.y = surface->h * scale;
-
-		m_texture = SDL_CreateTextureFromSurface(std::any_cast<SDL_Renderer*> (m_instance->getHandler()), surface.get());
-		if (m_texture == nullptr)
-			throw std::runtime_error("PL : Can't convert image surface to texture : " + std::string(SDL_GetError()));
-	}
-
-
-
 	Image::~Image()
 	{
-		if (m_texture != nullptr)
-			SDL_DestroyTexture(m_texture);
+		this->s_unload();
 	}
 
 
 
 	void Image::render()
 	{
-		SDL_FRect rect {m_pos.x, m_pos.y, m_size.x, m_size.y};
+		SDL_FRect rect {m_state.position.x, m_state.position.y, m_size.x, m_size.y};
 
 		if (SDL_RenderCopyF(
 			std::any_cast<SDL_Renderer*> (m_instance->getHandler()),
@@ -56,6 +28,32 @@ namespace pl::impl::SDL2_renderer::blocks
 			throw std::runtime_error("PL : Can't render image : " + std::string(SDL_GetError()));
 
 		this->m_renderChildren();
+	}
+
+
+
+	void Image::s_load()
+	{
+		std::unique_ptr<SDL_Surface, void (*)(SDL_Surface*)> surface {
+			IMG_Load((PL_DEFAULT_IMAGE_FOLDER_PATH + m_state.path).c_str()), SDL_FreeSurface
+		};
+		if (surface.get() == nullptr)
+			throw std::runtime_error("PL : Can't load image '" + m_state.path + "' : " + std::string(IMG_GetError()));
+
+		m_size.x = surface->w * m_state.scale * m_state.distortion.x;
+		m_size.y = surface->h * m_state.scale * m_state.distortion.y;
+
+		m_texture = SDL_CreateTextureFromSurface(std::any_cast<SDL_Renderer*> (m_instance->getHandler()), surface.get());
+		if (m_texture == nullptr)
+			throw std::runtime_error("PL : Can't convert image surface to texture : " + std::string(SDL_GetError()));
+	}
+
+
+
+	void Image::s_unload()
+	{
+		if (m_texture != nullptr)
+			SDL_DestroyTexture(m_texture);
 	}
 
 
