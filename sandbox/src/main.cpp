@@ -31,12 +31,14 @@ int main(int, char *[])
 
 		pl::blocks::Ellipse circleFill {instance, {200, 200}, 50.0f};
 		slide.addBlock(&circleFill);
-		pl::blocks::Ellipse circleBorder {instance, {300, 200}, 50.0f, 0.0f, 0.0f, pl::utils::white, pl::RenderMethod::border};
+		pl::blocks::Ellipse circleBorder {instance, {300, 200}, 50.0f, pl::args::color(pl::utils::white), pl::args::drawingMethod(pl::RenderMethod::border)};
 		slide.addBlock(&circleBorder);
 
-		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, 0.5f};
+		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, pl::args::excentricity(0.5f)};
 		slide.addBlock(&ellipseFill);
-		pl::blocks::Ellipse ellipseBorder {instance, {600, 200}, 50.0f, 0.5f, 45.0f, pl::utils::white, pl::RenderMethod::border};
+		pl::blocks::Ellipse ellipseBorder {
+			instance, {600, 200}, 50.0f,
+			pl::args::excentricity(0.5f), pl::args::angle(45.0f), pl::args::color(pl::utils::white), pl::args::drawingMethod(pl::RenderMethod::border)};
 		slide.addBlock(&ellipseBorder);
 
 

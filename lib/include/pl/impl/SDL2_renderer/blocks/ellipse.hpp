@@ -2,8 +2,9 @@
 
 #include "../../block.hpp"
 #include "../../../math/vector.hpp"
-#include "../../../utils/color.hpp"
 #include "../../../renderMethod.hpp"
+#include "../../../states/ellipse.hpp"
+#include "../../../utils/color.hpp"
 
 
 namespace pl::impl::SDL2_renderer::blocks
@@ -11,20 +12,21 @@ namespace pl::impl::SDL2_renderer::blocks
 	class Ellipse final : public pl::impl::Block
 	{
 		public:
+			template <class ...Args>
 			Ellipse(
 				pl::impl::Instance *instance,
 				const pl::math::Vec2f &center,
 				float radius,
-				float excentricity,
-				float angle,
-				const pl::utils::Color &color,
-				pl::RenderMethod method
+				Args ...args
 			);
-			virtual ~Ellipse();
+			virtual ~Ellipse() noexcept;
 
 			virtual void render();
 
 		private:
+			void m_load();
+			void m_unload() noexcept;
+
 			static void s_drawFilledEllipse(
 				SDL_Surface *surface,
 				const pl::math::Vec2f &size
@@ -36,11 +38,11 @@ namespace pl::impl::SDL2_renderer::blocks
 				const pl::math::Vec2f &innerSize
 			);
 
-			pl::math::Vec2f m_center, m_size;
-			float m_angle;
-			pl::utils::Color m_color;
-			pl::RenderMethod m_method;
+			pl::math::Vec2f m_size;
+			pl::states::Ellipse m_state;
 			SDL_Texture *m_texture;
 	};
 
 } // namespace pl::impl::SDL2_renderer::blocks
+
+#include "ellipse.inl"

@@ -11,22 +11,37 @@
 
 namespace pl::impl::SDL2_renderer::blocks
 {
-	Ellipse::Ellipse(
-		pl::impl::Instance *instance,
-		const pl::math::Vec2f &center,
-		float radius,
-		float excentricity,
-		float angle,
-		const pl::utils::Color &color,
-		pl::RenderMethod method
-	) : 
-		pl::impl::Block(instance),
-		m_center {center},
-		m_size {radius, radius * sqrt(1 - excentricity * excentricity)},
-		m_angle {angle},
-		m_color {color},
-		m_method {method},
-		m_texture {nullptr}
+	Ellipse::~Ellipse() noexcept
+	{
+		this->m_unload();
+	}
+
+
+
+	void Ellipse::render()
+	{
+		if (m_texture == nullptr)
+			return;
+
+		SDL_FRect rect {
+			m_state.center.x - m_size.x, m_state.center.y - m_size.y,
+			m_size.x * 2.0f, m_size.y * 2.0f
+		};
+
+		if (SDL_RenderCopyExF(
+			std::any_cast<SDL_Renderer*> (m_instance->getHandler()),
+			m_texture, nullptr, &rect, m_state.angle, nullptr, SDL_FLIP_NONE
+			) != 0)
+			throw std::runtime_error("PL : Can't render ellipse texture : " + std::string(SDL_GetError()));
+
+
+
+		this->m_renderChildren();
+	}
+
+
+
+	void Ellipse::m_load()
 	{
 		constexpr float borderSize = 4.f;
 		const pl::math::Vec2f innerBorder {m_size.x - borderSize, m_size.y - borderSize};
@@ -39,10 +54,10 @@ namespace pl::impl::SDL2_renderer::blocks
 			throw std::runtime_error("PL : Can't create the surface of ellispe : " + std::string(SDL_GetError()));
 
 
-		if (m_method == pl::RenderMethod::fill)
+		if (m_state.drawingMethod == pl::RenderMethod::fill)
 			s_drawFilledEllipse(surface.get(), m_size);
 
-		else if (m_method == pl::RenderMethod::border)
+		else if (m_state.drawingMethod == pl::RenderMethod::border)
 			s_drawBorderEllipse(surface.get(), m_size, innerBorder);
 
 
@@ -54,35 +69,18 @@ namespace pl::impl::SDL2_renderer::blocks
 		if (m_texture == nullptr)
 			throw std::runtime_error("PL : Can't convert the surface of ellispe in texture : " + std::string(SDL_GetError()));
 
-		if (SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b) != 0)
+		if (SDL_SetTextureColorMod(m_texture, m_state.color.r, m_state.color.g, m_state.color.b) != 0)
 			throw std::runtime_error("PL : Can't set ellipse's texture color mod : " + std::string(SDL_GetError()));
+
+		if (SDL_SetTextureAlphaMod(m_texture, m_state.color.a) != 0)
+			throw std::runtime_error("PL : Can't set ellipse's texture alpha mod : " + std::string(SDL_GetError()));
 	}
 
 
 
-	Ellipse::~Ellipse()
+	void Ellipse::m_unload() noexcept
 	{
-
-	}
-
-
-
-	void Ellipse::render()
-	{
-		if (m_texture == nullptr)
-			return;
-
-		SDL_FRect rect {m_center.x - m_size.x, m_center.y - m_size.y, m_size.x * 2.0f, m_size.y * 2.0f};
-
-		if (SDL_RenderCopyExF(
-			std::any_cast<SDL_Renderer*> (m_instance->getHandler()),
-			m_texture, nullptr, &rect, m_angle, nullptr, SDL_FLIP_NONE
-			) != 0)
-			throw std::runtime_error("PL : Can't render ellipse texture : " + std::string(SDL_GetError()));
-
-
-
-		this->m_renderChildren();
+		SDL_DestroyTexture(m_texture);
 	}
 
 

@@ -37,6 +37,9 @@ namespace pl::impl::SDL2_renderer::blocks
 		if (SDL_SetTextureColorMod(m_texture, color.r, color.g, color.b) != 0)
 			throw std::runtime_error("PL : Can't change math color : " + std::string(SDL_GetError()));
 
+		if (SDL_SetTextureAlphaMod(m_texture, color.a) != 0)
+			throw std::runtime_error("PL : Can't change math alpha : " + std::string(SDL_GetError()));
+
 		m_size.x = surface->w;
 		m_size.y = surface->h;
 	}
