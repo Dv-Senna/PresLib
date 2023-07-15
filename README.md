@@ -1,7 +1,7 @@
 # <img src="./logo.png" width="300px" alt="PresLib" />
 
 <p align="center">
-	<img src="https://img.shields.io/badge/version-0.3.0-informational" />
+	<img src="https://img.shields.io/badge/version-0.4.0-informational" />
 	<img src="https://img.shields.io/badge/Windows-success-success" />
 	<img src="https://img.shields.io/badge/Linux-not tested-important" />
 	<img src="https://img.shields.io/badge/MacOS-not tested-important" />
