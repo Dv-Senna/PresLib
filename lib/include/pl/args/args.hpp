@@ -26,7 +26,7 @@ namespace pl::args
 	inline pl::args::Excentricity excentricity {0.f};
 	inline pl::args::Angle angle {0.f};
 	inline pl::args::Color color {pl::utils::undefined};
-	inline pl::args::RenderMethod rendergMethod {pl::RenderMethod::fill};
+	inline pl::args::RenderMethod renderMethod {pl::RenderMethod::fill};
 	inline pl::args::BorderThickness borderThickness {0.f};
 	inline pl::args::Scale scale {0.f};
 	inline pl::args::Distortion distortion {{0.f, 0.f}};

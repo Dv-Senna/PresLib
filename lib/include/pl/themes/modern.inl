@@ -73,7 +73,7 @@ namespace pl::themes
 		this->style.background->addChild((*m_backgroundTriangles[2]).getImplementation());
 
 
-		m_titleRectangles[0] = std::make_unique<pl::blocks::Rectangle<API>> (
+		m_titleRectangles[0] = std::make_unique<pl::blocks::Rectangle<API, pl::args::Color>> (
 			instance,
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH) * 0.375f, static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.02777777777778f
@@ -81,11 +81,11 @@ namespace pl::themes
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.0925925925925925f
 			),
-			this->style.mainColor
+			pl::args::color = this->style.mainColor
 		);
 		this->style.background->addChild((*m_titleRectangles[0]).getImplementation());
 
-		m_titleRectangles[1] = std::make_unique<pl::blocks::Rectangle<API>> (
+		m_titleRectangles[1] = std::make_unique<pl::blocks::Rectangle<API, pl::args::Color>> (
 			instance,
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH) * 0.390625f, static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.00925925925925925f
@@ -93,7 +93,7 @@ namespace pl::themes
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.0925925925925925f
 			),
-			this->style.secondColor
+			pl::args::color = this->style.secondColor
 		);
 		this->style.background->addChild((*m_titleRectangles[1]).getImplementation());
 

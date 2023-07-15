@@ -39,21 +39,21 @@ int main(int, char *[])
 
 		pl::blocks::Rectangle rectFill {instance, {100, 100}, {100, 50}};
 		slide.addBlock(&rectFill);
-		pl::blocks::Rectangle rectBorder {instance, {200, 300}, {298, 72}, pl::utils::green, pl::RenderMethod::border};
+		pl::blocks::Rectangle rectBorder {instance, {200, 300}, {298, 72}, pl::args::color = pl::utils::green, pl::args::renderMethod = pl::RenderMethod::border};
 		slide.addBlock(&rectBorder);
 
 		pl::blocks::Ellipse circleFill {instance, {200, 200}, 50.0f};
 		slide.addBlock(&circleFill);
 		pl::blocks::Ellipse circleBorder {
 			instance, {300, 200}, 50.0f,
-			pl::args::color = pl::utils::white, pl::args::rendergMethod = pl::RenderMethod::border, pl::args::borderThickness = 10.f};
+			pl::args::color = pl::utils::white, pl::args::renderMethod = pl::RenderMethod::border, pl::args::borderThickness = 10.f};
 		slide.addBlock(&circleBorder);
 
 		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, pl::args::excentricity = 0.5f};
 		slide.addBlock(&ellipseFill);
 		pl::blocks::Ellipse ellipseBorder {
 			instance, {600, 200}, 50.0f,
-			pl::args::excentricity = 0.5f, pl::args::angle = 45.0f, pl::args::color = pl::utils::white, pl::args::rendergMethod = pl::RenderMethod::border};
+			pl::args::excentricity = 0.5f, pl::args::angle = 45.0f, pl::args::color = pl::utils::white, pl::args::renderMethod = pl::RenderMethod::border};
 		slide.addBlock(&ellipseBorder);
 
 

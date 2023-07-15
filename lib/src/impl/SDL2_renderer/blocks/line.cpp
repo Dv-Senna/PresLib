@@ -36,6 +36,9 @@ namespace pl::impl::SDL2_renderer::blocks
 
 	void Line::m_load()
 	{
+		if (m_state.color == pl::utils::undefined)
+			m_state.color = m_instance->getTheme().style.objectColor;
+
 		constexpr float generationUpscaleFactor = 10.f;
 
 		if (m_state.color == pl::utils::undefined)
