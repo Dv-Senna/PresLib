@@ -13,7 +13,7 @@ namespace pl::blocks
 {
 	/// @brief A block to create rectangles
 	/// @tparam API The graphics api used
-	template <pl::GraphicsApi API>
+	template <pl::GraphicsApi API, class ...Args>
 	class Rectangle final : public pl::Block<API>
 	{
 		public:
@@ -27,15 +27,11 @@ namespace pl::blocks
 				pl::Instance<API> &instance,
 				const pl::math::Vec2f &pos,
 				const pl::math::Vec2f &size,
-				pl::utils::Color color = pl::utils::undefined,
-				pl::RenderMethod method = pl::RenderMethod::fill
+				Args ...args
 			) : pl::Block<API> ()
 			{
-				if (color == pl::utils::undefined)
-					color = instance.getTheme().style.objectColor;
-
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
-					this->m_impl = new pl::impl::SDL2_renderer::blocks::Rectangle(instance.getImplementation(), pos, size, color, method);
+					this->m_impl = new pl::impl::SDL2_renderer::blocks::Rectangle(instance.getImplementation(), pos, size, args...);
 				
 
 				if (this->m_impl == nullptr)

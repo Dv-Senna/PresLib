@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "block.hpp"
 #include "impl/SDL2_renderer/instance.hpp"
 
@@ -9,7 +11,9 @@ namespace pl::impl::SDL2_renderer
 	{
 		this->m_initSDL2();
 
-		m_handler = SDL_CreateRenderer(std::any_cast<SDL_Window*> (m_window), -1, SDL_RENDERER_ACCELERATED);
+		bool antialiasing {SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best")};
+
+		m_handler = SDL_CreateRenderer(std::any_cast<SDL_Window*> (m_window), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE );
 		if (m_handler == nullptr)
 			throw std::runtime_error("PL : Can't create an SDL2_Renderer* : " + std::string(SDL_GetError()));
 
@@ -18,6 +22,13 @@ namespace pl::impl::SDL2_renderer
 
 		if (SDL_SetRenderDrawBlendMode(m_handler, SDL_BLENDMODE_BLEND) != 0)
 			throw std::runtime_error("PL : Can't change SDL2_Renderer* blend mode : " + std::string(SDL_GetError()));
+
+		#ifndef NDEBUG
+
+			if (!antialiasing)
+				std::cout << "Antialiasing was not enabled" << std::endl;
+
+		#endif
 	}
 
 

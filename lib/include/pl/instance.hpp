@@ -46,6 +46,8 @@ namespace pl
 			/// @brief Set the current theme. Know that if you created blocks before this call, they would still use the colors, fonts, ..., of the previously loaded theme
 			/// @param theme The new theme to load
 			inline void setTheme(const pl::Theme &theme);
+			inline void setCustomBackground(pl::Block<API> *background);
+			inline void setCustomForeground(pl::Block<API> *foreground);
 
 
 		private:

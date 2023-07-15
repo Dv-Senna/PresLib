@@ -34,6 +34,8 @@ namespace pl::math
 			const pl::math::Vector<T, D> &operator*=(T value);
 			const pl::math::Vector<T, D> &operator/=(T value);
 
+			bool operator==(const pl::math::Vector<T, D> &vector) const noexcept;
+
 
 		protected:
 			std::array<T, D> m_datas;

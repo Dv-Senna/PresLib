@@ -1,7 +1,7 @@
 
 
 #define PL_VERSION_MAJOR 0
-#define PL_VERSION_MINOR 3
+#define PL_VERSION_MINOR 4
 #define PL_VERSION_PATCH 0
 
 #define PL_DEFAULT_IMAGE_FOLDER_PATH std::string("images/")

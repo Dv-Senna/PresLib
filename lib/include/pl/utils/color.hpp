@@ -29,6 +29,16 @@ namespace pl::utils
 			SDL_Color color {r, g, b, a};
 			return color;
 		}
+
+		operator uint32_t()
+		{
+			return r * 0x1000000 + g * 0x10000 + b * 0x100 + a;
+		}
+
+		operator uint32_t() const
+		{
+			return r * 0x1000000 + g * 0x10000 + b * 0x100 + a;
+		}
 	};
 
 

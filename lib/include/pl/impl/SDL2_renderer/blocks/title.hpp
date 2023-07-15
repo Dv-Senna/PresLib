@@ -2,6 +2,7 @@
 
 #include "../../block.hpp"
 #include "../../../math/vector.hpp"
+#include "../../../states/title.hpp"
 #include "../../../utils/color.hpp"
 
 
@@ -18,9 +19,20 @@ namespace pl::impl::SDL2_renderer::blocks
 
 			virtual void render();
 
+			virtual inline void setState(const std::any &state);
+
+			virtual inline std::any getState() const noexcept;
+
 		private:
-			pl::math::Vec2f m_pos, m_size;
+			void m_load();
+			void m_unload();
+
+			pl::math::Vec2f m_size;
+			pl::states::Title m_state;
 			SDL_Texture *m_texture;
 	};
 
 } // namespace pl::impl::SDL2_renderer::blocks
+
+
+#include "title.inl"

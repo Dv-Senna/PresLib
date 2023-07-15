@@ -12,6 +12,8 @@ namespace pl::impl
 			virtual ~Group() = default;
 
 			virtual void render() {this->m_renderChildren();}
+			virtual inline void setState(const std::any &) {}
+			virtual inline std::any getState() const noexcept {return m_instance;}
 	};
 
 } // namespace pl::impl

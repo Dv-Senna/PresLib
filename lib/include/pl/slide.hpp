@@ -52,6 +52,7 @@ namespace pl
 			void addBlock(pl::Block<API> *block);
 
 			inline pl::SlideFlags getFlags() const noexcept;
+			inline const std::list<pl::impl::Block*> &getBlocks() const noexcept;
 
 		
 		private:

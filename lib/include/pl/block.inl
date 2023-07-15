@@ -40,6 +40,22 @@ namespace pl
 
 
 	template <pl::GraphicsApi API>
+	void Block<API>::setState(const std::any &state)
+	{
+		m_impl->setState(state);
+	}
+
+
+
+	template <pl::GraphicsApi API>
+	std::any Block<API>::getState() const noexcept
+	{
+		return m_impl->getState();
+	}
+
+
+
+	template <pl::GraphicsApi API>
 	pl::impl::Block *Block<API>::getImplementation() const noexcept
 	{
 		return m_impl;
