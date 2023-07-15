@@ -21,7 +21,7 @@ namespace pl::themes
 
 		private:
 			std::unique_ptr<pl::blocks::Group<API>> m_background;
-			std::array<std::unique_ptr<pl::blocks::Triangle<API>>, 3> m_backgroundTriangles;
+			std::array<std::unique_ptr<pl::blocks::Triangle<API, pl::args::Color>>, 3> m_backgroundTriangles;
 			std::array<std::unique_ptr<pl::blocks::Rectangle<API, pl::args::Color>>, 2> m_titleRectangles;
 	};
 

@@ -57,10 +57,8 @@ int main(int, char *[])
 		slide.addBlock(&ellipseBorder);
 
 
-		pl::blocks::Triangle triFill {instance, {400, 400}, {450, 450}, {400, 450}, {255, 120, 0}};
+		pl::blocks::Triangle triFill {instance, {400, 400}, {450, 450}, {400, 450}, pl::args::color = pl::utils::Color(255, 120, 0)};
 		slide2.addBlock(&triFill);
-		pl::blocks::Triangle triBorder {instance, {300, 300}, {320, 350}, {350, 310}, pl::utils::blue, pl::RenderMethod::border};
-		slide2.addBlock(&triBorder);
 
 		pl::blocks::Image image {instance, "logo.png", {100, 100}, pl::args::angle = -12.5f, pl::args::opacity = .1f, pl::args::scale = 0.1f};
 		slide2.addBlock(&image);

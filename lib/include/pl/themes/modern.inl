@@ -27,7 +27,7 @@ namespace pl::themes
 		this->style.backgroundColor = {200, 200, 200};
 
 
-		m_backgroundTriangles[0] = std::make_unique<pl::blocks::Triangle<API>> (
+		m_backgroundTriangles[0] = std::make_unique<pl::blocks::Triangle<API, pl::args::Color>> (
 			instance,
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT)
@@ -38,11 +38,11 @@ namespace pl::themes
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.675925925925925f
 			),
-			this->style.mainColor
+			pl::args::color = this->style.mainColor
 		);
 		this->style.background->addChild((*m_backgroundTriangles[0]).getImplementation());
 
-		m_backgroundTriangles[1] = std::make_unique<pl::blocks::Triangle<API>> (
+		m_backgroundTriangles[1] = std::make_unique<pl::blocks::Triangle<API, pl::args::Color>> (
 			instance,
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT)
@@ -53,11 +53,11 @@ namespace pl::themes
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.72222222222222f
 			),
-			this->style.thirdColor
+			pl::args::color = this->style.thirdColor
 		);
 		this->style.background->addChild((*m_backgroundTriangles[1]).getImplementation());
 
-		m_backgroundTriangles[2] = std::make_unique<pl::blocks::Triangle<API>> (
+		m_backgroundTriangles[2] = std::make_unique<pl::blocks::Triangle<API, pl::args::Color>> (
 			instance,
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT)
@@ -68,7 +68,7 @@ namespace pl::themes
 			pl::math::Vec2f(
 				static_cast<float> (PL_DEFAULT_VIEWPORT_WIDTH), static_cast<float> (PL_DEFAULT_VIEWPORT_HEIGHT) * 0.814814814814814814f
 			),
-			this->style.secondColor
+			pl::args::color = this->style.secondColor
 		);
 		this->style.background->addChild((*m_backgroundTriangles[2]).getImplementation());
 

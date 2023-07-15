@@ -137,6 +137,20 @@ namespace pl::math
 
 
 	template <class T, size_t D>
+	bool Vector<T, D>::operator==(const pl::math::Vector<T, D> &vector) const noexcept
+	{
+		for (size_t i {0}; i < D; i++)
+		{
+			if (m_datas[i] != vector[i])
+				return false;
+		}
+
+		return true;
+	}
+
+
+
+	template <class T, size_t D>
 	pl::math::Vector<T, D> operator+(pl::math::Vector<T, D> a, const pl::math::Vector<T, D> &b)
 	{
 		a += b;

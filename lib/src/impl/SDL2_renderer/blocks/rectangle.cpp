@@ -23,7 +23,7 @@ namespace pl::impl::SDL2_renderer::blocks
 			m_texture, nullptr, &rect,
 			m_state.angle, nullptr, SDL_FLIP_NONE
 		) != 0)
-			throw std::runtime_error("PL : Can't render image : " + std::string(SDL_GetError()));
+			throw std::runtime_error("PL : Can't render rectangle : " + std::string(SDL_GetError()));
 
 		this->m_renderChildren();
 	}
@@ -45,7 +45,7 @@ namespace pl::impl::SDL2_renderer::blocks
 			), SDL_FreeSurface};
 
 		if (surface.get() == nullptr)
-			throw std::runtime_error("PL : Can't create the surface of line : " + std::string(SDL_GetError()));
+			throw std::runtime_error("PL : Can't create the surface of rectangle : " + std::string(SDL_GetError()));
 
 
 		if (m_state.renderMethod == pl::RenderMethod::fill)
@@ -61,13 +61,13 @@ namespace pl::impl::SDL2_renderer::blocks
 		);
 
 		if (m_texture == nullptr)
-			throw std::runtime_error("PL : Can't convert the surface of line in texture : " + std::string(SDL_GetError()));
+			throw std::runtime_error("PL : Can't convert the surface of rectangle in texture : " + std::string(SDL_GetError()));
 
 		if (SDL_SetTextureColorMod(m_texture, m_state.color.r, m_state.color.g, m_state.color.b) != 0)
-			throw std::runtime_error("PL : Can't set line's texture color mod : " + std::string(SDL_GetError()));
+			throw std::runtime_error("PL : Can't set rectangle's texture color mod : " + std::string(SDL_GetError()));
 
 		if (SDL_SetTextureAlphaMod(m_texture, m_state.color.a) != 0)
-			throw std::runtime_error("PL : Can't set line's texture alpha mod : " + std::string(SDL_GetError()));
+			throw std::runtime_error("PL : Can't set rectangle's texture alpha mod : " + std::string(SDL_GetError()));
 	}
 
 
