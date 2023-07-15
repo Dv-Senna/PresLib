@@ -15,7 +15,7 @@ namespace pl::states
 		float excentricity = 0.f;
 		float angle = 0.f;
 		pl::utils::Color color = pl::utils::undefined;
-		pl::RenderMethod drawingMethod = pl::RenderMethod::fill;
+		pl::RenderMethod renderMethod = pl::RenderMethod::fill;
 		float borderThickness = 4.f;
 
 
@@ -26,19 +26,19 @@ namespace pl::states
 
 			([&]()
 			{
-				if constexpr (std::is_same_v<Args, pl::args::excentricity>)
+				if constexpr (std::is_same_v<Args, pl::args::Excentricity>)
 					state.excentricity = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::angle>)
+				else if constexpr (std::is_same_v<Args, pl::args::Angle>)
 					state.angle = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::color>)
+				else if constexpr (std::is_same_v<Args, pl::args::Color>)
 					state.color = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::drawingMethod>)
-					state.drawingMethod = args.value;
+				else if constexpr (std::is_same_v<Args, pl::args::RenderMethod>)
+					state.renderMethod = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::borderThickness>)
+				else if constexpr (std::is_same_v<Args, pl::args::BorderThickness>)
 					state.borderThickness = args.value;
 			} (), ...);
 

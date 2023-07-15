@@ -55,10 +55,10 @@ namespace pl::impl::SDL2_renderer::blocks
 			throw std::runtime_error("PL : Can't create the surface of ellispe : " + std::string(SDL_GetError()));
 
 
-		if (m_state.drawingMethod == pl::RenderMethod::fill)
+		if (m_state.renderMethod == pl::RenderMethod::fill)
 			s_drawFilledEllipse(surface.get(), m_size);
 
-		else if (m_state.drawingMethod == pl::RenderMethod::border)
+		else if (m_state.renderMethod == pl::RenderMethod::border)
 			s_drawBorderEllipse(surface.get(), m_size, innerBorder);
 
 

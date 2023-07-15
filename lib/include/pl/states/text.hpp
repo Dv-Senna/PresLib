@@ -33,13 +33,13 @@ namespace pl::states
 
 			([&]()
 			{
-				if constexpr (std::is_same_v<Args, pl::args::color>)
+				if constexpr (std::is_same_v<Args, pl::args::Color>)
 					state.color = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::angle>)
+				else if constexpr (std::is_same_v<Args, pl::args::Angle>)
 					state.angle = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::distortion>)
+				else if constexpr (std::is_same_v<Args, pl::args::Distortion>)
 					state.distortion = args.value;
 			} (), ...);
 

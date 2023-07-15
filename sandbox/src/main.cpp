@@ -20,7 +20,7 @@ int main(int, char *[])
 			instance, "© Dv-Senna64",
 			{PL_DEFAULT_VIEWPORT_WIDTH - 150, PL_DEFAULT_VIEWPORT_HEIGHT - 40},
 			"arial", 20,
-			pl::args::color(pl::utils::white)
+			pl::args::color = pl::utils::white
 		};
 		instance.setCustomForeground(&foreground);
 
@@ -33,10 +33,10 @@ int main(int, char *[])
 		pl::blocks::Line line {instance, {100, 200}, {300, 400}};
 		slide.addBlock(&line);
 
-		pl::blocks::Line line1 {instance, {100, 200}, {100, 300}, pl::args::color(pl::utils::magenta)};
+		pl::blocks::Line line1 {instance, {100, 200}, {100, 300}, pl::args::color = pl::utils::magenta};
 		slide.addBlock(&line1);
 
-		pl::blocks::Line line2 {instance, {1000, 100}, {1200, 100}, pl::args::color(pl::utils::aqua)};
+		pl::blocks::Line line2 {instance, {1000, 100}, {1200, 100}, pl::args::color = pl::utils::aqua};
 		slide.addBlock(&line2);
 
 		pl::blocks::Rectangle rectFill {instance, {100, 100}, {100, 50}};
@@ -48,14 +48,14 @@ int main(int, char *[])
 		slide.addBlock(&circleFill);
 		pl::blocks::Ellipse circleBorder {
 			instance, {300, 200}, 50.0f,
-			pl::args::color(pl::utils::white), pl::args::drawingMethod(pl::RenderMethod::border), pl::args::borderThickness(10.f)};
+			pl::args::color = pl::utils::white, pl::args::rendergMethod = pl::RenderMethod::border, pl::args::borderThickness = 10.f};
 		slide.addBlock(&circleBorder);
 
-		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, pl::args::excentricity(0.5f)};
+		pl::blocks::Ellipse ellipseFill {instance, {400, 200}, 50.0f, pl::args::excentricity = 0.5f};
 		slide.addBlock(&ellipseFill);
 		pl::blocks::Ellipse ellipseBorder {
 			instance, {600, 200}, 50.0f,
-			pl::args::excentricity(0.5f), pl::args::angle(45.0f), pl::args::color(pl::utils::white), pl::args::drawingMethod(pl::RenderMethod::border)};
+			pl::args::excentricity = 0.5f, pl::args::angle = 45.0f, pl::args::color = pl::utils::white, pl::args::rendergMethod = pl::RenderMethod::border};
 		slide.addBlock(&ellipseBorder);
 
 
@@ -64,7 +64,7 @@ int main(int, char *[])
 		pl::blocks::Triangle triBorder {instance, {300, 300}, {320, 350}, {350, 310}, pl::utils::blue, pl::RenderMethod::border};
 		slide2.addBlock(&triBorder);
 
-		pl::blocks::Image image {instance, "logo.png", {100, 100}, pl::args::angle(-12.5f), pl::args::opacity(.1f), pl::args::scale(0.1f)};
+		pl::blocks::Image image {instance, "logo.png", {100, 100}, pl::args::angle = -12.5f, pl::args::opacity = .1f, pl::args::scale = 0.1f};
 		slide2.addBlock(&image);
 
 		pl::blocks::Text text {instance, "Hello World from PresLib !", {600, 500}, "arial", 30};

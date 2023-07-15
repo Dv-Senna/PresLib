@@ -26,16 +26,16 @@ namespace pl::states
 
 			([&]()
 			{
-				if constexpr (std::is_same_v<Args, pl::args::scale>)
+				if constexpr (std::is_same_v<Args, pl::args::Scale>)
 					state.scale = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::angle>)
+				else if constexpr (std::is_same_v<Args, pl::args::Angle>)
 					state.angle = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::opacity>)
+				else if constexpr (std::is_same_v<Args, pl::args::Opacity>)
 					state.opacity = args.value;
 
-				else if constexpr (std::is_same_v<Args, pl::args::distortion>)
+				else if constexpr (std::is_same_v<Args, pl::args::Distortion>)
 					state.distortion = args.value;
 			} (), ...);
 
