@@ -27,4 +27,11 @@ namespace pl
 
 
 
+	const std::list<pl::impl::Block*> &Slide::getBlocks() const noexcept
+	{
+		return m_blocks;
+	}
+
+
+
 } // namespace 

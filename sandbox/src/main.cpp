@@ -30,13 +30,11 @@ int main(int, char *[])
 		pl::Slide slide2 {instance, pl::SlideFlag::noBackground};
 		pl::blocks::Title slideTitle2 {instance, "The new style | modern", slide2};
 
-		pl::blocks::Line line {instance, {100, 200}, {300, 400}};
+		pl::blocks::Line line {instance, {100, 200}, {300, 400}, pl::args::thickness = 10.f, pl::args::tipShape = pl::TipShape::round};
 		slide.addBlock(&line);
-
 		pl::blocks::Line line1 {instance, {100, 200}, {100, 300}, pl::args::color = pl::utils::magenta};
 		slide.addBlock(&line1);
-
-		pl::blocks::Line line2 {instance, {1000, 100}, {1200, 100}, pl::args::color = pl::utils::aqua};
+		pl::blocks::Line line2 {instance, {1000, 100}, {1200, 100}, pl::args::color = pl::utils::aqua, pl::args::thickness = 10.f, pl::args::tipShape = pl::TipShape::round};
 		slide.addBlock(&line2);
 
 		pl::blocks::Rectangle rectFill {instance, {100, 100}, {100, 50}};

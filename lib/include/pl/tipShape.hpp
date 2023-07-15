@@ -7,7 +7,7 @@ namespace pl
 	enum class TipShape
 	{
 		flat,
-		rounder
+		round
 	};
 
 } // namespace pl

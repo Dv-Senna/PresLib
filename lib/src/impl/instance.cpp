@@ -25,7 +25,7 @@ namespace pl::impl
 						std::cout << "Current slide : " << *m_currentSlide << std::endl;
 
 						for (auto slide : m_slides)
-							std::cout << "Slide : " << slide << std::endl;
+							std::cout << "Slide : " << slide << " : contains " << slide->getBlocks().size() << " blocks" << std::endl;
 
 						std::cout << "----------------  Debug log end  ----------------" << std::endl;
 					}

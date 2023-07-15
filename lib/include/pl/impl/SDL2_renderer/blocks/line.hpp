@@ -30,15 +30,8 @@ namespace pl::impl::SDL2_renderer::blocks
 			void m_load();
 			void m_unload();
 
-			static void s_drawHorizontalOrVerticalLine(
+			static void s_drawLine(
 				SDL_Surface *surface,
-				const pl::math::Vec2f &size
-			);
-			static void s_drawDiagonalLine(
-				SDL_Surface *surface,
-				const pl::math::Vec2f &start,
-				const pl::math::Vec2f &end,
-				float thickness,
 				const pl::math::Vec2f &size,
 				pl::TipShape startTip,
 				pl::TipShape endTip
@@ -46,6 +39,7 @@ namespace pl::impl::SDL2_renderer::blocks
 
 			pl::math::Vec2f m_pos, m_size;
 			pl::states::Line m_state;
+			float m_angle;
 			SDL_Texture *m_texture;
 	};
 

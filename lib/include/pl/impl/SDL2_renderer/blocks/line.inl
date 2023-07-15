@@ -15,6 +15,7 @@ namespace pl::impl::SDL2_renderer::blocks
 		m_pos {},
 		m_size {},
 		m_state {},
+		m_angle {0.f},
 		m_texture {nullptr}
 	{
 		m_state = pl::states::Line::createStateFromTemplates(start, end, args...);
