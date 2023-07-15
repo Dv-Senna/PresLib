@@ -2,6 +2,7 @@
 
 #include "../math/vector.hpp"
 #include "../renderMethod.hpp"
+#include "../tipShape.hpp"
 #include "../utils/color.hpp"
 
 
@@ -17,5 +18,9 @@ namespace pl::args
 	struct scale {float value;};
 	struct distortion {pl::math::Vec2f value;};
 	struct opacity {float value;};
+	struct thickness {float value;};
+	struct startTipShape {pl::TipShape value;};
+	struct endTipShape {pl::TipShape value;};
+	struct tipShape {pl::TipShape value;};
 
 } // namespace pl::args

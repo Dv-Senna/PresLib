@@ -30,8 +30,14 @@ int main(int, char *[])
 		pl::Slide slide2 {instance, pl::SlideFlag::noBackground};
 		pl::blocks::Title slideTitle2 {instance, "The new style | modern", slide2};
 
-		pl::blocks::Line line {instance, {10, 20}, {30, 40}, pl::utils::red};
+		pl::blocks::Line line {instance, {100, 200}, {300, 400}};
 		slide.addBlock(&line);
+
+		pl::blocks::Line line1 {instance, {100, 200}, {100, 300}, pl::args::color(pl::utils::magenta)};
+		slide.addBlock(&line1);
+
+		pl::blocks::Line line2 {instance, {1000, 100}, {1200, 100}, pl::args::color(pl::utils::aqua)};
+		slide.addBlock(&line2);
 
 		pl::blocks::Rectangle rectFill {instance, {100, 100}, {100, 50}};
 		slide.addBlock(&rectFill);

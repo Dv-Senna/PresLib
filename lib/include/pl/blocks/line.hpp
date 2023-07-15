@@ -10,27 +10,19 @@ namespace pl::blocks
 {
 	/// @brief A block to create lines
 	/// @tparam API The graphics api used
-	template <pl::GraphicsApi API>
+	template <pl::GraphicsApi API, class ...Args>
 	class Line final : public pl::Block<API>
 	{
 		public:
-			/// @brief A block to create lines
-			/// @param instance The current instance of PresLib
-			/// @param start The position of the start of the line
-			/// @param end The position of the end of the line
-			/// @param color The color of the line
 			Line(
 				pl::Instance<API> &instance,
 				const pl::math::Vec2f &start,
 				const pl::math::Vec2f &end,
-				pl::utils::Color color = pl::utils::undefined
+				Args ...args
 			) : pl::Block<API> ()
 			{
-				if (color == pl::utils::undefined)
-					color = instance.getTheme().style.objectColor;
-
 				if constexpr (API == pl::GraphicsApi::SDL2_renderer)
-					this->m_impl = new pl::impl::SDL2_renderer::blocks::Line(instance.getImplementation(), start, end, color);
+					this->m_impl = new pl::impl::SDL2_renderer::blocks::Line(instance.getImplementation(), start, end, args...);
 
 
 				if (this->m_impl == nullptr)
