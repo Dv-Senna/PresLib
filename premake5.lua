@@ -22,7 +22,7 @@ project "lib"
 	includedirs {
 		"lib/include/pl",
 		"vendors/SDL2/include",
-		"vendors/SDL2_gfx/include",
+		"vendors/SDL3/include",
 		"vendors/SDL2/include/SDL2",
 		"vendors/SDL2_ttf/include",
 		"vendors/SDL2_image/include",
@@ -66,7 +66,7 @@ project "Sandbox"
 		"sandbox/include",
 		"lib/include",
 		"vendors/SDL2/include",
-		"vendors/SDL2_gfx/include",
+		"vendors/SDL3/include",
 		"vendors/SDL2/include/SDL2",
 		"vendors/SDL2_ttf/include",
 		"vendors/SDL2_image/include",
@@ -76,7 +76,7 @@ project "Sandbox"
 	libdirs {
 		"lib/bin",
 		"vendors/SDL2/lib",
-		"vendors/SDL2_gfx/lib",
+		"vendors/SDL3/lib",
 		"vendors/SDL2_ttf/lib",
 		"vendors/SDL2_image/lib",
 		"vendors/SDL2_latex/lib",
@@ -84,12 +84,12 @@ project "Sandbox"
 
 	links {
 		"preslib",
-		"SDL2_gfx",
 		"SDL2_ttf",
 		"SDL2_latex",
 		"SDL2_image",
 		"SDL2",
 		"SDL2main",
+		"SDL3"
 	}
 
 
