@@ -4,7 +4,7 @@
 #include <string>
 
 #include "../macros.inl"
-#include "manager/event.hpp"
+#include "manager.hpp"
 
 
 namespace pl::impl
@@ -14,7 +14,7 @@ namespace pl::impl
 		public:
 			PL_CLASS_NO_COPY_MOVE(Instance);
 
-			Instance(const std::string &title, pl::impl::manager::Event *eventManager);
+			Instance(const std::string &title, pl::impl::Manager *manager);
 			virtual ~Instance() = default;
 
 			virtual void run() = 0;
@@ -22,12 +22,12 @@ namespace pl::impl
 			virtual const std::any &getHandler() const noexcept = 0;
 
 			inline const std::string &getTitle() const noexcept;
-			inline const pl::impl::manager::Event *getEventManager() const noexcept;
+			inline const pl::impl::Manager *getManager() const noexcept;
 
 		
 		protected:
 			std::string m_title;
-			pl::impl::manager::Event *m_eventManager;
+			pl::impl::Manager *m_manager;
 	};
 
 

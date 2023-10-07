@@ -10,10 +10,10 @@ namespace pl
 	template <pl::GraphicsApi API>
 	Instance<API>::Instance(const std::string &title) :
 		m_impl {nullptr},
-		m_eventManager {}
+		m_manager {}
 	{
 		if constexpr (API == pl::GraphicsApi::SDL2_renderer)
-			m_impl = new pl::impl::SDL2_renderer::Instance(title, m_eventManager.getImplementation());
+			m_impl = new pl::impl::SDL2_renderer::Instance(title, m_manager.getImplementation());
 		else if constexpr (API == pl::GraphicsApi::SDL3_gpu)
 			static_assert(false, "PL : graphics api 'SDL3_gpu' not yet implemented");
 		else if constexpr (API == pl::GraphicsApi::OpenGL)
@@ -76,6 +76,14 @@ namespace pl
 			throw std::runtime_error("PL : Can't get instance's window's title because the implementation has not been initialized");
 
 		return m_impl->getTitle();
+	}
+
+
+
+	template <pl::GraphicsApi API>
+	const pl::Manager<API> &Instance<API>::getManager() const noexcept
+	{
+		return m_manager;
 	}
 
 

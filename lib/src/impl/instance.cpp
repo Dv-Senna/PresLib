@@ -4,9 +4,9 @@
 
 namespace pl::impl
 {
-	Instance::Instance(const std::string &title, pl::impl::manager::Event *eventManager) :
+	Instance::Instance(const std::string &title, pl::impl::Manager *manager) :
 		m_title {std::move(title)},
-		m_eventManager {eventManager}
+		m_manager {manager}
 	{
 
 	}

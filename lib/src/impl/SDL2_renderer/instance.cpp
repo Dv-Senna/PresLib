@@ -9,8 +9,8 @@
 
 namespace pl::impl::SDL2_renderer
 {
-	Instance::Instance(const std::string &title, pl::impl::manager::Event *eventManager) :
-		pl::impl::Instance(title, eventManager),
+	Instance::Instance(const std::string &title, pl::impl::Manager *manager) :
+		pl::impl::Instance(title, manager),
 		m_window {static_cast<SDL_Window*> (nullptr)},
 		m_renderer {static_cast<SDL_Renderer*> (nullptr)}
 	{
@@ -68,7 +68,7 @@ namespace pl::impl::SDL2_renderer
 		static SDL_Renderer *renderer {std::any_cast<SDL_Renderer*> (m_renderer)};
 
 
-		if (!m_eventManager->process())
+		if (!m_manager->getEvent()->process())
 			return false;
 
 

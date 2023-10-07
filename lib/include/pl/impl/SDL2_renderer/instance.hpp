@@ -13,7 +13,7 @@ namespace pl::impl::SDL2_renderer
 		public:
 			PL_CLASS_NO_COPY_MOVE(Instance);
 
-			Instance(const std::string &title, pl::impl::manager::Event *eventManager);
+			Instance(const std::string &title, pl::impl::Manager *manager);
 			~Instance() override;
 
 			void run() override;

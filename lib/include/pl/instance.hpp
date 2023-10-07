@@ -5,7 +5,7 @@
 #include "graphicsApi.inl"
 #include "impl/instance.hpp"
 #include "macros.inl"
-#include "manager/event.hpp"
+#include "manager.hpp"
 
 
 namespace pl
@@ -24,11 +24,12 @@ namespace pl
 			inline pl::impl::Instance *getImplementation() const;
 			inline const std::any &getHandler() const;
 			inline const std::string &getTitle() const;
+			inline const pl::Manager<API> &getManager() const noexcept;
 
 
 		private:
 			pl::impl::Instance *m_impl;
-			pl::manager::Event<API> m_eventManager;
+			pl::Manager<API> m_manager;
 	};
 
 } // namespace pl

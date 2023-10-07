@@ -23,9 +23,6 @@ namespace pl::impl::manager
 		if (m_keys[pl::utils::keys::escape].isDown)
 			return false;
 
-		if (!m_keys[pl::utils::keys::right].isDown && m_keys[pl::utils::keys::right].hasChanged)
-			return false;
-
 		return true;
 	}
 

@@ -11,9 +11,9 @@ namespace pl::impl
 
 
 
-	const pl::impl::manager::Event *Instance::getEventManager() const noexcept
+	const pl::impl::Manager *Instance::getManager() const noexcept
 	{
-		return m_eventManager;
+		return m_manager;
 	}
 
 
