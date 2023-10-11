@@ -1,38 +1,41 @@
 #pragma once
 
+#include <memory>
 #include <string>
 
-#include "graphicsApi.inl"
-#include "impl/instance.hpp"
-#include "macros.inl"
-#include "manager.hpp"
+#include "internalApi.inl"
+#include "math/vec2.hpp"
 
 
 namespace pl
 {
-	template <pl::GraphicsApi API>
 	class Instance final
 	{
 		public:
-			PL_TEMPLATE_CLASS_NO_COPY_MOVE(Instance, API);
+			struct CreateInfo
+			{
+				std::string presentationTitle {"PresLib"};
+				pl::WindowApi windowApi {pl::WindowApi::SDL2};
+				pl::GraphicsApi graphicsApi {pl::GraphicsApi::Software};
+				pl::math::Vec2i viewportSize {1920, 1080};
+			};
 
-			Instance(const std::string &title);
+			struct Implementation
+			{
+				std::shared_ptr<void> internalState {nullptr};
+				void (*setup) (pl::Instance::Implementation *impl, const pl::Instance::CreateInfo &createInfo) {nullptr};
+				void (*cleanup) (pl::Instance::Implementation *impl) {nullptr};
+				void (*run) (pl::Instance::Implementation *impl) {nullptr};
+			};
+
+			Instance(const pl::Instance::CreateInfo &createInfo);
 			~Instance();
 
-			inline void run();
-
-			inline pl::impl::Instance *getImplementation() const;
-			inline const std::any &getHandler() const;
-			inline const std::string &getTitle() const;
-			inline const pl::Manager<API> &getManager() const noexcept;
+			void run();
 
 
 		private:
-			pl::impl::Instance *m_impl;
-			pl::Manager<API> m_manager;
+			pl::Instance::Implementation m_impl;
 	};
 
 } // namespace pl
-
-
-#include "instance.inl"

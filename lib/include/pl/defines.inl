@@ -1,6 +1,0 @@
-#pragma once
-
-#define PL_DEFAULT_VIEWPORT_WIDTH 1920
-#define PL_DEFAULT_VIEWPORT_HEIGHT 1080
-
-#define PL_KEYS_COUNT 43

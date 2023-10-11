@@ -8,8 +8,8 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {"PresLib"};
-
+		pl::Instance::CreateInfo instanceCreateInfo {};
+		pl::Instance instance {instanceCreateInfo};
 
 		instance.run();
 	}
