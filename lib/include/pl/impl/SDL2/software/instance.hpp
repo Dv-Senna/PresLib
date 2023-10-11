@@ -16,8 +16,8 @@ namespace pl::SDL2::software
 				SDL_Renderer *renderer;
 			};
 
-			static void setup(pl::Instance::Implementation *impl, const pl::Instance::CreateInfo &createInfo);
-			static void cleanup(pl::Instance::Implementation *impl);
-			static void run(pl::Instance::Implementation *impl);
+			static void setup(pl::InstanceImplementation *impl, const pl::InstanceCreateInfo &createInfo);
+			static void cleanup(pl::InstanceImplementation *impl);
+			static void run(pl::InstanceImplementation *impl);
 	};
 } // namespace pl::SDL2::software

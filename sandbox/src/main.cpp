@@ -8,7 +8,7 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::Instance::CreateInfo instanceCreateInfo {};
+		pl::InstanceCreateInfo instanceCreateInfo {};
 		pl::Instance instance {instanceCreateInfo};
 
 		instance.run();

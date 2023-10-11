@@ -35,7 +35,7 @@ namespace pl::SDL2::software
 
 
 
-	void Instance::setup(pl::Instance::Implementation *impl, const pl::Instance::CreateInfo &createInfo)
+	void Instance::setup(pl::InstanceImplementation *impl, const pl::InstanceCreateInfo &createInfo)
 	{
 		SDL_Window *window {SDL_CreateWindow(
 			createInfo.presentationTitle.c_str(),
@@ -62,7 +62,7 @@ namespace pl::SDL2::software
 
 
 
-	void Instance::cleanup(pl::Instance::Implementation *impl)
+	void Instance::cleanup(pl::InstanceImplementation *impl)
 	{
 		auto internalState {static_cast<pl::SDL2::software::Instance::InternalState*> (impl->internalState.get())};
 		if (internalState == nullptr)
@@ -73,7 +73,7 @@ namespace pl::SDL2::software
 
 
 
-	void Instance::run(pl::Instance::Implementation *impl)
+	void Instance::run(pl::InstanceImplementation *impl)
 	{
 		auto internalState {static_cast<pl::SDL2::software::Instance::InternalState*> (impl->internalState.get())};
 		if (internalState == nullptr || internalState->window == nullptr || internalState->renderer == nullptr)

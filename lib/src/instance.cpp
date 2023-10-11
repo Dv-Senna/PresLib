@@ -8,9 +8,9 @@
 
 namespace pl
 {
-	pl::Instance::Implementation chooseImplementation(const pl::Instance::CreateInfo &createInfo)
+	pl::InstanceImplementation chooseImplementation(const pl::InstanceCreateInfo &createInfo)
 	{
-		pl::Instance::Implementation implementation {};
+		pl::InstanceImplementation implementation {};
 
 		if (createInfo.windowApi == pl::WindowApi::SDL2)
 		{
@@ -46,7 +46,7 @@ namespace pl
 	}
 
 
-	Instance::Instance(const pl::Instance::CreateInfo &createInfo) : 
+	Instance::Instance(const pl::InstanceCreateInfo &createInfo) : 
 		m_impl {pl::chooseImplementation(createInfo)}
 	{
 		if (m_impl.setup == nullptr || m_impl.cleanup == nullptr || m_impl.run == nullptr)
