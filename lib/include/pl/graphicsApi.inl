@@ -14,12 +14,4 @@ namespace pl
 	};
 
 
-	enum class WindowApi
-	{
-		SDL2,
-		SDL3,
-		glfw
-	};
-
-
 } // namespace pl

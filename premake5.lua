@@ -27,6 +27,7 @@ project "lib"
 		"vendors/SDL2_ttf/include",
 		"vendors/SDL2_image/include",
 		"vendors/SDL2_latex/include",
+		"vendors/glad/include",
 	}
 
 	filter "configurations:debug"
@@ -71,6 +72,7 @@ project "Sandbox"
 		"vendors/SDL2_ttf/include",
 		"vendors/SDL2_image/include",
 		"vendors/SDL2_latex/include",
+		"vendors/glad/include",
 	}
 
 	libdirs {
@@ -80,16 +82,18 @@ project "Sandbox"
 		"vendors/SDL2_ttf/lib",
 		"vendors/SDL2_image/lib",
 		"vendors/SDL2_latex/lib",
+		"vendors/glad/lib",
 	}
 
 	links {
 		"preslib",
-		"SDL2_ttf",
-		"SDL2_latex",
-		"SDL2_image",
-		"SDL2",
-		"SDL2main",
-		"SDL3"
+		--"SDL2_ttf",
+		--"SDL2_latex",
+		--"SDL2_image",
+		--"SDL2",
+		--"SDL2main",
+		"SDL3",
+		"glad"
 	}
 
 

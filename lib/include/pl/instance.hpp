@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "internalApi.inl"
+#include "graphicsApi.inl"
 #include "math/vec2.hpp"
 
 
@@ -12,7 +12,6 @@ namespace pl
 	struct InstanceCreateInfo
 	{
 		std::string presentationTitle {"PresLib"};
-		pl::WindowApi windowApi {pl::WindowApi::SDL2};
 		pl::GraphicsApi graphicsApi {pl::GraphicsApi::Software};
 		pl::math::Vec2i viewportSize {1920, 1080};
 	};

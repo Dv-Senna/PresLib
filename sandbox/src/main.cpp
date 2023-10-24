@@ -9,6 +9,7 @@ int main(int, char *[])
 	try
 	{
 		pl::InstanceCreateInfo instanceCreateInfo {};
+		instanceCreateInfo.graphicsApi = pl::GraphicsApi::OpenGL;
 		pl::Instance instance {instanceCreateInfo};
 
 		instance.run();
