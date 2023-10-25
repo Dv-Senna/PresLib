@@ -6,7 +6,6 @@ namespace pl
 {
 	enum class GraphicsApi
 	{
-		Software,
 		OpenGL,
 		Vulkan,
 		DirectX11,

@@ -1,6 +1,5 @@
+#include <map>
 #include <stdexcept>
-
-#include "impl/opengl/instance.hpp"
 
 #include "instance.hpp"
 
@@ -8,56 +7,66 @@
 
 namespace pl
 {
-	pl::InstanceImplementation chooseImplementation(const pl::InstanceCreateInfo &createInfo)
+	Instance::Instance(const pl::Instance::CreateInfo &createInfo) : 
+		m_window {nullptr}
 	{
-		pl::InstanceImplementation implementation {};
+		static const std::map<pl::GraphicsApi, SDL_WindowFlags> flags {
+			{pl::GraphicsApi::OpenGL, SDL_WINDOW_OPENGL}
+		};
 
-		if (createInfo.graphicsApi == pl::GraphicsApi::OpenGL)
-		{
-			implementation.setup = pl::opengl::Instance::setup;
-			implementation.cleanup = pl::opengl::Instance::cleanup;
-			implementation.run = pl::opengl::Instance::run;
-
-			return implementation;
-		}
-
-		else if (createInfo.graphicsApi == pl::GraphicsApi::Vulkan)
-			throw std::invalid_argument("PL : Can't use the Vulkan renderer yet");
-
-		else if (createInfo.graphicsApi == pl::GraphicsApi::DirectX11)
-			throw std::invalid_argument("PL : Can't use the DirectX11 renderer yet");
-
-		else if (createInfo.graphicsApi == pl::GraphicsApi::DirectX12)
-			throw std::invalid_argument("PL : Can't use the DirectX12 renderer yet");
-
-
-		return implementation;
-	}
-
-
-	Instance::Instance(const pl::InstanceCreateInfo &createInfo) : 
-		m_impl {pl::chooseImplementation(createInfo)}
-	{
-		if (m_impl.setup == nullptr || m_impl.cleanup == nullptr || m_impl.run == nullptr)
-			throw std::runtime_error("PL : No implementation was choosen for the instance");
+		auto it {flags.find(createInfo.graphicsApi)};
+		if (it == flags.end())
+			throw std::runtime_error("PL : Can't use graphics api " + std::to_string((int)createInfo.graphicsApi) + " in window");
 		
-		m_impl.setup(&m_impl, createInfo);
+		m_window = SDL_CreateWindow(
+			createInfo.presentationTitle.c_str(),
+			createInfo.viewportSize.x, createInfo.viewportSize.y,
+			SDL_WINDOW_FULLSCREEN | it->second
+		);
+		if (m_window == nullptr)
+			throw std::runtime_error("PL : Can't create an SDL3 window : " + std::string(SDL_GetError()));
+
+		pl::Renderer::CreateInfo rendererCreateInfo {};
+		rendererCreateInfo.graphicsApi = createInfo.graphicsApi;
+		rendererCreateInfo.viewportSize = createInfo.viewportSize;
+		rendererCreateInfo.window = m_window;
+		m_renderer = std::make_unique<pl::Renderer> (rendererCreateInfo);
 	}
 
 
 
 	Instance::~Instance()
 	{
-		if (m_impl.cleanup != nullptr)
-			m_impl.cleanup(&m_impl);
+		if (m_renderer.get() != nullptr)
+			m_renderer.reset();
+
+		if (m_window != nullptr)
+			SDL_DestroyWindow(m_window);
 	}
 
 
 
 	void Instance::run()
 	{
-		if (m_impl.run != nullptr)
-			m_impl.run(&m_impl);
+		SDL_Event event {};
+
+		while (true)
+		{
+			while (SDL_PollEvent(&event))
+			{
+				if (event.type == SDL_EVENT_KEY_DOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+					return;
+
+				if (event.type == SDL_EVENT_QUIT)
+					return;
+			}
+
+
+			m_renderer->cleanViewport({100, 100, 100, 255});
+
+			
+			m_renderer->updateScreen();
+		}
 	}
 
 

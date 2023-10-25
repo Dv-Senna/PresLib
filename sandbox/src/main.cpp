@@ -8,7 +8,7 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::InstanceCreateInfo instanceCreateInfo {};
+		pl::Instance::CreateInfo instanceCreateInfo {};
 		instanceCreateInfo.graphicsApi = pl::GraphicsApi::OpenGL;
 		pl::Instance instance {instanceCreateInfo};
 
