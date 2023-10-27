@@ -17,7 +17,9 @@ namespace pl
 				pl::impl::opengl::Renderer::setup,
 				pl::impl::opengl::Renderer::cleanup,
 				pl::impl::opengl::Renderer::cleanViewport,
-				pl::impl::opengl::Renderer::updateScreen
+				pl::impl::opengl::Renderer::updateScreen,
+				pl::impl::opengl::Renderer::registerObject,
+				pl::impl::opengl::Renderer::getObjectType
 			}}
 		};
 
@@ -64,6 +66,26 @@ namespace pl
 			throw std::runtime_error("PL : Renderer's updateScreen function is not defined");
 
 		m_impl.functions.updateScreen(&m_impl);
+	}
+
+
+
+	pl::utils::Id Renderer::registerObject(pl::utils::ObjectType type, const std::any &data, pl::utils::IdType idType)
+	{
+		if (m_impl.functions.registerObject == nullptr)
+			throw std::runtime_error("PL : Renderer's registerObject function is not defined");
+
+		return m_impl.functions.registerObject(&m_impl, type, data, idType);
+	}
+
+
+
+	pl::utils::ObjectType Renderer::getObjectType(pl::utils::Id objectID)
+	{
+		if (m_impl.functions.getObjectType == nullptr)
+			throw std::runtime_error("PL : Renderer's getObjectType function is not defined");
+
+		return m_impl.functions.getObjectType(&m_impl, objectID);
 	}
 
 
