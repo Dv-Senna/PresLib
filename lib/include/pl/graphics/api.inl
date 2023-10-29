@@ -2,9 +2,9 @@
 
 
 
-namespace pl
+namespace pl::graphics
 {
-	enum class GraphicsApi
+	enum class Api
 	{
 		OpenGL,
 		Vulkan,
@@ -13,4 +13,4 @@ namespace pl
 	};
 
 
-} // namespace pl
+} // namespace pl::graphics

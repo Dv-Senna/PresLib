@@ -19,6 +19,8 @@ namespace pl::impl::opengl
 				pl::utils::IdType idType
 			);
 			static pl::utils::ObjectType getObjectType(pl::Renderer::Implementation *impl, pl::utils::Id objectID);
+			static void usePipeline(pl::Renderer::Implementation *impl, pl::utils::Id pipeline);
+			static void drawVertices(pl::Renderer::Implementation *impl, pl::utils::Id vertices);
 	};
 
 } // namespace pl::impl::opengl

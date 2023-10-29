@@ -8,10 +8,12 @@
 namespace pl
 {
 	Instance::Instance(const pl::Instance::CreateInfo &createInfo) : 
-		m_window {nullptr}
+		m_window {nullptr},
+		m_renderer {nullptr},
+		m_renderingCallback {nullptr}
 	{
-		static const std::map<pl::GraphicsApi, SDL_WindowFlags> flags {
-			{pl::GraphicsApi::OpenGL, SDL_WINDOW_OPENGL}
+		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
+			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
 		};
 
 		auto it {flags.find(createInfo.graphicsApi)};
@@ -46,6 +48,20 @@ namespace pl
 
 
 
+	pl::Renderer &Instance::getRenderer()
+	{
+		return *m_renderer;
+	}
+
+
+
+	void Instance::setRenderingCallback(const std::function<void()> &callback)
+	{
+		m_renderingCallback = callback;
+	}
+
+
+
 	void Instance::run()
 	{
 		SDL_Event event {};
@@ -64,6 +80,8 @@ namespace pl
 
 			m_renderer->cleanViewport({100, 100, 100, 255});
 
+			if (m_renderingCallback != nullptr)
+				m_renderingCallback();
 			
 			m_renderer->updateScreen();
 		}

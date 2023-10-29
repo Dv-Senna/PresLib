@@ -5,7 +5,7 @@
 
 #include <SDL3/SDL.h>
 
-#include "graphicsApi.inl"
+#include "graphics/api.inl"
 #include "math/vec2.hpp"
 #include "utils/color.hpp"
 #include "utils/id.hpp"
@@ -21,7 +21,7 @@ namespace pl
 			{
 				pl::math::Vec2i viewportSize;
 				SDL_Window *window;
-				pl::GraphicsApi graphicsApi;
+				pl::graphics::Api graphicsApi;
 			};
 
 			struct Implementation;
@@ -38,10 +38,14 @@ namespace pl
 					pl::utils::IdType idType
 				) {nullptr};
 				pl::utils::ObjectType (*getObjectType) (pl::Renderer::Implementation *impl, pl::utils::Id objectID) {nullptr};
+				void (*usePipeline)(pl::Renderer::Implementation *impl, pl::utils::Id pipeline) {nullptr};
+				void (*drawVertices)(pl::Renderer::Implementation *impl, pl::utils::Id vertices) {nullptr};
 
 				inline bool isOneNotSet()
 				{
-					return !(setup && cleanup && cleanViewport && updateScreen && registerObject && getObjectType);
+					return !(setup && cleanup && cleanViewport && updateScreen && registerObject
+						&& getObjectType && usePipeline && drawVertices
+					);
 				}
 			};
 
@@ -63,6 +67,8 @@ namespace pl
 				pl::utils::ObjectType type, const std::any &data, pl::utils::IdType idType = pl::utils::IdType::external
 			);
 			pl::utils::ObjectType getObjectType(pl::utils::Id objectID);
+			void usePipeline(pl::utils::Id pipeline);
+			void drawVertices(pl::utils::Id vertices);
 
 		
 		private:

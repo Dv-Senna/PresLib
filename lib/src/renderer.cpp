@@ -12,14 +12,16 @@ namespace pl
 	Renderer::Renderer(const pl::Renderer::CreateInfo &createInfo) : 
 		m_impl {}
 	{
-		static const std::map<pl::GraphicsApi, pl::Renderer::Functions> functions {
-			{pl::GraphicsApi::OpenGL, {
+		static const std::map<pl::graphics::Api, pl::Renderer::Functions> functions {
+			{pl::graphics::Api::OpenGL, {
 				pl::impl::opengl::Renderer::setup,
 				pl::impl::opengl::Renderer::cleanup,
 				pl::impl::opengl::Renderer::cleanViewport,
 				pl::impl::opengl::Renderer::updateScreen,
 				pl::impl::opengl::Renderer::registerObject,
-				pl::impl::opengl::Renderer::getObjectType
+				pl::impl::opengl::Renderer::getObjectType,
+				pl::impl::opengl::Renderer::usePipeline,
+				pl::impl::opengl::Renderer::drawVertices
 			}}
 		};
 
@@ -86,6 +88,26 @@ namespace pl
 			throw std::runtime_error("PL : Renderer's getObjectType function is not defined");
 
 		return m_impl.functions.getObjectType(&m_impl, objectID);
+	}
+
+
+
+	void Renderer::usePipeline(pl::utils::Id pipeline)
+	{
+		if (m_impl.functions.usePipeline == nullptr)
+			throw std::runtime_error("PL : Renderer's usePipeline function is not defined");
+
+		return m_impl.functions.usePipeline(&m_impl, pipeline);
+	}
+
+
+
+	void Renderer::drawVertices(pl::utils::Id vertices)
+	{
+		if (m_impl.functions.drawVertices == nullptr)
+			throw std::runtime_error("PL : Renderer's drawVertices function is not defined");
+
+		return m_impl.functions.drawVertices(&m_impl, vertices);
 	}
 
 

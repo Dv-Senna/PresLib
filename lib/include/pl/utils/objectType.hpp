@@ -10,6 +10,7 @@ namespace pl::utils
 		framebuffer,
 		texture,
 		shader,
+		pipeline,
 
 		invalid
 	};

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "graphicsApi.inl"
+#include "graphics/api.inl"
 #include "math/vec2.hpp"
 #include "utils/color.hpp"
 
@@ -14,7 +14,7 @@ namespace pl::config
 	inline const bool useMSAA {true};
 	inline const int MSAASamplesCount {4};
 	inline const pl::math::Vec2i defaultViewportSize {1920, 1080};
-	inline const pl::GraphicsApi defaultGraphicsApi {pl::GraphicsApi::OpenGL};
+	inline const pl::graphics::Api defaultGraphicsApi {pl::graphics::Api::OpenGL};
 	inline const std::string defaultPresentationTitle {"PresLib"};
 
 } // namespace pl::config
