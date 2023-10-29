@@ -21,6 +21,12 @@ namespace pl::impl::opengl
 			static pl::utils::ObjectType getObjectType(pl::Renderer::Implementation *impl, pl::utils::Id objectID);
 			static void usePipeline(pl::Renderer::Implementation *impl, pl::utils::Id pipeline);
 			static void drawVertices(pl::Renderer::Implementation *impl, pl::utils::Id vertices);
+			static void setUniformValues(
+				pl::Renderer::Implementation *impl,
+				pl::utils::Id pipeline,
+				const std::string &uboName,
+				const std::vector<pl::graphics::UniformFieldValue> &values
+			);
 	};
 
 } // namespace pl::impl::opengl

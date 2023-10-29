@@ -2,11 +2,13 @@
 
 #include <any>
 #include <memory>
+#include <vector>
 
 #include <SDL3/SDL.h>
+#include <glm/glm.hpp>
 
 #include "graphics/api.inl"
-#include "math/vec2.hpp"
+#include "graphics/uniform.hpp"
 #include "utils/color.hpp"
 #include "utils/id.hpp"
 #include "utils/objectType.hpp"
@@ -19,7 +21,7 @@ namespace pl
 		public:
 			struct CreateInfo
 			{
-				pl::math::Vec2i viewportSize;
+				glm::vec2 viewportSize;
 				SDL_Window *window;
 				pl::graphics::Api graphicsApi;
 			};
@@ -38,13 +40,19 @@ namespace pl
 					pl::utils::IdType idType
 				) {nullptr};
 				pl::utils::ObjectType (*getObjectType) (pl::Renderer::Implementation *impl, pl::utils::Id objectID) {nullptr};
-				void (*usePipeline)(pl::Renderer::Implementation *impl, pl::utils::Id pipeline) {nullptr};
-				void (*drawVertices)(pl::Renderer::Implementation *impl, pl::utils::Id vertices) {nullptr};
+				void (*usePipeline) (pl::Renderer::Implementation *impl, pl::utils::Id pipeline) {nullptr};
+				void (*drawVertices) (pl::Renderer::Implementation *impl, pl::utils::Id vertices) {nullptr};
+				void (*setUniformValues) (
+					pl::Renderer::Implementation *impl,
+					pl::utils::Id pipeline,
+					const std::string &uboName,
+					const std::vector<pl::graphics::UniformFieldValue> &values
+				) {nullptr};
 
 				inline bool isOneNotSet()
 				{
 					return !(setup && cleanup && cleanViewport && updateScreen && registerObject
-						&& getObjectType && usePipeline && drawVertices
+						&& getObjectType && usePipeline && drawVertices && setUniformValues
 					);
 				}
 			};
@@ -52,7 +60,7 @@ namespace pl
 			struct Implementation
 			{
 				std::shared_ptr<void> internalState {nullptr};
-				pl::math::Vec2i viewportSize;
+				glm::vec2 viewportSize;
 				SDL_Window *window;
 				pl::Renderer::Functions functions {};
 			};
@@ -69,6 +77,9 @@ namespace pl
 			pl::utils::ObjectType getObjectType(pl::utils::Id objectID);
 			void usePipeline(pl::utils::Id pipeline);
 			void drawVertices(pl::utils::Id vertices);
+			void setUniformValues(
+				pl::utils::Id pipeline, const std::string &uboName, const std::vector<pl::graphics::UniformFieldValue> &values
+			);
 
 		
 		private:

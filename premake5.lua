@@ -28,6 +28,7 @@ project "lib"
 		"vendors/SDL2_image/include",
 		"vendors/SDL2_latex/include",
 		"vendors/glad/include",
+		"vendors/glm/include"
 	}
 
 	filter "configurations:debug"
@@ -73,6 +74,7 @@ project "Sandbox"
 		"vendors/SDL2_image/include",
 		"vendors/SDL2_latex/include",
 		"vendors/glad/include",
+		"vendors/glm/include"
 	}
 
 	libdirs {

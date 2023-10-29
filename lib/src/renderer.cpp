@@ -21,7 +21,8 @@ namespace pl
 				pl::impl::opengl::Renderer::registerObject,
 				pl::impl::opengl::Renderer::getObjectType,
 				pl::impl::opengl::Renderer::usePipeline,
-				pl::impl::opengl::Renderer::drawVertices
+				pl::impl::opengl::Renderer::drawVertices,
+				pl::impl::opengl::Renderer::setUniformValues
 			}}
 		};
 
@@ -108,6 +109,18 @@ namespace pl
 			throw std::runtime_error("PL : Renderer's drawVertices function is not defined");
 
 		return m_impl.functions.drawVertices(&m_impl, vertices);
+	}
+
+
+
+	void Renderer::setUniformValues(
+		pl::utils::Id pipeline, const std::string &uboName, const std::vector<pl::graphics::UniformFieldValue> &values
+	)
+	{
+		if (m_impl.functions.setUniformValues == nullptr)
+			throw std::runtime_error("PL : Renderer's setUniformValues function is not defined");
+
+		return m_impl.functions.setUniformValues(&m_impl, pipeline, uboName, values);
 	}
 
 

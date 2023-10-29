@@ -54,14 +54,39 @@ int main(int, char *[])
 			fragmentShaderInfos
 		);
 
+		pl::graphics::Uniform uniformInfos {
+			{
+				{pl::graphics::UniformFieldType::floating, "r"},
+				{pl::graphics::UniformFieldType::floating, "g"},
+				{pl::graphics::UniformFieldType::floating, "b"},
+				{pl::graphics::UniformFieldType::mat4, "scale"}
+			},
+			"uni_Color",
+			0
+		};
+
 		pl::graphics::Pipeline pipelineInfos {
 			{vertexShader, fragmentShader},
-			{}
+			{uniformInfos}
 		};
 		auto pipeline = instance.getRenderer().registerObject(
 			pl::utils::ObjectType::pipeline,
 			pipelineInfos
 		);
+
+		glm::mat4 scaleMatrix {
+			0.5f, 0.f, 0.f, 0.f,
+			0.f, 0.5f, 0.f, 0.f,
+			0.f, 0.f, 1.f, 0.f,
+			0.f, 0.f, 0.f, 1.f,
+		};
+
+		instance.getRenderer().setUniformValues(pipeline, "uni_Color", {
+			{"r", 1.f},
+			{"g", 0.5f},
+			{"b", 0.1f},
+			{"scale", scaleMatrix}
+		});
 
 		instance.setRenderingCallback([&]() {
 			instance.getRenderer().usePipeline(pipeline);

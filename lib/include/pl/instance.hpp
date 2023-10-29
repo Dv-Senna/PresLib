@@ -5,10 +5,10 @@
 #include <string>
 
 #include <SDL3/SDL.h>
+#include <glm/glm.hpp>
 
 #include "config.hpp"
 #include "graphics/api.inl"
-#include "math/vec2.hpp"
 #include "renderer.hpp"
 
 
@@ -21,7 +21,7 @@ namespace pl
 			{
 				std::string presentationTitle {pl::config::defaultPresentationTitle};
 				pl::graphics::Api graphicsApi {pl::config::defaultGraphicsApi};
-				pl::math::Vec2i viewportSize {pl::config::defaultViewportSize};
+				glm::vec2 viewportSize {pl::config::defaultViewportSize};
 			};
 
 			Instance(const pl::Instance::CreateInfo &createInfo);

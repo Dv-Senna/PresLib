@@ -1,7 +1,10 @@
+#include <iostream>
 #include <list>
 #include <map>
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "config.hpp"
 #include "graphics/pipeline.hpp"
@@ -161,11 +164,21 @@ namespace pl::impl::opengl
 			}
 
 
-			static void m_fillBufferWithData(std::vector<unsigned char> &buffer, size_t offset, size_t size, void *data)
+			static void m_fillBufferWithData(std::vector<unsigned char> &buffer, size_t offset, size_t size, const void *data)
 			{
+				if (offset > buffer.size())
+					throw std::runtime_error("PL : OpenGL can't fill buffer because the offset is not valid : " + std::to_string(offset));
+
 				for (size_t i {0}; i < size; ++i)
 					buffer[offset + i] = *reinterpret_cast<unsigned char*> (reinterpret_cast<size_t> (data) + i);
 			}
+
+
+			struct FieldAlignement
+			{
+				size_t alignement;
+				size_t size;
+			};
 
 
 		public:
@@ -174,63 +187,44 @@ namespace pl::impl::opengl
 				m_fieldsInfos {},
 				m_bufferSize {0}
 			{
-				GLint uniformsCount {};
-				glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &uniformsCount);
+				static std::map<pl::graphics::UniformFieldType, pl::impl::opengl::UniformsBuffer::FieldAlignement> fieldAlignments {
+					{pl::graphics::UniformFieldType::floating, {4, 4}},
+					{pl::graphics::UniformFieldType::integer, {4, 4}},
+					{pl::graphics::UniformFieldType::vec2, {8, 4}},
+					{pl::graphics::UniformFieldType::vec3, {16, 4}},
+					{pl::graphics::UniformFieldType::mat4, {16, 64}},
+				};
 
-				if (formats.size() > static_cast<size_t> (uniformsCount))
-					throw std::runtime_error("PL : OpenGL you specify to much uniforms formats for the current pipeline");
-
-				std::vector<const GLchar*> uniformsNames {};
-				std::vector<GLuint> uniformsIndices {};
-				std::vector<GLint> uniformsOffsets {};
-				uniformsNames.reserve(formats.size());
-				uniformsIndices.reserve(formats.size());
-				uniformsOffsets.reserve(formats.size());
-				m_fieldsInfos.reserve(formats.size());
-
-				for (const auto &format : formats)
-				{
-					uniformsNames.push_back(format.name.c_str());
-				}
-
-				glGetUniformIndices(
-					program,
-					formats.size(),
-					uniformsNames.data(),
-					uniformsIndices.data()
-				);
-
-				glGetActiveUniformsiv(
-					program,
-					formats.size(),
-					uniformsIndices.data(),
-					GL_UNIFORM_OFFSET,
-					uniformsOffsets.data()
-				);
+				size_t offset {0};
 
 				for (size_t i {0}; i < formats.size(); ++i)
 				{
+					auto alignments = fieldAlignments[formats[i].type];
+
+					if (offset % alignments.alignement != 0)
+						offset += alignments.alignement - (offset % alignments.alignement);
+
 					m_fieldsInfos.push_back({
 						formats[i].name,
 						formats[i].type,
-						static_cast<size_t> (uniformsOffsets[i])
+						offset
 					});
+
+					offset += alignments.size;
 				}
 
 
-				GLint size {};
-				glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCKS, &size);
-				m_bufferSize = size;
-
+				m_bufferSize = offset;
 
 				glCreateBuffers(1, &m_ubo);
 				glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
 
 					glBufferData(GL_UNIFORM_BUFFER, m_bufferSize, nullptr, GL_DYNAMIC_DRAW);
 
-				glBindBuffer(GL_UNIFORM_BUFFER, 0);
+					glUniformBlockBinding(program, glGetUniformBlockIndex(program, name.c_str()), bindingPoint);
+					glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_ubo);
 
-				glUniformBlockBinding(program, glGetUniformBlockIndex(program, name.c_str()), bindingPoint);
+				glBindBuffer(GL_UNIFORM_BUFFER, 0);
 			}
 
 
@@ -243,11 +237,13 @@ namespace pl::impl::opengl
 			void setValues(const std::vector<pl::graphics::UniformFieldValue> &values)
 			{
 				std::vector<unsigned char> buffer {};
-				buffer.reserve(m_bufferSize);
+				buffer.resize(m_bufferSize);
 
 				glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
 
-					glGetBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize, buffer.data());
+					void *ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_READ_ONLY);
+					memcpy(buffer.data(), ptr, buffer.size());
+					glUnmapBuffer(GL_UNIFORM_BUFFER);
 
 
 					for (const auto &value : values)
@@ -283,7 +279,7 @@ namespace pl::impl::opengl
 									buffer,
 									info->offset,
 									8,
-									std::make_shared<pl::math::Vec2f> (std::any_cast<pl::math::Vec2f> (value.value)).get()
+									glm::value_ptr(std::any_cast<glm::vec2> (value.value))
 								);
 								break;
 
@@ -292,25 +288,7 @@ namespace pl::impl::opengl
 									buffer,
 									info->offset,
 									12,
-									std::make_shared<pl::math::Vec3f> (std::any_cast<pl::math::Vec3f> (value.value)).get()
-								);
-								break;
-
-							case pl::graphics::UniformFieldType::mat2:
-								pl::impl::opengl::UniformsBuffer::m_fillBufferWithData(
-									buffer,
-									info->offset,
-									4,
-									std::make_shared<float> (std::any_cast<float> (value.value)).get()
-								);
-								break;
-
-							case pl::graphics::UniformFieldType::mat3:
-								pl::impl::opengl::UniformsBuffer::m_fillBufferWithData(
-									buffer,
-									info->offset,
-									4,
-									std::make_shared<float> (std::any_cast<float> (value.value)).get()
+									glm::value_ptr(std::any_cast<glm::vec3> (value.value))
 								);
 								break;
 
@@ -318,15 +296,17 @@ namespace pl::impl::opengl
 								pl::impl::opengl::UniformsBuffer::m_fillBufferWithData(
 									buffer,
 									info->offset,
-									4,
-									std::make_shared<float> (std::any_cast<float> (value.value)).get()
+									64,
+									glm::value_ptr(std::any_cast<glm::mat4> (value.value))
 								);
 								break;
 						}
 					}
 
 
-					glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize, buffer.data());
+					ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+					memcpy(ptr, buffer.data(), buffer.size());
+					glUnmapBuffer(GL_UNIFORM_BUFFER);
 
 				glBindBuffer(GL_UNIFORM_BUFFER, 0);
 			}
@@ -343,8 +323,9 @@ namespace pl::impl::opengl
 	class Pipeline
 	{
 		public:
-			Pipeline(const std::vector<pl::impl::opengl::Shader*> &shaders, const std::vector<pl::graphics::Uniform> &/* uniforms */) : 
-				m_program {}
+			Pipeline(const std::vector<pl::impl::opengl::Shader*> &shaders, const std::vector<pl::graphics::Uniform> &uniforms) : 
+				m_program {},
+				m_ubos {}
 			{
 				m_program = glCreateProgram();
 
@@ -357,11 +338,20 @@ namespace pl::impl::opengl
 				glGetProgramiv(m_program, GL_LINK_STATUS, &success);
 				if (success == GL_FALSE)
 					throw std::runtime_error("PL : OpenGL can't link program");
+
+
+				for (const auto &uniform : uniforms)
+				{
+					m_ubos[uniform.name] = std::make_shared<pl::impl::opengl::UniformsBuffer> (
+						m_program, uniform.formats, uniform.name, uniform.bindingPoint
+					);
+				}
 			}
 
 
 			~Pipeline()
 			{
+				m_ubos.clear();
 				glDeleteProgram(m_program);
 			}
 
@@ -377,8 +367,15 @@ namespace pl::impl::opengl
 			}
 
 
+			pl::impl::opengl::UniformsBuffer *getUbo(const std::string &name)
+			{
+				return m_ubos[name].get();
+			}
+
+
 		private:
 			GLuint m_program;
+			std::map<std::string, std::shared_ptr<pl::impl::opengl::UniformsBuffer>> m_ubos;
 	};
 
 
@@ -605,12 +602,15 @@ namespace pl::impl::opengl
 			if (object.id != pipeline)
 				continue;
 
+			if (object.type != pl::utils::ObjectType::pipeline)
+				throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
+
 			auto pipelineObject {static_cast<pl::impl::opengl::Pipeline*> (object.data.get())};
 			pipelineObject->use();
 			return;
 		}
 
-		throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
+		throw std::runtime_error("PL : OpenGL can't find given pipeline");
 	}
 
 
@@ -624,12 +624,42 @@ namespace pl::impl::opengl
 			if (object.id != vertices)
 				continue;
 
+			if (object.type != pl::utils::ObjectType::vertices)
+				throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
+
 			auto verticesObject {static_cast<pl::impl::opengl::Vertices*> (object.data.get())};
 			verticesObject->draw();
 			return;
 		}
 
-		throw std::runtime_error("PL : OpenGL can't use given object as a vertices");
+		throw std::runtime_error("PL : OpenGL can't find given vertices");
+	}
+
+
+
+	void Renderer::setUniformValues(
+		pl::Renderer::Implementation *impl,
+		pl::utils::Id pipeline,
+		const std::string &uboName,
+		const std::vector<pl::graphics::UniformFieldValue> &values
+	)
+	{
+		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
+
+		for (const auto &object : internalState->objects)
+		{
+			if (object.id != pipeline)
+				continue;
+
+			if (object.type != pl::utils::ObjectType::pipeline)
+				throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
+
+			auto pipelineObject {static_cast<pl::impl::opengl::Pipeline*> (object.data.get())};
+			pipelineObject->getUbo(uboName)->setValues(values);
+			return;
+		}
+
+		throw std::runtime_error("PL : OpenGL can't find given pipeline");
 	}
 
 
