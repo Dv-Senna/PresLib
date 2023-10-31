@@ -48,11 +48,17 @@ namespace pl
 					const std::string &uboName,
 					const std::vector<pl::graphics::UniformFieldValue> &values
 				) {nullptr};
+				void (*bindTexture) (
+					pl::Renderer::Implementation *impl,
+					pl::utils::Id pipeline,
+					pl::utils::Id texture,
+					int bindingPoint
+				) {nullptr};
 
 				inline bool isOneNotSet()
 				{
 					return !(setup && cleanup && cleanViewport && updateScreen && registerObject
-						&& getObjectType && usePipeline && drawVertices && setUniformValues
+						&& getObjectType && usePipeline && drawVertices && setUniformValues && bindTexture
 					);
 				}
 			};
@@ -80,6 +86,7 @@ namespace pl
 			void setUniformValues(
 				pl::utils::Id pipeline, const std::string &uboName, const std::vector<pl::graphics::UniformFieldValue> &values
 			);
+			void bindTexture(pl::utils::Id pipeline, pl::utils::Id texture, int bindingPoint);
 
 		
 		private:

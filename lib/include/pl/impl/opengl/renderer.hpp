@@ -27,6 +27,12 @@ namespace pl::impl::opengl
 				const std::string &uboName,
 				const std::vector<pl::graphics::UniformFieldValue> &values
 			);
+			static void bindTexture(
+				pl::Renderer::Implementation *impl,
+				pl::utils::Id pipeline,
+				pl::utils::Id texture,
+				int bindingPoint
+			);
 	};
 
 } // namespace pl::impl::opengl

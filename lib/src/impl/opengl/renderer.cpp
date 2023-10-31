@@ -8,6 +8,7 @@
 
 #include "config.hpp"
 #include "graphics/pipeline.hpp"
+#include "graphics/texture.hpp"
 #include "graphics/uniform.hpp"
 #include "graphics/vertices.hpp"
 #include "impl/opengl/renderer.hpp"
@@ -373,9 +374,85 @@ namespace pl::impl::opengl
 			}
 
 
+			inline GLuint getProgram() const noexcept
+			{
+				return m_program;
+			}
+
+
 		private:
 			GLuint m_program;
 			std::map<std::string, std::shared_ptr<pl::impl::opengl::UniformsBuffer>> m_ubos;
+	};
+
+
+
+	class Texture
+	{
+		struct FormatValues
+		{
+			size_t size;
+			GLenum internalFormat;
+			GLenum format;
+		};
+
+		public:
+			Texture(const pl::graphics::Texture &infos) : 
+				m_texture {0},
+				m_size {infos.size}
+			{
+				static std::map<pl::graphics::TextureFormat, pl::impl::opengl::Texture::FormatValues> formats {
+					{pl::graphics::TextureFormat::r8g8b8, {24, GL_RGB8, GL_RGB}},
+					{pl::graphics::TextureFormat::r8g8b8a8, {32, GL_RGBA8, GL_RGBA}},
+				};
+				static std::map<pl::graphics::Filter, GLenum> minFilters {
+					{pl::graphics::Filter::nearest, GL_NEAREST_MIPMAP_LINEAR},
+					{pl::graphics::Filter::linear, GL_LINEAR_MIPMAP_LINEAR}
+				};
+				static std::map<pl::graphics::Filter, GLenum> magFilters {
+					{pl::graphics::Filter::nearest, GL_NEAREST},
+					{pl::graphics::Filter::linear, GL_LINEAR}
+				};
+
+				glGenTextures(1, &m_texture);
+				glBindTexture(GL_TEXTURE_2D, m_texture);
+
+					glTexImage2D(
+						GL_TEXTURE_2D,
+						0,  formats[infos.format].internalFormat,
+						m_size.x, m_size.y,
+						0, formats[infos.format].format, GL_UNSIGNED_BYTE, infos.pixels.get()
+					);
+					glGenerateMipmap(GL_TEXTURE_2D);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilters[infos.minFilter]);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilters[infos.magFilter]);
+
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
+
+
+			void bind(int bindingPoint)
+			{
+				glActiveTexture(GL_TEXTURE0 + bindingPoint);
+				glBindTexture(GL_TEXTURE_2D, m_texture);
+			}
+
+
+			void unbind()
+			{
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
+
+
+			~Texture()
+			{
+				glDeleteTextures(1, &m_texture);
+			}
+
+
+		private:
+			GLuint m_texture;
+			glm::vec2 m_size;
 	};
 
 
@@ -423,6 +500,23 @@ namespace pl::impl::opengl
 	#define setOpenGLAttribute(attribute, value) setOpenGLAttribute(attribute, value, #attribute)
 
 
+	std::shared_ptr<void> getObject(const std::list<pl::Object> &objects, pl::utils::Id id, pl::utils::ObjectType type)
+	{
+		for (const auto &object : objects)
+		{
+			if (object.id != id)
+				continue;
+
+			if (object.type != type)
+				throw std::runtime_error("PL : OpenGL object is not of the right type");
+
+			return object.data;
+		}
+
+		throw std::runtime_error("PL : OpenGL can't find object with id " + std::to_string(id));
+	}
+
+
 
 	void Renderer::setup(pl::Renderer::Implementation *impl, const pl::Renderer::CreateInfo &/* createInfo */)
 	{
@@ -451,6 +545,10 @@ namespace pl::impl::opengl
 		
 		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
 			throw std::runtime_error("PL : OpenGL can't load functions with glad : " + std::string(SDL_GetError()));
+
+		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 
@@ -539,23 +637,32 @@ namespace pl::impl::opengl
 
 				for (const auto &shader : pipeline.shaders)
 				{
-					for (const auto &object : internalState->objects)
-					{
-						if (object.id != shader)
-							continue;
-
-						if (object.type != pl::utils::ObjectType::shader)
-							throw std::runtime_error("PL : OpenGL specified shader isn't a shader");
-
-						shaders.push_back(static_cast<pl::impl::opengl::Shader*> (object.data.get()));
-						break;
-					}
+					shaders.push_back(static_cast<pl::impl::opengl::Shader*> (pl::impl::opengl::getObject(
+						internalState->objects, shader, pl::utils::ObjectType::shader
+					).get()));
 				}
 				
 				id = pl::utils::generateNewID(idType);
 				internalState->objects.push_back({
 					type,
 					std::make_shared<pl::impl::opengl::Pipeline> (shaders, pipeline.uniforms),
+					id,
+					idType
+				});
+
+				break;
+			}
+
+			case pl::utils::ObjectType::texture:
+			{
+				if (!data.has_value() || data.type() != typeid(pl::graphics::Texture))
+					throw std::runtime_error("PL : OpenGL can't register texture because data is not valid");
+
+				const auto &texture {std::any_cast<pl::graphics::Texture> (data)};
+				id = pl::utils::generateNewID(idType);
+				internalState->objects.push_back({
+					type,
+					std::make_shared<pl::impl::opengl::Texture> (texture),
 					id,
 					idType
 				});
@@ -597,20 +704,10 @@ namespace pl::impl::opengl
 
 		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
 
-		for (const auto &object : internalState->objects)
-		{
-			if (object.id != pipeline)
-				continue;
-
-			if (object.type != pl::utils::ObjectType::pipeline)
-				throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
-
-			auto pipelineObject {static_cast<pl::impl::opengl::Pipeline*> (object.data.get())};
-			pipelineObject->use();
-			return;
-		}
-
-		throw std::runtime_error("PL : OpenGL can't find given pipeline");
+		auto pipelineObject {static_cast<pl::impl::opengl::Pipeline*> (pl::impl::opengl::getObject(
+			internalState->objects, pipeline, pl::utils::ObjectType::pipeline
+		).get())};
+		pipelineObject->use();
 	}
 
 
@@ -619,20 +716,10 @@ namespace pl::impl::opengl
 	{
 		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
 
-		for (const auto &object : internalState->objects)
-		{
-			if (object.id != vertices)
-				continue;
-
-			if (object.type != pl::utils::ObjectType::vertices)
-				throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
-
-			auto verticesObject {static_cast<pl::impl::opengl::Vertices*> (object.data.get())};
-			verticesObject->draw();
-			return;
-		}
-
-		throw std::runtime_error("PL : OpenGL can't find given vertices");
+		auto verticesObject {static_cast<pl::impl::opengl::Vertices*> (pl::impl::opengl::getObject(
+			internalState->objects, vertices, pl::utils::ObjectType::vertices
+		).get())};
+		verticesObject->draw();
 	}
 
 
@@ -646,20 +733,34 @@ namespace pl::impl::opengl
 	{
 		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
 
-		for (const auto &object : internalState->objects)
+		auto pipelineObject {static_cast<pl::impl::opengl::Pipeline*> (pl::impl::opengl::getObject(
+			internalState->objects, pipeline, pl::utils::ObjectType::pipeline
+		).get())};
+		pipelineObject->getUbo(uboName)->setValues(values);
+	}
+
+
+
+	void Renderer::bindTexture(
+		pl::Renderer::Implementation *impl,
+		pl::utils::Id,
+		pl::utils::Id texture,
+		int bindingPoint
+	)
+	{
+		if (texture == 0)
 		{
-			if (object.id != pipeline)
-				continue;
-
-			if (object.type != pl::utils::ObjectType::pipeline)
-				throw std::runtime_error("PL : OpenGL can't use given object as a pipeline");
-
-			auto pipelineObject {static_cast<pl::impl::opengl::Pipeline*> (object.data.get())};
-			pipelineObject->getUbo(uboName)->setValues(values);
+			glBindTexture(GL_TEXTURE_2D, 0);
 			return;
 		}
 
-		throw std::runtime_error("PL : OpenGL can't find given pipeline");
+		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
+
+		auto textureObject {static_cast<pl::impl::opengl::Texture*> (pl::impl::opengl::getObject(
+			internalState->objects, texture, pl::utils::ObjectType::texture
+		).get())};
+
+		textureObject->bind(bindingPoint);
 	}
 
 

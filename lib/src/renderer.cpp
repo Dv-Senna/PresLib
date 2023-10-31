@@ -22,7 +22,8 @@ namespace pl
 				pl::impl::opengl::Renderer::getObjectType,
 				pl::impl::opengl::Renderer::usePipeline,
 				pl::impl::opengl::Renderer::drawVertices,
-				pl::impl::opengl::Renderer::setUniformValues
+				pl::impl::opengl::Renderer::setUniformValues,
+				pl::impl::opengl::Renderer::bindTexture
 			}}
 		};
 
@@ -121,6 +122,16 @@ namespace pl
 			throw std::runtime_error("PL : Renderer's setUniformValues function is not defined");
 
 		return m_impl.functions.setUniformValues(&m_impl, pipeline, uboName, values);
+	}
+
+
+
+	void Renderer::bindTexture(pl::utils::Id pipeline, pl::utils::Id texture, int bindingPoint)
+	{
+		if (m_impl.functions.bindTexture == nullptr)
+			throw std::runtime_error("PL : Renderer's bindTexture function is not defined");
+
+		return m_impl.functions.bindTexture(&m_impl, pipeline, texture, bindingPoint);
 	}
 
 

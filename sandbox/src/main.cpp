@@ -5,6 +5,21 @@
 #include <pl/graphics/vertices.hpp>
 #include <pl/graphics/shader.hpp>
 #include <pl/graphics/pipeline.hpp>
+#include <pl/graphics/texture.hpp>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
+
+class PixelDeleter
+{
+	public:
+		void operator() (unsigned char *pixels)
+		{
+			stbi_image_free(pixels);
+			pixels = nullptr;
+		}
+};
 
 
 int main(int, char *[])
@@ -18,13 +33,17 @@ int main(int, char *[])
 
 		pl::graphics::Vertices verticesInfos {
 			{
-				0.0f, 0.5f,     1.f, 0.f, 0.f,
-				-0.5f, -0.5f,   0.f, 1.f, 0.f,
-				0.5f, -0.5f,    0.f, 0.f, 1.f
+				-0.5f, 0.5f,     0.f, 1.f,
+				-0.5f, -0.5f,   0.f, 0.f,
+				0.5f, 0.5f,    1.f, 1.f,
+
+				0.5f, -0.5f,     1.f, 0.f,
+				0.5f, 0.5f,    1.f, 1.f,
+				-0.5f, -0.5f,   0.f, 0.f
 			},
 			{{
 					{pl::graphics::VerticesChannel::position, {0, 2}},
-					{pl::graphics::VerticesChannel::color, {1, 3, 2}},
+					{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}},
 				},
 				pl::graphics::VerticesUsage::staticDraw
 			}
@@ -75,8 +94,8 @@ int main(int, char *[])
 		);
 
 		glm::mat4 scaleMatrix {
-			0.5f, 0.f, 0.f, 0.f,
-			0.f, 0.5f, 0.f, 0.f,
+			1.f, 0.f, 0.f, 0.f,//1.f / pl::config::defaultViewportSize.x, 0.f, 0.f, 0.f,
+			0.f, 1.f, 0.f, 0.f,//0.f, 1.f / pl::config::defaultViewportSize.y, 0.f, 0.f,
 			0.f, 0.f, 1.f, 0.f,
 			0.f, 0.f, 0.f, 1.f,
 		};
@@ -88,9 +107,33 @@ int main(int, char *[])
 			{"scale", scaleMatrix}
 		});
 
+
+		int channelCount {};
+		int width {}, height {};
+		stbi_set_flip_vertically_on_load(true);
+		std::shared_ptr<unsigned char> pixels {
+			stbi_load("logo.png", &width, &height, &channelCount, 0),
+			PixelDeleter()
+		};
+		if (pixels == nullptr)
+			throw std::runtime_error("Could not load image logo.png");
+
+		pl::graphics::Texture textureInfos {
+			{width, height},
+			pixels,
+			pl::graphics::TextureFormat::r8g8b8a8
+		};
+		auto texture = instance.getRenderer().registerObject(
+			pl::utils::ObjectType::texture,
+			textureInfos
+		);
+
+
 		instance.setRenderingCallback([&]() {
 			instance.getRenderer().usePipeline(pipeline);
-				instance.getRenderer().drawVertices(vertices);
+				instance.getRenderer().bindTexture(pipeline, texture, 0);
+					instance.getRenderer().drawVertices(vertices);
+				instance.getRenderer().bindTexture(pipeline, 0, 0);
 			instance.getRenderer().usePipeline(0);
 		});
 
