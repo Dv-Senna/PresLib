@@ -50,3 +50,6 @@ sandbox/bin/*
 
 # LaTeX
 latex/*
+
+# Shaders
+*.spv

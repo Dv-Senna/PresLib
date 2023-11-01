@@ -23,7 +23,9 @@ namespace pl
 				pl::impl::opengl::Renderer::usePipeline,
 				pl::impl::opengl::Renderer::drawVertices,
 				pl::impl::opengl::Renderer::setUniformValues,
-				pl::impl::opengl::Renderer::bindTexture
+				pl::impl::opengl::Renderer::bindTexture,
+				pl::impl::opengl::Renderer::useFramebuffer,
+				pl::impl::opengl::Renderer::getFramebufferTexture
 			}}
 		};
 
@@ -54,12 +56,12 @@ namespace pl
 
 
 
-	void Renderer::cleanViewport(const pl::utils::Color &color)
+	void Renderer::cleanViewport(const pl::utils::Color &color, pl::graphics::CleanFlag flag)
 	{
 		if (m_impl.functions.cleanViewport == nullptr)
 			throw std::runtime_error("PL : Renderer's cleanViewport function is not defined");
 
-		m_impl.functions.cleanViewport(&m_impl, color);
+		m_impl.functions.cleanViewport(&m_impl, color, flag);
 	}
 
 
@@ -74,12 +76,12 @@ namespace pl
 
 
 
-	pl::utils::Id Renderer::registerObject(pl::utils::ObjectType type, const std::any &data, pl::utils::IdType idType)
+	pl::utils::Id Renderer::registerObject(pl::utils::ObjectType type, const std::any &data)
 	{
 		if (m_impl.functions.registerObject == nullptr)
 			throw std::runtime_error("PL : Renderer's registerObject function is not defined");
 
-		return m_impl.functions.registerObject(&m_impl, type, data, idType);
+		return m_impl.functions.registerObject(&m_impl, type, data);
 	}
 
 
@@ -132,6 +134,26 @@ namespace pl
 			throw std::runtime_error("PL : Renderer's bindTexture function is not defined");
 
 		return m_impl.functions.bindTexture(&m_impl, pipeline, texture, bindingPoint);
+	}
+
+
+
+	void Renderer::useFramebuffer(pl::utils::Id framebuffer)
+	{
+		if (m_impl.functions.useFramebuffer == nullptr)
+			throw std::runtime_error("PL : Renderer's useFramebuffer function is not defined");
+
+		return m_impl.functions.useFramebuffer(&m_impl, framebuffer);
+	}
+
+
+
+	pl::utils::Id Renderer::getFramebufferTexture(pl::utils::Id framebuffer)
+	{
+		if (m_impl.functions.getFramebufferTexture == nullptr)
+			throw std::runtime_error("PL : Renderer's getFramebufferTexture function is not defined");
+
+		return m_impl.functions.getFramebufferTexture(&m_impl, framebuffer);
 	}
 
 

@@ -13,7 +13,6 @@ namespace pl
 		pl::utils::ObjectType type;
 		std::shared_ptr<void> data;
 		pl::utils::Id id;
-		pl::utils::IdType idType;
 	};
 
 } // namespace pl

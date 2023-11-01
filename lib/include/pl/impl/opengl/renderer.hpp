@@ -10,13 +10,12 @@ namespace pl::impl::opengl
 		public:
 			static void setup(pl::Renderer::Implementation *impl, const pl::Renderer::CreateInfo &createInfo);
 			static void cleanup(pl::Renderer::Implementation *impl);
-			static void cleanViewport(pl::Renderer::Implementation *impl, const pl::utils::Color &color);
+			static void cleanViewport(pl::Renderer::Implementation *impl, const pl::utils::Color &color, pl::graphics::CleanFlag flag);
 			static void updateScreen(pl::Renderer::Implementation *impl);
 			static pl::utils::Id registerObject(
 				pl::Renderer::Implementation *impl,
 				pl::utils::ObjectType type,
-				const std::any &data,
-				pl::utils::IdType idType
+				const std::any &data
 			);
 			static pl::utils::ObjectType getObjectType(pl::Renderer::Implementation *impl, pl::utils::Id objectID);
 			static void usePipeline(pl::Renderer::Implementation *impl, pl::utils::Id pipeline);
@@ -33,6 +32,8 @@ namespace pl::impl::opengl
 				pl::utils::Id texture,
 				int bindingPoint
 			);
+			static void useFramebuffer(pl::Renderer::Implementation *impl, pl::utils::Id framebuffer);
+			static pl::utils::Id getFramebufferTexture(pl::Renderer::Implementation *impl, pl::utils::Id framebuffer);
 	};
 
 } // namespace pl::impl::opengl

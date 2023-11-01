@@ -37,6 +37,7 @@ namespace pl
 			SDL_Window *m_window;
 			std::unique_ptr<pl::Renderer> m_renderer;
 			std::function<void()> m_renderingCallback;
+			pl::utils::Id m_vertices, m_framebuffer, m_shaders[3], m_pipeline;
 	};
 
 } // namespace pl

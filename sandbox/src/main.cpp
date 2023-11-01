@@ -31,28 +31,6 @@ int main(int, char *[])
 		pl::Instance instance {instanceCreateInfo};
 
 
-		pl::graphics::Vertices verticesInfos {
-			{
-				-0.5f, 0.5f,     0.f, 1.f,
-				-0.5f, -0.5f,   0.f, 0.f,
-				0.5f, 0.5f,    1.f, 1.f,
-
-				0.5f, -0.5f,     1.f, 0.f,
-				0.5f, 0.5f,    1.f, 1.f,
-				-0.5f, -0.5f,   0.f, 0.f
-			},
-			{{
-					{pl::graphics::VerticesChannel::position, {0, 2}},
-					{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}},
-				},
-				pl::graphics::VerticesUsage::staticDraw
-			}
-		};
-		auto vertices = instance.getRenderer().registerObject(
-			pl::utils::ObjectType::vertices,
-			verticesInfos
-		);
-
 		pl::graphics::Shader vertexShaderInfos {
 			pl::graphics::ShaderType::vertex,
 			"shaders/test.vert.spv",
@@ -94,8 +72,8 @@ int main(int, char *[])
 		);
 
 		glm::mat4 scaleMatrix {
-			1.f, 0.f, 0.f, 0.f,//1.f / pl::config::defaultViewportSize.x, 0.f, 0.f, 0.f,
-			0.f, 1.f, 0.f, 0.f,//0.f, 1.f / pl::config::defaultViewportSize.y, 0.f, 0.f,
+			1.f / pl::config::defaultViewportSize.x, 0.f, 0.f, -1.f,
+			0.f, 1.f / pl::config::defaultViewportSize.y, 0.f, -1.f,
 			0.f, 0.f, 1.f, 0.f,
 			0.f, 0.f, 0.f, 1.f,
 		};
@@ -121,11 +99,34 @@ int main(int, char *[])
 		pl::graphics::Texture textureInfos {
 			{width, height},
 			pixels,
-			pl::graphics::TextureFormat::r8g8b8a8
+			pl::graphics::ColorFormat::r8g8b8a8
 		};
 		auto texture = instance.getRenderer().registerObject(
 			pl::utils::ObjectType::texture,
 			textureInfos
+		);
+
+
+		pl::graphics::Vertices verticesInfos {
+			{
+				0.f, 0.f,      0.f, 0.f,
+				width / 4.f, height / 4.f,  1.f, 1.f,
+				0.f, height / 4.f,    0.f, 1.f,
+
+				0.f, 0.f,      0.f, 0.f,
+				width / 4.f, 0.f,    1.f, 0.f,
+				width / 4.f, height / 4.f,  1.f, 1.f,
+			},
+			{{
+					{pl::graphics::VerticesChannel::position, {0, 2}},
+					{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}},
+				},
+				pl::graphics::VerticesUsage::staticDraw
+			}
+		};
+		auto vertices = instance.getRenderer().registerObject(
+			pl::utils::ObjectType::vertices,
+			verticesInfos
 		);
 
 

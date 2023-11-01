@@ -53,7 +53,7 @@ namespace pl::utils
 	inline pl::utils::Color green {0, 255, 0};
 	inline pl::utils::Color blue {0, 0, 255};
 	inline pl::utils::Color white {255, 255, 255};
-	inline pl::utils::Color black {255, 255, 255};
+	inline pl::utils::Color black {0, 0, 0};
 	inline pl::utils::Color yellow {255, 255, 0};
 	inline pl::utils::Color aqua {0, 255, 255};
 	inline pl::utils::Color magenta {255, 0, 255};

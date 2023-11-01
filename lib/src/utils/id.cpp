@@ -7,13 +7,10 @@
 
 namespace pl::utils
 {
-	pl::utils::Id generateNewID(pl::utils::IdType type)
+	pl::utils::Id generateNewID()
 	{
-		static std::array<pl::utils::Id, static_cast<size_t> (pl::utils::IdType::__last)> currentIDs {1, 1};
-		if (type >= pl::utils::IdType::__last)
-			throw std::runtime_error("PL : Invalid id type given. Unable to generate new id");
-
-		return currentIDs[static_cast<size_t> (type)]++;
+		static size_t id {1};
+		return id++;
 	}
 	
 } // namespace pl::utils

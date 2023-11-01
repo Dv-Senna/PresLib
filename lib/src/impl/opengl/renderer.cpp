@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "config.hpp"
+#include "graphics/framebuffer.hpp"
 #include "graphics/pipeline.hpp"
 #include "graphics/texture.hpp"
 #include "graphics/uniform.hpp"
@@ -298,7 +299,7 @@ namespace pl::impl::opengl
 									buffer,
 									info->offset,
 									64,
-									glm::value_ptr(std::any_cast<glm::mat4> (value.value))
+									glm::value_ptr(glm::transpose(std::any_cast<glm::mat4> (value.value)))
 								);
 								break;
 						}
@@ -399,11 +400,12 @@ namespace pl::impl::opengl
 		public:
 			Texture(const pl::graphics::Texture &infos) : 
 				m_texture {0},
-				m_size {infos.size}
+				m_size {infos.size},
+				m_target {GL_TEXTURE_2D}
 			{
-				static std::map<pl::graphics::TextureFormat, pl::impl::opengl::Texture::FormatValues> formats {
-					{pl::graphics::TextureFormat::r8g8b8, {24, GL_RGB8, GL_RGB}},
-					{pl::graphics::TextureFormat::r8g8b8a8, {32, GL_RGBA8, GL_RGBA}},
+				static std::map<pl::graphics::ColorFormat, pl::impl::opengl::Texture::FormatValues> formats {
+					{pl::graphics::ColorFormat::r8g8b8, {24, GL_RGB8, GL_RGB}},
+					{pl::graphics::ColorFormat::r8g8b8a8, {32, GL_RGBA8, GL_RGBA}},
 				};
 				static std::map<pl::graphics::Filter, GLenum> minFilters {
 					{pl::graphics::Filter::nearest, GL_NEAREST_MIPMAP_LINEAR},
@@ -415,32 +417,53 @@ namespace pl::impl::opengl
 				};
 
 				glGenTextures(1, &m_texture);
-				glBindTexture(GL_TEXTURE_2D, m_texture);
 
-					glTexImage2D(
-						GL_TEXTURE_2D,
-						0,  formats[infos.format].internalFormat,
-						m_size.x, m_size.y,
-						0, formats[infos.format].format, GL_UNSIGNED_BYTE, infos.pixels.get()
-					);
-					glGenerateMipmap(GL_TEXTURE_2D);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilters[infos.minFilter]);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilters[infos.magFilter]);
+				if (infos.multisample == 0)
+				{
+					glBindTexture(GL_TEXTURE_2D, m_texture);
+						glTexImage2D(
+							GL_TEXTURE_2D,
+							0,  formats[infos.format].internalFormat,
+							m_size.x, m_size.y,
+							0, formats[infos.format].format, GL_UNSIGNED_BYTE, infos.pixels.get()
+						);
+						glGenerateMipmap(GL_TEXTURE_2D);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilters[infos.minFilter]);
+						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilters[infos.magFilter]);
 
-				glBindTexture(GL_TEXTURE_2D, 0);
+					glBindTexture(GL_TEXTURE_2D, 0);
+				}
+
+				else
+				{
+					glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_texture);
+						glTexImage2DMultisample(
+							GL_TEXTURE_2D_MULTISAMPLE,
+							infos.multisample,
+							formats[infos.format].internalFormat,
+							m_size.x, m_size.y, GL_TRUE
+						);
+						glGenerateMipmap(GL_TEXTURE_2D_MULTISAMPLE);
+						glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, minFilters[infos.minFilter]);
+						glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, magFilters[infos.magFilter]);
+
+					glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+
+					m_target = GL_TEXTURE_2D_MULTISAMPLE;
+				}
 			}
 
 
 			void bind(int bindingPoint)
 			{
 				glActiveTexture(GL_TEXTURE0 + bindingPoint);
-				glBindTexture(GL_TEXTURE_2D, m_texture);
+				glBindTexture(m_target, m_texture);
 			}
 
 
 			void unbind()
 			{
-				glBindTexture(GL_TEXTURE_2D, 0);
+				glBindTexture(m_target, 0);
 			}
 
 
@@ -450,9 +473,99 @@ namespace pl::impl::opengl
 			}
 
 
+			inline GLuint getObject() const noexcept
+			{
+				return m_texture;
+			}
+
+
 		private:
 			GLuint m_texture;
 			glm::vec2 m_size;
+			GLenum m_target;
+	};
+
+
+
+	class Framebuffer
+	{
+		public:
+			Framebuffer(const pl::graphics::Framebuffer &infos, const pl::impl::opengl::Texture &texture, pl::utils::Id textureID) :
+				m_framebuffer {0},
+				m_renderbuffer {0},
+				m_textureID {textureID}
+			{
+				static std::map<pl::graphics::DepthStencilFormat, GLenum> renderBufferFormats {
+					{pl::graphics::DepthStencilFormat::depth24stencil8, GL_DEPTH24_STENCIL8}
+				};
+
+				glGenFramebuffers(1, &m_framebuffer);
+				glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+
+					if (infos.depthStencilFormat != pl::graphics::DepthStencilFormat::none)
+					{
+						glGenRenderbuffers(1, &m_renderbuffer);
+						glBindRenderbuffer(GL_RENDERBUFFER, m_renderbuffer);
+
+							if (infos.multisample == 0)
+							{
+								glRenderbufferStorage(
+									GL_RENDERBUFFER, renderBufferFormats[infos.depthStencilFormat], infos.size.x, infos.size.y
+								);
+							}
+
+							else
+							{
+								glRenderbufferStorageMultisample(
+									GL_RENDERBUFFER, infos.multisample,
+									renderBufferFormats[infos.depthStencilFormat], infos.size.x, infos.size.y
+								);
+							}
+
+							glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_renderbuffer);
+
+						glBindRenderbuffer(GL_RENDERBUFFER, 0);
+					}
+
+					GLenum textureTarget {GL_TEXTURE_2D};
+					if (infos.multisample != 0)
+						textureTarget = GL_TEXTURE_2D_MULTISAMPLE;
+
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, texture.getObject(), 0);
+
+					if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+						throw std::runtime_error("PL : OpenGL can't make attachement to the framebuffer");
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			}
+
+			~Framebuffer()
+			{
+				if (m_renderbuffer != 0)
+					glDeleteRenderbuffers(1, &m_renderbuffer);
+
+				glDeleteFramebuffers(1, &m_framebuffer);
+			}
+
+			inline pl::utils::Id getTextureID() const noexcept
+			{
+				return m_textureID;
+			}
+
+			inline GLuint getObject() const noexcept
+			{
+				return m_framebuffer;
+			}
+
+			void use()
+			{
+				glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
+			}
+
+		
+		private:
+			GLuint m_framebuffer, m_renderbuffer;
+			pl::utils::Id m_textureID;
 	};
 
 
@@ -518,7 +631,7 @@ namespace pl::impl::opengl
 
 
 
-	void Renderer::setup(pl::Renderer::Implementation *impl, const pl::Renderer::CreateInfo &/* createInfo */)
+	void Renderer::setup(pl::Renderer::Implementation *impl, const pl::Renderer::CreateInfo &/*createInfo*/)
 	{
 		impl->internalState = std::make_shared<pl::impl::opengl::InternalState> ();
 		pl::impl::opengl::InternalState *internalState {static_cast<pl::impl::opengl::InternalState*> (impl->internalState.get())};
@@ -549,6 +662,9 @@ namespace pl::impl::opengl
 		
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_CCW);
 	}
 
 
@@ -560,12 +676,28 @@ namespace pl::impl::opengl
 
 
 
-	void Renderer::cleanViewport(pl::Renderer::Implementation *impl, const pl::utils::Color &color)
+	void Renderer::cleanViewport(pl::Renderer::Implementation *impl, const pl::utils::Color &color, pl::graphics::CleanFlag flag)
 	{
+		static std::map<pl::graphics::CleanFlag, GLbitfield> cleanFlagMap {
+			{pl::graphics::CleanFlag::color, GL_COLOR_BUFFER_BIT},
+			{pl::graphics::CleanFlag::depth, GL_DEPTH_BUFFER_BIT},
+			{pl::graphics::CleanFlag::stencil, GL_STENCIL_BUFFER_BIT}
+		};
+
 		(void)pl::impl::opengl::checkInternalStateValidity(impl->internalState);
 
-		glClearColor((float)color.r / 255.f, (float)color.g / 255.f, (float)color.b / 255.f, (float)color.a / 255.f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLbitfield cleanFlags {0};
+
+		for (size_t i {0}; i < (size_t)pl::graphics::CleanFlag::__last; ++i)
+		{
+			if (((size_t)flag & (1 << i)) != 0)
+				cleanFlags |= cleanFlagMap[static_cast<pl::graphics::CleanFlag> (1 << i)];
+		}
+
+		if (((size_t)flag & (size_t)pl::graphics::CleanFlag::color) != 0)
+			glClearColor((float)color.r / 255.f, (float)color.g / 255.f, (float)color.b / 255.f, (float)color.a / 255.f);
+
+		glClear(cleanFlags);
 	}
 
 
@@ -582,8 +714,7 @@ namespace pl::impl::opengl
 	pl::utils::Id Renderer::registerObject(
 		pl::Renderer::Implementation *impl,
 		pl::utils::ObjectType type,
-		const std::any &data,
-		pl::utils::IdType idType
+		const std::any &data
 	)
 	{
 		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
@@ -597,12 +728,11 @@ namespace pl::impl::opengl
 					throw std::runtime_error("PL : OpenGL can't register vertices because data is not valid");
 
 				const auto &vertices {std::any_cast<pl::graphics::Vertices> (data)};
-				id = pl::utils::generateNewID(idType);
+				id = pl::utils::generateNewID();
 				internalState->objects.push_back({
 					type,
 					std::make_shared<pl::impl::opengl::Vertices> (vertices.format, vertices.data),
-					id,
-					idType
+					id
 				});
 
 				break;
@@ -615,12 +745,11 @@ namespace pl::impl::opengl
 
 				const auto &shader {std::any_cast<pl::graphics::Shader> (data)};
 				std::vector<unsigned char> fileContent {pl::utils::getBinaryFileContent(shader.file)};
-				id = pl::utils::generateNewID(idType);
+				id = pl::utils::generateNewID();
 				internalState->objects.push_back({
 					type,
 					std::make_shared<pl::impl::opengl::Shader> (fileContent, shader.entryPoint, shader.type),
-					id,
-					idType
+					id
 				});
 
 				break;
@@ -642,12 +771,11 @@ namespace pl::impl::opengl
 					).get()));
 				}
 				
-				id = pl::utils::generateNewID(idType);
+				id = pl::utils::generateNewID();
 				internalState->objects.push_back({
 					type,
 					std::make_shared<pl::impl::opengl::Pipeline> (shaders, pipeline.uniforms),
-					id,
-					idType
+					id
 				});
 
 				break;
@@ -659,12 +787,42 @@ namespace pl::impl::opengl
 					throw std::runtime_error("PL : OpenGL can't register texture because data is not valid");
 
 				const auto &texture {std::any_cast<pl::graphics::Texture> (data)};
-				id = pl::utils::generateNewID(idType);
+				id = pl::utils::generateNewID();
 				internalState->objects.push_back({
 					type,
 					std::make_shared<pl::impl::opengl::Texture> (texture),
-					id,
-					idType
+					id
+				});
+
+				break;
+			}
+
+			case pl::utils::ObjectType::framebuffer:
+			{
+				if (!data.has_value() || data.type() != typeid(pl::graphics::Framebuffer))
+					throw std::runtime_error("PL : OpenGL can't register framebuffer because data is not valid");
+
+
+				const auto &framebuffer {std::any_cast<pl::graphics::Framebuffer> (data)};
+
+				pl::graphics::Texture textureInfos {
+					framebuffer.size,
+					nullptr,
+					framebuffer.colorFormat,
+					framebuffer.minFilter,
+					framebuffer.magFilter,
+					framebuffer.multisample
+				};
+				auto textureID {pl::impl::opengl::Renderer::registerObject(impl, pl::utils::ObjectType::texture, textureInfos)};
+				auto texture {static_cast<pl::impl::opengl::Texture*> (pl::impl::opengl::getObject(
+					internalState->objects, textureID, pl::utils::ObjectType::texture
+				).get())};
+				
+				id = pl::utils::generateNewID();
+				internalState->objects.push_back({
+					type,
+					std::make_shared<pl::impl::opengl::Framebuffer> (framebuffer, *texture, textureID),
+					id
 				});
 
 				break;
@@ -761,6 +919,36 @@ namespace pl::impl::opengl
 		).get())};
 
 		textureObject->bind(bindingPoint);
+	}
+
+
+
+	void Renderer::useFramebuffer(pl::Renderer::Implementation *impl, pl::utils::Id framebuffer)
+	{
+		if (framebuffer == 0)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			return;
+		}
+
+		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
+
+		auto framebufferObject {static_cast<pl::impl::opengl::Framebuffer*> (pl::impl::opengl::getObject(
+			internalState->objects, framebuffer, pl::utils::ObjectType::framebuffer
+		).get())};
+		framebufferObject->use();
+	}
+
+
+
+	pl::utils::Id Renderer::getFramebufferTexture(pl::Renderer::Implementation *impl, pl::utils::Id framebuffer)
+	{
+		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
+
+		auto framebufferObject {static_cast<pl::impl::opengl::Framebuffer*> (pl::impl::opengl::getObject(
+			internalState->objects, framebuffer, pl::utils::ObjectType::framebuffer
+		).get())};
+		return framebufferObject->getTextureID();
 	}
 
 
