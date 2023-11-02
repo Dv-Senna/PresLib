@@ -646,7 +646,7 @@ namespace pl::impl::opengl
 		const void * /* userParam */
 	)
 	{
-		static std::ofstream output {"openglDebug.log"};
+		static std::ofstream output {"debug.opengl.log"};
 
 		if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
 			return;
