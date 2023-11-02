@@ -27,6 +27,7 @@ int main(int, char *[])
 	try
 	{
 		pl::Instance::CreateInfo instanceCreateInfo {};
+		instanceCreateInfo.viewportSize = {2560, 1440};
 		instanceCreateInfo.graphicsApi = pl::graphics::Api::OpenGL;
 		pl::Instance instance {instanceCreateInfo};
 

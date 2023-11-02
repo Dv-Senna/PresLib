@@ -16,7 +16,7 @@ layout (binding = 0) uniform sampler2DMS texture0;
 
 void main()
 {
-	ivec2 normalizedTexCoord0 = ivec2(uni_ViewportSize.x * in_TexCoord0.x, uni_ViewportSize.y * in_TexCoord0.y);
+	ivec2 normalizedTexCoord0 = ivec2(int(uni_ViewportSize.x * in_TexCoord0.x), int(uni_ViewportSize.y * in_TexCoord0.y));
 
 	vec4 color = vec4(0.0);
 	for (int i = 0; i < uni_SamplesCount; i++)

@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <map>
@@ -184,16 +185,19 @@ namespace pl::impl::opengl
 
 
 		public:
-			UniformsBuffer(GLuint program, const pl::graphics::UniformsFormat &formats, const std::string &name, int bindingPoint) : 
+			UniformsBuffer(
+				GLuint /* program */, const pl::graphics::UniformsFormat &formats, const std::string & /* name */, int bindingPoint
+			) : 
 				m_ubo {0},
 				m_fieldsInfos {},
-				m_bufferSize {0}
+				m_bufferSize {0},
+				m_bindingPoint {bindingPoint}
 			{
 				static std::map<pl::graphics::UniformFieldType, pl::impl::opengl::UniformsBuffer::FieldAlignement> fieldAlignments {
 					{pl::graphics::UniformFieldType::floating, {4, 4}},
 					{pl::graphics::UniformFieldType::integer, {4, 4}},
-					{pl::graphics::UniformFieldType::vec2, {8, 4}},
-					{pl::graphics::UniformFieldType::vec3, {16, 4}},
+					{pl::graphics::UniformFieldType::vec2, {8, 8}},
+					{pl::graphics::UniformFieldType::vec3, {16, 12}},
 					{pl::graphics::UniformFieldType::mat4, {16, 64}},
 				};
 
@@ -215,16 +219,12 @@ namespace pl::impl::opengl
 					offset += alignments.size;
 				}
 
-
 				m_bufferSize = offset;
 
 				glCreateBuffers(1, &m_ubo);
 				glBindBuffer(GL_UNIFORM_BUFFER, m_ubo);
 
 					glBufferData(GL_UNIFORM_BUFFER, m_bufferSize, nullptr, GL_DYNAMIC_DRAW);
-
-					glUniformBlockBinding(program, glGetUniformBlockIndex(program, name.c_str()), bindingPoint);
-					glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_ubo);
 
 				glBindBuffer(GL_UNIFORM_BUFFER, 0);
 			}
@@ -236,8 +236,14 @@ namespace pl::impl::opengl
 			}
 
 
-			void setValues(const std::vector<pl::graphics::UniformFieldValue> &values)
+			void bind()
 			{
+				glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingPoint, m_ubo);
+			}
+
+
+			void setValues(const std::vector<pl::graphics::UniformFieldValue> &values)
+			{				
 				std::vector<unsigned char> buffer {};
 				buffer.resize(m_bufferSize);
 
@@ -318,6 +324,7 @@ namespace pl::impl::opengl
 			GLuint m_ubo;
 			std::vector<pl::impl::opengl::UniformsBuffer::FieldInfos> m_fieldsInfos;
 			size_t m_bufferSize;
+			int m_bindingPoint;
 	};
 
 
@@ -361,6 +368,9 @@ namespace pl::impl::opengl
 			void use()
 			{
 				glUseProgram(m_program);
+
+				for (auto &ubo : m_ubos)
+					ubo.second->bind();
 			}
 
 			void unuse()
@@ -440,12 +450,9 @@ namespace pl::impl::opengl
 						glTexImage2DMultisample(
 							GL_TEXTURE_2D_MULTISAMPLE,
 							infos.multisample,
-							formats[infos.format].internalFormat,
+							formats[infos.format].format,
 							m_size.x, m_size.y, GL_TRUE
 						);
-						glGenerateMipmap(GL_TEXTURE_2D_MULTISAMPLE);
-						glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, minFilters[infos.minFilter]);
-						glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, magFilters[infos.magFilter]);
 
 					glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
@@ -629,6 +636,57 @@ namespace pl::impl::opengl
 		throw std::runtime_error("PL : OpenGL can't find object with id " + std::to_string(id));
 	}
 
+	void APIENTRY debugOutput(
+		GLenum source,
+		GLenum type,
+		unsigned int id,
+		GLenum severity,
+		GLsizei /* length */,
+		const char *message,
+		const void * /* userParam */
+	)
+	{
+		static std::ofstream output {"openglDebug.log"};
+
+		if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
+			return;
+
+		output << "---------------" << std::endl;
+		output << "Debug message (" << id << "): " <<  message << std::endl;
+
+		switch (source)
+		{
+			case GL_DEBUG_SOURCE_API:             output << "Source: API"; break;
+			case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   output << "Source: Window System"; break;
+			case GL_DEBUG_SOURCE_SHADER_COMPILER: output << "Source: Shader Compiler"; break;
+			case GL_DEBUG_SOURCE_THIRD_PARTY:     output << "Source: Third Party"; break;
+			case GL_DEBUG_SOURCE_APPLICATION:     output << "Source: Application"; break;
+			case GL_DEBUG_SOURCE_OTHER:           output << "Source: Other"; break;
+		} output << std::endl;
+
+		switch (type)
+		{
+			case GL_DEBUG_TYPE_ERROR:               output << "Type: Error"; break;
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: output << "Type: Deprecated Behaviour"; break;
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  output << "Type: Undefined Behaviour"; break; 
+			case GL_DEBUG_TYPE_PORTABILITY:         output << "Type: Portability"; break;
+			case GL_DEBUG_TYPE_PERFORMANCE:         output << "Type: Performance"; break;
+			case GL_DEBUG_TYPE_MARKER:              output << "Type: Marker"; break;
+			case GL_DEBUG_TYPE_PUSH_GROUP:          output << "Type: Push Group"; break;
+			case GL_DEBUG_TYPE_POP_GROUP:           output << "Type: Pop Group"; break;
+			case GL_DEBUG_TYPE_OTHER:               output << "Type: Other"; break;
+		} output << std::endl;
+		
+		switch (severity)
+		{
+			case GL_DEBUG_SEVERITY_HIGH:         output << "Severity: high"; break;
+			case GL_DEBUG_SEVERITY_MEDIUM:       output << "Severity: medium"; break;
+			case GL_DEBUG_SEVERITY_LOW:          output << "Severity: low"; break;
+			case GL_DEBUG_SEVERITY_NOTIFICATION: output << "Severity: notification"; break;
+		} output << std::endl;
+		output << std::endl;
+	}
+
 
 
 	void Renderer::setup(pl::Renderer::Implementation *impl, const pl::Renderer::CreateInfo &/*createInfo*/)
@@ -643,6 +701,10 @@ namespace pl::impl::opengl
 		setOpenGLAttribute(SDL_GL_GREEN_SIZE, pl::config::openglBitsPerColor.g);
 		setOpenGLAttribute(SDL_GL_BLUE_SIZE, pl::config::openglBitsPerColor.b);
 		setOpenGLAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+		#ifndef __NDEBUG__
+			setOpenGLAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+		#endif
 		
 		if (pl::config::useMSAA)
 		{
@@ -663,8 +725,20 @@ namespace pl::impl::opengl
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		glFrontFace(GL_CW);
+
 		glEnable(GL_CULL_FACE);
-		glCullFace(GL_CCW);
+		glCullFace(GL_FRONT);
+
+
+		#ifndef __NDEBUG__
+
+			glEnable(GL_DEBUG_OUTPUT);
+			glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+			glDebugMessageCallback(pl::impl::opengl::debugOutput, nullptr);
+			glDebugMessageControl(GL_DONT_CARE/*GL_DEBUG_SOURCE_API*/, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+		#endif
 	}
 
 

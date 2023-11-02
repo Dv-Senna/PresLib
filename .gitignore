@@ -53,3 +53,6 @@ latex/*
 
 # Shaders
 *.spv
+
+# Logs
+*.log

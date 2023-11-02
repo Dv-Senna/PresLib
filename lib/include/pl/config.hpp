@@ -12,7 +12,7 @@ namespace pl::config
 {
 	inline const glm::vec2 openglVersion {4, 6};
 	inline const pl::utils::Color openglBitsPerColor {8, 8, 8};
-	inline const bool useMSAA {false};
+	inline const bool useMSAA {true};
 	inline const int MSAASamplesCount {4};
 	inline const glm::vec2 defaultViewportSize {1920, 1080};
 	inline const pl::graphics::Api defaultGraphicsApi {pl::graphics::Api::OpenGL};

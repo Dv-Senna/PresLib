@@ -1,3 +1,4 @@
+#include <iostream>
 #include <map>
 #include <stdexcept>
 
@@ -112,8 +113,8 @@ namespace pl
 		if (pl::config::useMSAA)
 		{
 			m_renderer->setUniformValues(m_pipeline, "uni_WindowFramebufferBlock", {
-				{"uni_ViewportSize", createInfo.viewportSize},
-				{"uni_SamplesCount", static_cast<float> (pl::config::MSAASamplesCount)}
+				{"uni_SamplesCount", static_cast<float> (pl::config::MSAASamplesCount)},
+				{"uni_ViewportSize", createInfo.viewportSize}
 			});
 		}
 
