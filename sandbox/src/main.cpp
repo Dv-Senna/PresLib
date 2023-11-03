@@ -32,6 +32,9 @@ int main(int, char *[])
 		pl::Instance instance {instanceCreateInfo};
 
 
+		auto slide = instance.registerSlide();
+
+
 		pl::graphics::Shader vertexShaderInfos {
 			pl::graphics::ShaderType::vertex,
 			"shaders/test.vert.spv",

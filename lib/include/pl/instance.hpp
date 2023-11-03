@@ -10,6 +10,7 @@
 #include "config.hpp"
 #include "graphics/api.inl"
 #include "renderer.hpp"
+#include "slide.hpp"
 
 
 namespace pl
@@ -29,6 +30,7 @@ namespace pl
 
 			pl::Renderer &getRenderer();
 			void setRenderingCallback(const std::function<void()> &callback);
+			std::shared_ptr<pl::Slide> registerSlide(const pl::Slide::CreateInfo &createInfos = {});
 
 			void run();
 
@@ -38,6 +40,8 @@ namespace pl
 			std::unique_ptr<pl::Renderer> m_renderer;
 			std::function<void()> m_renderingCallback;
 			pl::utils::Id m_vertices, m_framebuffer, m_shaders[3], m_pipeline;
+			std::list<std::shared_ptr<pl::Slide>> m_slides;
+			std::list<std::shared_ptr<pl::Slide>>::iterator m_currentSlide;
 	};
 
 } // namespace pl

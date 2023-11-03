@@ -19,7 +19,9 @@ namespace pl
 		m_vertices {0},
 		m_framebuffer {0},
 		m_shaders {0, 0},
-		m_pipeline {0}
+		m_pipeline {0},
+		m_slides {},
+		m_currentSlide {m_slides.end()}
 	{
 		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
 			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
@@ -164,8 +166,23 @@ namespace pl
 		{
 			while (SDL_PollEvent(&event))
 			{
-				if (event.type == SDL_EVENT_KEY_DOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-					return;
+				if (event.type == SDL_EVENT_KEY_DOWN)
+				{
+					if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
+					{
+						if (!m_slides.empty() && m_currentSlide != (--m_slides.end()))
+							++m_currentSlide;
+					}
+
+					else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
+					{
+						if (!m_slides.empty() && m_currentSlide != m_slides.begin())
+							--m_currentSlide;
+					}
+
+					else if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+						return;
+				}
 
 				if (event.type == SDL_EVENT_QUIT)
 					return;
@@ -174,6 +191,9 @@ namespace pl
 
 			m_renderer->useFramebuffer(m_framebuffer);
 				m_renderer->cleanViewport({100, 100, 100, 255});
+
+				if (m_currentSlide != m_slides.end())
+					(*m_currentSlide)->draw();
 
 				if (m_renderingCallback != nullptr)
 					m_renderingCallback();
@@ -191,6 +211,17 @@ namespace pl
 
 			m_renderer->updateScreen();
 		}
+	}
+
+
+
+	std::shared_ptr<pl::Slide> Instance::registerSlide(const pl::Slide::CreateInfo &createInfos)
+	{
+		m_slides.push_back(std::shared_ptr<pl::Slide> (new pl::Slide(createInfos)));
+		if (m_slides.size() == 1)
+			m_currentSlide = m_slides.begin();
+
+		return *m_slides.rbegin();
 	}
 
 

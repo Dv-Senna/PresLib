@@ -1,33 +1,89 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
+#include "utils/color.hpp"
+#include "utils/types.hpp"
 
 
 namespace pl
 {
 	struct Instance;
-	struct InstanceImplementation;
 
-	enum class BlockType
+
+	class Block
 	{
+		public:
+			virtual ~Block() = default;
+			virtual void draw() = 0;
 		
+		protected:
+			inline Block(pl::Instance &instance);
+			pl::Instance &m_instance;
 	};
 
-	struct BlockCreateInfo
-	{
-		pl::BlockType type;
 
+	class BlockWithPosition
+	{
+		public:
+			virtual ~BlockWithPosition() = default;
+			inline void setPosition(const glm::vec2 &position);
+			inline const glm::vec2 &getPosition() const noexcept;
+
+		protected:
+			BlockWithPosition() = default;
+			glm::vec2 m_position;
 	};
 
-	struct Block
+	class BlockWithOrientation
 	{
-		pl::BlockType type;
-		void (*setup) (
-			pl::Block *block,
-			pl::InstanceImplementation *instance,
-			const pl::BlockCreateInfo &createInfo
-		);
-		void (*draw) (pl::Block *block, pl::InstanceImplementation *instance);
-		void (*cleanup) (pl::Block *block, pl::InstanceImplementation *instance);
+		public:
+			virtual ~BlockWithOrientation() = default;
+			inline void setOrientation(pl::utils::Radians angle);
+			inline pl::utils::Radians getOrientation() const noexcept;
+
+		protected:
+			BlockWithOrientation() = default;
+			pl::utils::Radians m_angle;
+	};
+
+	class BlockWithSize
+	{
+		public:
+			virtual ~BlockWithSize() = default;
+			inline void setSize(const glm::vec2 &size);
+			inline const glm::vec2 &getSize() const noexcept;
+		
+		protected:
+			BlockWithSize() = default;
+			glm::vec2 m_size;
+	};
+
+	class BlockWithColor
+	{
+		public:
+			virtual ~BlockWithColor() = default;
+			inline void setColor(const pl::utils::Color &color);
+			inline const pl::utils::Color &getColor() const noexcept;
+
+		protected:
+			BlockWithColor() = default;
+			pl::utils::Color m_color;
+	};
+
+	class BlockWithDistortion
+	{
+		public:
+			virtual ~BlockWithDistortion() = default;
+			inline void setDistortion(const glm::mat4 &distortion);
+			inline const glm::mat4 &getDistortion() const noexcept;
+
+		protected:
+			BlockWithDistortion() = default;
+			glm::mat4 m_distortion;
 	};
 
 } // namespace pl
+
+
+#include "block.inl"
