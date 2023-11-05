@@ -1,5 +1,7 @@
 #pragma once
 
+#include <any>
+
 #include <glm/glm.hpp>
 
 #include "utils/color.hpp"
@@ -8,14 +10,26 @@
 
 namespace pl
 {
-	struct Instance;
+	class Instance;
 
 
 	class Block
 	{
 		public:
+			enum class Type
+			{
+				rectangle,
+				triangle
+			};
+
+			struct CreateInfo
+			{
+				pl::Block::Type type;
+				std::any data;
+			};
+
 			virtual ~Block() = default;
-			virtual void draw() = 0;
+			virtual void draw(const glm::mat4 &globalTransformation) = 0;
 		
 		protected:
 			inline Block(pl::Instance &instance);
@@ -31,7 +45,7 @@ namespace pl
 			inline const glm::vec2 &getPosition() const noexcept;
 
 		protected:
-			BlockWithPosition() = default;
+			inline BlockWithPosition(const glm::vec2 &position);
 			glm::vec2 m_position;
 	};
 
@@ -43,7 +57,7 @@ namespace pl
 			inline pl::utils::Radians getOrientation() const noexcept;
 
 		protected:
-			BlockWithOrientation() = default;
+			inline BlockWithOrientation(pl::utils::Radians angle);
 			pl::utils::Radians m_angle;
 	};
 
@@ -55,7 +69,7 @@ namespace pl
 			inline const glm::vec2 &getSize() const noexcept;
 		
 		protected:
-			BlockWithSize() = default;
+			inline BlockWithSize(const glm::vec2 &size);
 			glm::vec2 m_size;
 	};
 
@@ -67,7 +81,7 @@ namespace pl
 			inline const pl::utils::Color &getColor() const noexcept;
 
 		protected:
-			BlockWithColor() = default;
+			inline BlockWithColor(const pl::utils::Color &color);
 			pl::utils::Color m_color;
 	};
 
@@ -79,7 +93,7 @@ namespace pl
 			inline const glm::mat4 &getDistortion() const noexcept;
 
 		protected:
-			BlockWithDistortion() = default;
+			inline BlockWithDistortion(const glm::mat4 &distortion);
 			glm::mat4 m_distortion;
 	};
 

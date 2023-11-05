@@ -3,7 +3,8 @@
 #include <cinttypes>
 #include <ostream>
 
-#include <SDL2/SDL.h>
+#include <glm/glm.hpp>
+#include <SDL3/SDL.h>
 
 
 namespace pl::utils
@@ -38,6 +39,11 @@ namespace pl::utils
 		operator uint32_t() const
 		{
 			return r * 0x1000000 + g * 0x10000 + b * 0x100 + a;
+		}
+
+		operator glm::vec4() const
+		{
+			return glm::vec4((float)r / 255.f, (float)g / 255.f, (float)b / 255.f, (float)a / 255.f);
 		}
 	};
 

@@ -2,6 +2,11 @@
 #include <map>
 #include <stdexcept>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "blocks/rectangle.hpp"
+#include "blocks/triangle.hpp"
 #include "graphics/framebuffer.hpp"
 #include "graphics/pipeline.hpp"
 #include "graphics/shader.hpp"
@@ -21,7 +26,10 @@ namespace pl
 		m_shaders {0, 0},
 		m_pipeline {0},
 		m_slides {},
-		m_currentSlide {m_slides.end()}
+		m_currentSlide {m_slides.end()},
+		m_transformation {1.f},
+		m_viewportSize {createInfo.viewportSize},
+		m_projection {createInfo.projection}
 	{
 		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
 			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
@@ -41,7 +49,7 @@ namespace pl
 
 		pl::Renderer::CreateInfo rendererCreateInfo {};
 		rendererCreateInfo.graphicsApi = createInfo.graphicsApi;
-		rendererCreateInfo.viewportSize = createInfo.viewportSize;
+		rendererCreateInfo.viewportSize = m_viewportSize;
 		rendererCreateInfo.window = m_window;
 		m_renderer = std::make_unique<pl::Renderer> (rendererCreateInfo);
 
@@ -50,9 +58,9 @@ namespace pl
 		int windowWidth {}, windowHeight {};
 		SDL_GetWindowSize(m_window, &windowWidth, &windowHeight);
 
-		float viewportRatio {createInfo.viewportSize.x / createInfo.viewportSize.y};
+		float viewportRatio {m_viewportSize.x / m_viewportSize.y};
 		float windowRatio {(float)windowWidth / (float)windowHeight};
-		float scaleFactor {(createInfo.viewportSize.y * (float)windowWidth) / ((float)windowHeight * createInfo.viewportSize.x)};
+		float scaleFactor {(m_viewportSize.y * (float)windowWidth) / ((float)windowHeight * m_viewportSize.x)};
 		glm::vec2 viewportScaledCentered {1.f, scaleFactor};
 
 		if (viewportRatio < windowRatio)
@@ -116,18 +124,21 @@ namespace pl
 		{
 			m_renderer->setUniformValues(m_pipeline, "uni_WindowFramebufferBlock", {
 				{"uni_SamplesCount", static_cast<float> (pl::config::MSAASamplesCount)},
-				{"uni_ViewportSize", createInfo.viewportSize}
+				{"uni_ViewportSize", m_viewportSize}
 			});
 		}
 
 		pl::graphics::Framebuffer framebufferInfos {
-			createInfo.viewportSize,
+			m_viewportSize,
 			pl::config::useMSAA ? pl::config::MSAASamplesCount : 0
 		};
 		m_framebuffer = m_renderer->registerObject(pl::utils::ObjectType::framebuffer, framebufferInfos);
 
 		
 		/************* setup framebuffer-related stuff *************/
+
+
+		m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
 	}
 
 
@@ -161,6 +172,7 @@ namespace pl
 	{
 		SDL_Event event {};
 		pl::utils::Id framebufferTexture {m_renderer->getFramebufferTexture(m_framebuffer)};
+		pl::graphics::RenderMode renderMode {pl::graphics::RenderMode::normal};
 
 		while (true)
 		{
@@ -168,20 +180,46 @@ namespace pl
 			{
 				if (event.type == SDL_EVENT_KEY_DOWN)
 				{
-					if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
+					switch (event.key.keysym.scancode)
 					{
-						if (!m_slides.empty() && m_currentSlide != (--m_slides.end()))
-							++m_currentSlide;
-					}
+						case SDL_SCANCODE_RIGHT:
+							if (!m_slides.empty())
+								++m_currentSlide;
+							if (m_currentSlide == m_slides.end())
+								return;
+							break;
 
-					else if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
-					{
-						if (!m_slides.empty() && m_currentSlide != m_slides.begin())
-							--m_currentSlide;
-					}
+						case SDL_SCANCODE_LEFT:
+							if (!m_slides.empty() && m_currentSlide != m_slides.begin())
+								--m_currentSlide;
+							break;
 
-					else if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-						return;
+						case SDL_SCANCODE_W:
+							if (renderMode == pl::graphics::RenderMode::normal)
+								renderMode = pl::graphics::RenderMode::wireframe;
+							
+							else
+								renderMode = pl::graphics::RenderMode::normal;
+
+							m_renderer->setRenderMode(renderMode);
+							break;
+
+						case SDL_SCANCODE_P:
+							if (m_projection == pl::graphics::Projection::ortho)
+								m_projection = pl::graphics::Projection::perspective;
+							
+							else
+								m_projection = pl::graphics::Projection::ortho;
+
+							m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
+							break;
+
+						case SDL_SCANCODE_ESCAPE:
+							return;
+
+					default:
+						break;
+					}
 				}
 
 				if (event.type == SDL_EVENT_QUIT)
@@ -193,7 +231,7 @@ namespace pl
 				m_renderer->cleanViewport({100, 100, 100, 255});
 
 				if (m_currentSlide != m_slides.end())
-					(*m_currentSlide)->draw();
+					(*m_currentSlide)->draw(m_transformation);
 
 				if (m_renderingCallback != nullptr)
 					m_renderingCallback();
@@ -205,7 +243,7 @@ namespace pl
 
 			m_renderer->usePipeline(m_pipeline);
 				m_renderer->bindTexture(m_pipeline, framebufferTexture, 0);
-					m_renderer->drawVertices(m_vertices);
+					m_renderer->drawVertices(m_vertices, true);
 				m_renderer->bindTexture(m_pipeline, 0, 0);
 			m_renderer->usePipeline(0);
 
@@ -222,6 +260,83 @@ namespace pl
 			m_currentSlide = m_slides.begin();
 
 		return *m_slides.rbegin();
+	}
+
+
+
+	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Slide> slide, const pl::Block::CreateInfo &createInfos)
+	{
+		if (slide.get() == nullptr)
+			throw std::runtime_error("PL : Can't register new block because slide is invalid");
+
+		std::shared_ptr<pl::Block> block {nullptr};
+
+		switch (createInfos.type)
+		{
+			case pl::Block::Type::rectangle:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Rectangle::CreateInfo))
+					throw std::runtime_error("PL : Can't register rectangle block because given data are invalid");
+
+				block = std::make_shared<pl::blocks::Rectangle> (
+					*this, std::any_cast<pl::blocks::Rectangle::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			case pl::Block::Type::triangle:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Triangle::CreateInfo))
+					throw std::runtime_error("PL : Can't register triangle block because given data are invalid");
+
+				block = std::make_shared<pl::blocks::Triangle> (
+					*this, std::any_cast<pl::blocks::Triangle::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			default:
+				throw std::runtime_error("PL : Can't register new block because type is not valid");
+		}
+
+		slide->registerBlock(block);
+		return block;
+	}
+
+
+
+	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Block> block)
+	{
+		if (slide.get() == nullptr)
+			throw std::runtime_error("PL : Can't register block because slide is invalid");
+
+		if (block.get() == nullptr)
+			throw std::runtime_error("PL : Can't register block because the given block is not valid");
+
+		slide->registerBlock(block);
+		return block;
+	}
+
+
+
+	const glm::mat4 &Instance::getTransformation() const noexcept
+	{
+		return m_transformation;
+	}
+
+
+
+	void Instance::setProjection(pl::graphics::Projection projection)
+	{
+		m_projection = projection;
+		m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
+	}
+
+
+
+	glm::mat4 Instance::s_generateTransformationFromProjection(pl::graphics::Projection projection, const glm::vec2 &viewportSize)
+	{
+		if (projection == pl::graphics::Projection::ortho)
+			return glm::ortho(0.f, viewportSize.x, 0.f, viewportSize.y);
+
+		return glm::perspective(179.f, viewportSize.x / viewportSize.y, 0.1f, 100.f);
+		//return glm::perspective();
 	}
 
 

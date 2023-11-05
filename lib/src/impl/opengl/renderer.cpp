@@ -198,6 +198,7 @@ namespace pl::impl::opengl
 					{pl::graphics::UniformFieldType::integer, {4, 4}},
 					{pl::graphics::UniformFieldType::vec2, {8, 8}},
 					{pl::graphics::UniformFieldType::vec3, {16, 12}},
+					{pl::graphics::UniformFieldType::vec4, {16, 16}},
 					{pl::graphics::UniformFieldType::mat4, {16, 64}},
 				};
 
@@ -300,12 +301,21 @@ namespace pl::impl::opengl
 								);
 								break;
 
+							case pl::graphics::UniformFieldType::vec4:
+								pl::impl::opengl::UniformsBuffer::m_fillBufferWithData(
+									buffer,
+									info->offset,
+									16,
+									glm::value_ptr(std::any_cast<glm::vec4> (value.value))
+								);
+								break;
+
 							case pl::graphics::UniformFieldType::mat4:
 								pl::impl::opengl::UniformsBuffer::m_fillBufferWithData(
 									buffer,
 									info->offset,
 									64,
-									glm::value_ptr(glm::transpose(std::any_cast<glm::mat4> (value.value)))
+									glm::value_ptr(std::any_cast<glm::mat4> (value.value))
 								);
 								break;
 						}
@@ -944,14 +954,21 @@ namespace pl::impl::opengl
 
 
 
-	void Renderer::drawVertices(pl::Renderer::Implementation *impl, pl::utils::Id vertices)
+	void Renderer::drawVertices(pl::Renderer::Implementation *impl, pl::utils::Id vertices, bool forceNormalRenderMode)
 	{
 		auto internalState {pl::impl::opengl::checkInternalStateValidity(impl->internalState)};
 
 		auto verticesObject {static_cast<pl::impl::opengl::Vertices*> (pl::impl::opengl::getObject(
 			internalState->objects, vertices, pl::utils::ObjectType::vertices
 		).get())};
+
+		if (forceNormalRenderMode)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		verticesObject->draw();
+
+		if (forceNormalRenderMode && impl->renderMode == pl::graphics::RenderMode::wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
 
@@ -1023,6 +1040,19 @@ namespace pl::impl::opengl
 			internalState->objects, framebuffer, pl::utils::ObjectType::framebuffer
 		).get())};
 		return framebufferObject->getTextureID();
+	}
+
+
+
+	void Renderer::setRenderMode(pl::Renderer::Implementation *impl, pl::graphics::RenderMode renderMode)
+	{
+		impl->renderMode = renderMode;
+
+		if (renderMode == pl::graphics::RenderMode::normal)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		else if (renderMode == pl::graphics::RenderMode::wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 
 

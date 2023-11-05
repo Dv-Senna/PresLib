@@ -10,7 +10,7 @@ namespace pl::graphics
 	enum class UniformFieldType
 	{
 		floating, integer,
-		vec2, vec3, mat4
+		vec2, vec3, vec4, mat4
 	};
 
 	struct UniformField

@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "graphics/api.inl"
+#include "graphics/projection.hpp"
 #include "utils/color.hpp"
 
 
@@ -17,5 +18,6 @@ namespace pl::config
 	inline const glm::vec2 defaultViewportSize {1920, 1080};
 	inline const pl::graphics::Api defaultGraphicsApi {pl::graphics::Api::OpenGL};
 	inline const std::string defaultPresentationTitle {"PresLib"};
+	inline const pl::graphics::Projection defaultProjection {pl::graphics::Projection::ortho};
 
 } // namespace pl::config

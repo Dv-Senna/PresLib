@@ -1,6 +1,8 @@
 #include <iostream>
 #include <exception>
 
+#include <pl/blocks/rectangle.hpp>
+#include <pl/blocks/triangle.hpp>
 #include <pl/instance.hpp>
 #include <pl/graphics/vertices.hpp>
 #include <pl/graphics/shader.hpp>
@@ -33,6 +35,25 @@ int main(int, char *[])
 
 
 		auto slide = instance.registerSlide();
+		auto rectangle = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
+			{800, 200},
+			{600, 300},
+			pl::utils::yellow,
+			0.1f
+		)});
+		auto rectangle2 = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
+			{1300, 600},
+			{600, 300},
+			pl::utils::red,
+			1.8f
+		)});
+
+		auto slide2 = instance.registerSlide();
+		auto triangle = instance.registerBlock(slide2, {pl::Block::Type::triangle, pl::blocks::Triangle::CreateInfo(
+			{500.f, 0.f}, {600.f, 600.f},
+			{400.f, 700.f},
+			pl::utils::green
+		)});
 
 
 		pl::graphics::Shader vertexShaderInfos {
@@ -75,18 +96,11 @@ int main(int, char *[])
 			pipelineInfos
 		);
 
-		glm::mat4 scaleMatrix {
-			1.f / pl::config::defaultViewportSize.x, 0.f, 0.f, -1.f,
-			0.f, 1.f / pl::config::defaultViewportSize.y, 0.f, -1.f,
-			0.f, 0.f, 1.f, 0.f,
-			0.f, 0.f, 0.f, 1.f,
-		};
-
 		instance.getRenderer().setUniformValues(pipeline, "uni_Color", {
 			{"r", 1.f},
 			{"g", 0.5f},
 			{"b", 0.1f},
-			{"scale", scaleMatrix}
+			{"scale", instance.getTransformation()}
 		});
 
 
@@ -135,6 +149,10 @@ int main(int, char *[])
 
 
 		instance.setRenderingCallback([&]() {
+			instance.getRenderer().setUniformValues(pipeline, "uni_Color", {
+				{"scale", instance.getTransformation()}
+			});
+
 			instance.getRenderer().usePipeline(pipeline);
 				instance.getRenderer().bindTexture(pipeline, texture, 0);
 					instance.getRenderer().drawVertices(vertices);

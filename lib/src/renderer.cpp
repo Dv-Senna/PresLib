@@ -25,7 +25,8 @@ namespace pl
 				pl::impl::opengl::Renderer::setUniformValues,
 				pl::impl::opengl::Renderer::bindTexture,
 				pl::impl::opengl::Renderer::useFramebuffer,
-				pl::impl::opengl::Renderer::getFramebufferTexture
+				pl::impl::opengl::Renderer::getFramebufferTexture,
+				pl::impl::opengl::Renderer::setRenderMode
 			}}
 		};
 
@@ -106,12 +107,12 @@ namespace pl
 
 
 
-	void Renderer::drawVertices(pl::utils::Id vertices)
+	void Renderer::drawVertices(pl::utils::Id vertices, bool forceNormalRenderMode)
 	{
 		if (m_impl.functions.drawVertices == nullptr)
 			throw std::runtime_error("PL : Renderer's drawVertices function is not defined");
 
-		return m_impl.functions.drawVertices(&m_impl, vertices);
+		return m_impl.functions.drawVertices(&m_impl, vertices, forceNormalRenderMode);
 	}
 
 
@@ -154,6 +155,16 @@ namespace pl
 			throw std::runtime_error("PL : Renderer's getFramebufferTexture function is not defined");
 
 		return m_impl.functions.getFramebufferTexture(&m_impl, framebuffer);
+	}
+
+
+
+	void Renderer::setRenderMode(pl::graphics::RenderMode renderMode)
+	{
+		if (m_impl.functions.setRenderMode == nullptr)
+			throw std::runtime_error("PL : Renderer's setRenderMode function is not defined");
+
+		return m_impl.functions.setRenderMode(&m_impl, renderMode);
 	}
 
 

@@ -19,7 +19,7 @@ namespace pl::impl::opengl
 			);
 			static pl::utils::ObjectType getObjectType(pl::Renderer::Implementation *impl, pl::utils::Id objectID);
 			static void usePipeline(pl::Renderer::Implementation *impl, pl::utils::Id pipeline);
-			static void drawVertices(pl::Renderer::Implementation *impl, pl::utils::Id vertices);
+			static void drawVertices(pl::Renderer::Implementation *impl, pl::utils::Id vertices, bool forceNormalRenderMode);
 			static void setUniformValues(
 				pl::Renderer::Implementation *impl,
 				pl::utils::Id pipeline,
@@ -34,6 +34,7 @@ namespace pl::impl::opengl
 			);
 			static void useFramebuffer(pl::Renderer::Implementation *impl, pl::utils::Id framebuffer);
 			static pl::utils::Id getFramebufferTexture(pl::Renderer::Implementation *impl, pl::utils::Id framebuffer);
+			static void setRenderMode(pl::Renderer::Implementation *impl, pl::graphics::RenderMode renderMode);
 	};
 
 } // namespace pl::impl::opengl

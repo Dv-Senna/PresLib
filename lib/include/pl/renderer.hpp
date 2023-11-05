@@ -9,6 +9,7 @@
 
 #include "graphics/api.inl"
 #include "graphics/framebuffer.hpp"
+#include "graphics/renderMode.hpp"
 #include "graphics/uniform.hpp"
 #include "utils/color.hpp"
 #include "utils/id.hpp"
@@ -42,7 +43,7 @@ namespace pl
 				) {nullptr};
 				pl::utils::ObjectType (*getObjectType) (pl::Renderer::Implementation *impl, pl::utils::Id objectID) {nullptr};
 				void (*usePipeline) (pl::Renderer::Implementation *impl, pl::utils::Id pipeline) {nullptr};
-				void (*drawVertices) (pl::Renderer::Implementation *impl, pl::utils::Id vertices) {nullptr};
+				void (*drawVertices) (pl::Renderer::Implementation *impl, pl::utils::Id vertices, bool forceNormalRenderMode) {nullptr};
 				void (*setUniformValues) (
 					pl::Renderer::Implementation *impl,
 					pl::utils::Id pipeline,
@@ -57,12 +58,13 @@ namespace pl
 				) {nullptr};
 				void (*useFramebuffer) (pl::Renderer::Implementation *impl, pl::utils::Id framebuffer) {nullptr};
 				pl::utils::Id (*getFramebufferTexture) (pl::Renderer::Implementation *impl, pl::utils::Id framebuffer) {nullptr};
+				void (*setRenderMode) (pl::Renderer::Implementation *impl, pl::graphics::RenderMode renderMode);
 
 				inline bool isOneNotSet()
 				{
 					return !(setup && cleanup && cleanViewport && updateScreen && registerObject
 						&& getObjectType && usePipeline && drawVertices && setUniformValues && bindTexture
-						&& useFramebuffer && getFramebufferTexture
+						&& useFramebuffer && getFramebufferTexture && setRenderMode
 					);
 				}
 			};
@@ -72,6 +74,7 @@ namespace pl
 				std::shared_ptr<void> internalState {nullptr};
 				glm::vec2 viewportSize;
 				SDL_Window *window;
+				pl::graphics::RenderMode renderMode {pl::graphics::RenderMode::normal};
 				pl::Renderer::Functions functions {};
 			};
 
@@ -86,13 +89,14 @@ namespace pl
 			);
 			pl::utils::ObjectType getObjectType(pl::utils::Id objectID);
 			void usePipeline(pl::utils::Id pipeline);
-			void drawVertices(pl::utils::Id vertices);
+			void drawVertices(pl::utils::Id vertices, bool forceNormalRenderMode = false);
 			void setUniformValues(
 				pl::utils::Id pipeline, const std::string &uboName, const std::vector<pl::graphics::UniformFieldValue> &values
 			);
 			void bindTexture(pl::utils::Id pipeline, pl::utils::Id texture, int bindingPoint);
 			void useFramebuffer(pl::utils::Id framebuffer);
 			pl::utils::Id getFramebufferTexture(pl::utils::Id framebuffer);
+			void setRenderMode(pl::graphics::RenderMode renderMode);
 
 
 		
