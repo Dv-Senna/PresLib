@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include <stdexcept>
+#include <chrono>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,6 +21,7 @@ namespace pl
 	Instance::Instance(const pl::Instance::CreateInfo &createInfo) : 
 		m_window {nullptr},
 		m_renderer {nullptr},
+		m_eventManager {},
 		m_renderingCallback {nullptr},
 		m_vertices {0},
 		m_framebuffer {0},
@@ -170,60 +172,50 @@ namespace pl
 
 	void Instance::run()
 	{
-		SDL_Event event {};
 		pl::utils::Id framebufferTexture {m_renderer->getFramebufferTexture(m_framebuffer)};
 		pl::graphics::RenderMode renderMode {pl::graphics::RenderMode::normal};
+		auto startTime {std::chrono::steady_clock::now()};
+		float dt {1.f};
 
-		while (true)
+		while (m_eventManager.pollEvent())
 		{
-			while (SDL_PollEvent(&event))
+			if (m_eventManager.isKeyDown(SDL_SCANCODE_ESCAPE))
+				return;
+
+			if (m_eventManager.isKeyPressed(SDL_SCANCODE_LEFT))
 			{
-				if (event.type == SDL_EVENT_KEY_DOWN)
-				{
-					switch (event.key.keysym.scancode)
-					{
-						case SDL_SCANCODE_RIGHT:
-							if (!m_slides.empty())
-								++m_currentSlide;
-							if (m_currentSlide == m_slides.end())
-								return;
-							break;
+				if (!m_slides.empty() && m_currentSlide != m_slides.begin())
+					--m_currentSlide;
+			}
 
-						case SDL_SCANCODE_LEFT:
-							if (!m_slides.empty() && m_currentSlide != m_slides.begin())
-								--m_currentSlide;
-							break;
-
-						case SDL_SCANCODE_W:
-							if (renderMode == pl::graphics::RenderMode::normal)
-								renderMode = pl::graphics::RenderMode::wireframe;
-							
-							else
-								renderMode = pl::graphics::RenderMode::normal;
-
-							m_renderer->setRenderMode(renderMode);
-							break;
-
-						case SDL_SCANCODE_P:
-							if (m_projection == pl::graphics::Projection::ortho)
-								m_projection = pl::graphics::Projection::perspective;
-							
-							else
-								m_projection = pl::graphics::Projection::ortho;
-
-							m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
-							break;
-
-						case SDL_SCANCODE_ESCAPE:
-							return;
-
-					default:
-						break;
-					}
-				}
-
-				if (event.type == SDL_EVENT_QUIT)
+			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT))
+			{
+				if (!m_slides.empty())
+					++m_currentSlide;
+				if (m_currentSlide == m_slides.end())
 					return;
+			}
+
+			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_O))
+			{
+				if (renderMode == pl::graphics::RenderMode::normal)
+					renderMode = pl::graphics::RenderMode::wireframe;
+				
+				else
+					renderMode = pl::graphics::RenderMode::normal;
+
+				m_renderer->setRenderMode(renderMode);
+			}
+
+			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_P))
+			{
+				if (m_projection == pl::graphics::Projection::ortho)
+					m_projection = pl::graphics::Projection::perspective;
+				
+				else
+					m_projection = pl::graphics::Projection::ortho;
+
+				m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
 			}
 
 
@@ -248,6 +240,10 @@ namespace pl
 			m_renderer->usePipeline(0);
 
 			m_renderer->updateScreen();
+
+			dt = std::chrono::duration_cast<std::chrono::duration<float, std::milli>> (
+				std::chrono::steady_clock::now() - startTime).count();
+			startTime = std::chrono::steady_clock::now();
 		}
 	}
 
@@ -335,8 +331,14 @@ namespace pl
 		if (projection == pl::graphics::Projection::ortho)
 			return glm::ortho(0.f, viewportSize.x, 0.f, viewportSize.y);
 
-		return glm::perspective(179.f, viewportSize.x / viewportSize.y, 0.1f, 100.f);
-		//return glm::perspective();
+		return glm::perspective(glm::radians(179.f), viewportSize.x / viewportSize.y, 0.1f, 100.f);
+	}
+
+
+
+	const pl::EventManager &Instance::getEvent() const noexcept
+	{
+		return m_eventManager;
 	}
 
 

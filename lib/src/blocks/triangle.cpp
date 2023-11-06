@@ -17,7 +17,7 @@ namespace pl::blocks
 	Triangle::Triangle(pl::Instance &instance, const pl::blocks::Triangle::CreateInfo &createInfo) :
 		pl::Block(instance),
 		pl::BlockWithPosition(createInfo.position),
-		pl::BlockWithOrientation(createInfo.angle),
+		pl::BlockWithOrientation(createInfo.angle, createInfo.rotationCenter),
 		pl::BlockWithColor(createInfo.color),
 		pl::BlockWithDistortion(createInfo.distortion),
 		m_vertices {0}

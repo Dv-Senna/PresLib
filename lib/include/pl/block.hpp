@@ -55,10 +55,13 @@ namespace pl
 			virtual ~BlockWithOrientation() = default;
 			inline void setOrientation(pl::utils::Radians angle);
 			inline pl::utils::Radians getOrientation() const noexcept;
+			inline void setRotationCenter(const glm::vec2 &rotationCenter);
+			inline const glm::vec2 &getRotationCenter() const noexcept;
 
 		protected:
-			inline BlockWithOrientation(pl::utils::Radians angle);
+			inline BlockWithOrientation(pl::utils::Radians angle, const glm::vec2 &rotationCenter);
 			pl::utils::Radians m_angle;
+			glm::vec2 m_rotationCenter;
 	};
 
 	class BlockWithSize

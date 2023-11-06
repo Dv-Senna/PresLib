@@ -33,7 +33,9 @@ namespace pl
 
 
 
-	BlockWithOrientation::BlockWithOrientation(pl::utils::Radians angle) : m_angle {angle}
+	BlockWithOrientation::BlockWithOrientation(pl::utils::Radians angle, const glm::vec2 &orientationCenter) :
+		m_angle {angle},
+		m_rotationCenter {orientationCenter}
 	{
 
 	}
@@ -50,6 +52,20 @@ namespace pl
 	pl::utils::Radians BlockWithOrientation::getOrientation() const noexcept
 	{
 		return m_angle;
+	}
+
+
+
+	void BlockWithOrientation::setRotationCenter(const glm::vec2 &rotationCenter)
+	{
+		m_rotationCenter = rotationCenter;
+	}
+
+
+
+	const glm::vec2 &BlockWithOrientation::getRotationCenter() const noexcept
+	{
+		return m_rotationCenter;
 	}
 
 

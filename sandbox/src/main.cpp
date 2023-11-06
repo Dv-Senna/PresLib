@@ -38,14 +38,13 @@ int main(int, char *[])
 		auto rectangle = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
 			{800, 200},
 			{600, 300},
-			pl::utils::yellow,
-			0.1f
+			pl::utils::yellow
 		)});
 		auto rectangle2 = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
 			{1300, 600},
 			{600, 300},
 			pl::utils::red,
-			1.8f
+			3.14159f / 2.f
 		)});
 
 		auto slide2 = instance.registerSlide();

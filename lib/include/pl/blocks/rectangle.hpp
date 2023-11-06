@@ -22,6 +22,7 @@ namespace pl::blocks
 				glm::vec2 position, size;
 				pl::utils::Color color {pl::utils::undefined};
 				pl::utils::Radians angle {0.f};
+				glm::vec2 rotationCenter {0.5f, 0.5f};
 				glm::mat4 distortion {1.f};
 			};
 

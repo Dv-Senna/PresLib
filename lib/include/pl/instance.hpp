@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "config.hpp"
+#include "eventManager.hpp"
 #include "graphics/api.inl"
 #include "graphics/projection.hpp"
 #include "renderer.hpp"
@@ -37,6 +38,7 @@ namespace pl
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Block> block);
 			const glm::mat4 &getTransformation() const noexcept;
 			void setProjection(pl::graphics::Projection projection);
+			const pl::EventManager &getEvent() const noexcept;
 
 			void run();
 
@@ -46,6 +48,7 @@ namespace pl
 
 			SDL_Window *m_window;
 			std::unique_ptr<pl::Renderer> m_renderer;
+			pl::EventManager m_eventManager;
 			std::function<void()> m_renderingCallback;
 			pl::utils::Id m_vertices, m_framebuffer, m_shaders[3], m_pipeline;
 			std::list<std::shared_ptr<pl::Slide>> m_slides;
