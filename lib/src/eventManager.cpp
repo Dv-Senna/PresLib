@@ -21,6 +21,7 @@ namespace pl
 	{
 		static SDL_Event event {};
 		auto pastDownKeys {m_downKeys};
+		m_mouseMotion = {0.f, 0.f};
 
 		for (auto &key : m_pressedKeys)
 			key.second = false;

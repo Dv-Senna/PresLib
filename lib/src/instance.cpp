@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "blocks/group.hpp"
 #include "blocks/rectangle.hpp"
 #include "blocks/triangle.hpp"
 #include "graphics/framebuffer.hpp"
@@ -30,8 +31,7 @@ namespace pl
 		m_slides {},
 		m_currentSlide {m_slides.end()},
 		m_transformation {1.f},
-		m_viewportSize {createInfo.viewportSize},
-		m_projection {createInfo.projection}
+		m_viewportSize {createInfo.viewportSize}
 	{
 		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
 			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
@@ -140,7 +140,7 @@ namespace pl
 		/************* setup framebuffer-related stuff *************/
 
 
-		m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
+		m_transformation = glm::ortho(0.f, m_viewportSize.x, 0.f, m_viewportSize.y);
 	}
 
 
@@ -188,7 +188,7 @@ namespace pl
 					--m_currentSlide;
 			}
 
-			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT))
+			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
 			{
 				if (!m_slides.empty())
 					++m_currentSlide;
@@ -196,7 +196,7 @@ namespace pl
 					return;
 			}
 
-			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_O))
+			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_E))
 			{
 				if (renderMode == pl::graphics::RenderMode::normal)
 					renderMode = pl::graphics::RenderMode::wireframe;
@@ -205,17 +205,6 @@ namespace pl
 					renderMode = pl::graphics::RenderMode::normal;
 
 				m_renderer->setRenderMode(renderMode);
-			}
-
-			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_P))
-			{
-				if (m_projection == pl::graphics::Projection::ortho)
-					m_projection = pl::graphics::Projection::perspective;
-				
-				else
-					m_projection = pl::graphics::Projection::ortho;
-
-				m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
 			}
 
 
@@ -265,31 +254,9 @@ namespace pl
 		if (slide.get() == nullptr)
 			throw std::runtime_error("PL : Can't register new block because slide is invalid");
 
-		std::shared_ptr<pl::Block> block {nullptr};
-
-		switch (createInfos.type)
-		{
-			case pl::Block::Type::rectangle:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Rectangle::CreateInfo))
-					throw std::runtime_error("PL : Can't register rectangle block because given data are invalid");
-
-				block = std::make_shared<pl::blocks::Rectangle> (
-					*this, std::any_cast<pl::blocks::Rectangle::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::triangle:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Triangle::CreateInfo))
-					throw std::runtime_error("PL : Can't register triangle block because given data are invalid");
-
-				block = std::make_shared<pl::blocks::Triangle> (
-					*this, std::any_cast<pl::blocks::Triangle::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			default:
-				throw std::runtime_error("PL : Can't register new block because type is not valid");
-		}
+		auto block {pl::Instance::s_createBlock(*this, createInfos)};
+		if (block.get() == nullptr)
+			throw std::runtime_error("PL : Newly created block is null");
 
 		slide->registerBlock(block);
 		return block;
@@ -311,6 +278,35 @@ namespace pl
 
 
 
+	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Block> group, const pl::Block::CreateInfo &createInfos)
+	{
+		if (group.get() == nullptr)
+			throw std::runtime_error("PL : Can't register new block because group is invalid");
+
+		auto block {pl::Instance::s_createBlock(*this, createInfos)};
+		if (block.get() == nullptr)
+			throw std::runtime_error("PL : Newly created block is null");
+
+		group.get()->registerBlock(block);
+		return block;
+	}
+
+
+
+	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block)
+	{
+		if (group.get() == nullptr)
+			throw std::runtime_error("PL : Can't register block because group is invalid");
+
+		if (block.get() == nullptr)
+			throw std::runtime_error("PL : Can't register block because the given block is not valid");
+
+		group->registerBlock(block);
+		return block;
+	}
+
+
+
 	const glm::mat4 &Instance::getTransformation() const noexcept
 	{
 		return m_transformation;
@@ -318,27 +314,49 @@ namespace pl
 
 
 
-	void Instance::setProjection(pl::graphics::Projection projection)
-	{
-		m_projection = projection;
-		m_transformation = s_generateTransformationFromProjection(m_projection, m_viewportSize);
-	}
-
-
-
-	glm::mat4 Instance::s_generateTransformationFromProjection(pl::graphics::Projection projection, const glm::vec2 &viewportSize)
-	{
-		if (projection == pl::graphics::Projection::ortho)
-			return glm::ortho(0.f, viewportSize.x, 0.f, viewportSize.y);
-
-		return glm::perspective(glm::radians(179.f), viewportSize.x / viewportSize.y, 0.1f, 100.f);
-	}
-
-
-
 	const pl::EventManager &Instance::getEvent() const noexcept
 	{
 		return m_eventManager;
+	}
+
+
+
+	std::shared_ptr<pl::Block> Instance::s_createBlock(pl::Instance &instance, const pl::Block::CreateInfo &createInfos)
+	{
+		switch (createInfos.type)
+		{
+			case pl::Block::Type::rectangle:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Rectangle::CreateInfo))
+					throw std::runtime_error("PL : Can't register rectangle block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Rectangle> (
+					instance, std::any_cast<pl::blocks::Rectangle::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			case pl::Block::Type::triangle:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Triangle::CreateInfo))
+					throw std::runtime_error("PL : Can't register triangle block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Triangle> (
+					instance, std::any_cast<pl::blocks::Triangle::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			case pl::Block::Type::group:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Group::CreateInfo))
+					throw std::runtime_error("PL : Can't register group block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Group> (
+					instance, std::any_cast<pl::blocks::Group::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			default:
+				throw std::runtime_error("PL : Can't register new block because type is not valid");
+		}
+
+		return std::shared_ptr<pl::Block> (nullptr);
 	}
 
 

@@ -12,6 +12,13 @@ namespace pl
 
 
 
+	void Block::registerBlock(std::shared_ptr<pl::Block> /* block */)
+	{
+		throw std::runtime_error("PL : This block can't have children");
+	}
+
+
+
 	BlockWithPosition::BlockWithPosition(const glm::vec2 &position) : m_position {position}
 	{
 

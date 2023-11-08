@@ -10,7 +10,6 @@
 #include "config.hpp"
 #include "eventManager.hpp"
 #include "graphics/api.inl"
-#include "graphics/projection.hpp"
 #include "renderer.hpp"
 #include "slide.hpp"
 
@@ -25,7 +24,6 @@ namespace pl
 				std::string presentationTitle {pl::config::defaultPresentationTitle};
 				pl::graphics::Api graphicsApi {pl::config::defaultGraphicsApi};
 				glm::vec2 viewportSize {pl::config::defaultViewportSize};
-				pl::graphics::Projection projection {pl::config::defaultProjection};
 			};
 
 			Instance(const pl::Instance::CreateInfo &createInfo);
@@ -36,15 +34,16 @@ namespace pl
 			std::shared_ptr<pl::Slide> registerSlide(const pl::Slide::CreateInfo &createInfos = {});
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Slide> slide, const pl::Block::CreateInfo &createInfos);
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Block> block);
+			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, const pl::Block::CreateInfo &createInfos);
+			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block);
 			const glm::mat4 &getTransformation() const noexcept;
-			void setProjection(pl::graphics::Projection projection);
 			const pl::EventManager &getEvent() const noexcept;
 
 			void run();
 
 
 		private:
-			static glm::mat4 s_generateTransformationFromProjection(pl::graphics::Projection projection, const glm::vec2 &viewportSize);
+			static std::shared_ptr<pl::Block> s_createBlock(pl::Instance &instance, const pl::Block::CreateInfo &createInfos);
 
 			SDL_Window *m_window;
 			std::unique_ptr<pl::Renderer> m_renderer;
@@ -55,7 +54,6 @@ namespace pl
 			std::list<std::shared_ptr<pl::Slide>>::iterator m_currentSlide;
 			glm::mat4 m_transformation;
 			glm::vec2 m_viewportSize;
-			pl::graphics::Projection m_projection;
 	};
 
 } // namespace pl

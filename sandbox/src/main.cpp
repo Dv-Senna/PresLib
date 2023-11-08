@@ -1,6 +1,7 @@
 #include <iostream>
 #include <exception>
 
+#include <pl/blocks/group.hpp>
 #include <pl/blocks/rectangle.hpp>
 #include <pl/blocks/triangle.hpp>
 #include <pl/instance.hpp>
@@ -35,12 +36,17 @@ int main(int, char *[])
 
 
 		auto slide = instance.registerSlide();
-		auto rectangle = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
+		auto group = instance.registerBlock(slide, {pl::Block::Type::group, pl::blocks::Group::CreateInfo(
+			{0.f, 0.f},
+			{1.f, 1.f},
+			0.1f
+		)});
+		auto rectangle = instance.registerBlock(group, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
 			{800, 200},
 			{600, 300},
 			pl::utils::yellow
 		)});
-		auto rectangle2 = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
+		auto rectangle2 = instance.registerBlock(group, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
 			{1300, 600},
 			{600, 300},
 			pl::utils::red,

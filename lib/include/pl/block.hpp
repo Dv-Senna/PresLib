@@ -1,6 +1,7 @@
 #pragma once
 
 #include <any>
+#include <memory>
 
 #include <glm/glm.hpp>
 
@@ -19,7 +20,8 @@ namespace pl
 			enum class Type
 			{
 				rectangle,
-				triangle
+				triangle,
+				group
 			};
 
 			struct CreateInfo
@@ -30,6 +32,7 @@ namespace pl
 
 			virtual ~Block() = default;
 			virtual void draw(const glm::mat4 &globalTransformation) = 0;
+			inline virtual void registerBlock(std::shared_ptr<pl::Block> block);
 		
 		protected:
 			inline Block(pl::Instance &instance);
