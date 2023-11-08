@@ -22,7 +22,8 @@ namespace pl
 				rectangle,
 				triangle,
 				group,
-				line
+				line,
+				ellipse
 			};
 
 			struct CreateInfo

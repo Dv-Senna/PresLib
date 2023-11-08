@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "blocks/ellipse.hpp"
 #include "blocks/group.hpp"
 #include "blocks/rectangle.hpp"
 #include "blocks/triangle.hpp"
@@ -140,7 +141,8 @@ namespace pl
 		/************* setup framebuffer-related stuff *************/
 
 
-		m_transformation = glm::ortho(0.f, m_viewportSize.x, 0.f, m_viewportSize.y);
+		//m_transformation = glm::ortho(0.f, m_viewportSize.x, 0.f, m_viewportSize.y);
+		m_transformation = glm::ortho(0.f, (float)windowWidth, 0.f, (float)windowHeight);
 	}
 
 
@@ -176,9 +178,21 @@ namespace pl
 		pl::graphics::RenderMode renderMode {pl::graphics::RenderMode::normal};
 		auto startTime {std::chrono::steady_clock::now()};
 		float dt {1.f};
+		
+		float dtSum {0.f};
+		int dtCount {0};
+		bool monitoring {false};
 
 		while (m_eventManager.pollEvent())
 		{
+			if (monitoring)
+			{
+				++dtCount;
+				dtSum += dt;
+			}
+
+
+
 			if (m_eventManager.isKeyDown(SDL_SCANCODE_ESCAPE))
 				return;
 
@@ -188,7 +202,7 @@ namespace pl
 					--m_currentSlide;
 			}
 
-			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
+			if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
 			{
 				if (!m_slides.empty())
 					++m_currentSlide;
@@ -196,7 +210,7 @@ namespace pl
 					return;
 			}
 
-			else if (m_eventManager.isKeyPressed(SDL_SCANCODE_E))
+			if (m_eventManager.isKeyPressed(SDL_SCANCODE_E))
 			{
 				if (renderMode == pl::graphics::RenderMode::normal)
 					renderMode = pl::graphics::RenderMode::wireframe;
@@ -205,6 +219,25 @@ namespace pl
 					renderMode = pl::graphics::RenderMode::normal;
 
 				m_renderer->setRenderMode(renderMode);
+			}
+
+			if (m_eventManager.isKeyPressed(SDL_SCANCODE_P))
+			{
+				if (monitoring)
+				{
+					std::cout << "Average performance on " << dtCount << " frames : dt=" << dtSum / (float)dtCount
+					<< " | fps=" << 1000.f * (float)dtCount / dtSum << std::endl;
+					dtCount = 0;
+					dtSum = 0.f;
+				}
+
+				else
+				{
+					dtCount = 1;
+					dtSum = dt;
+				}
+
+				monitoring = !monitoring;
 			}
 
 
@@ -358,6 +391,15 @@ namespace pl
 
 				return std::make_shared<pl::blocks::Line> (
 					instance, std::any_cast<pl::blocks::Line::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			case pl::Block::Type::ellipse:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Ellipse::CreateInfo))
+					throw std::runtime_error("PL : Can't register ellipse block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Ellipse> (
+					instance, std::any_cast<pl::blocks::Ellipse::CreateInfo> (createInfos.data)
 				);
 				break;
 

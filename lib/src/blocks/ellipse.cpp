@@ -1,23 +1,20 @@
-#include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
 
-#include <glm/ext/matrix_transform.hpp>
-
-#include "blocks/rectangle.hpp"
+#include "blocks/ellipse.hpp"
 #include "instance.hpp"
 #include "graphics/vertices.hpp"
 #include "graphics/shader.hpp"
 #include "graphics/pipeline.hpp"
-#include "utils/output.hpp"
 
 
 
 namespace pl::blocks
 {
-	pl::utils::Id Rectangle::s_vertices {0}, Rectangle::s_shaders[2] {0, 0}, Rectangle::s_pipeline {0};
+	pl::utils::Id Ellipse::s_vertices {0}, Ellipse::s_shaders[2] {0, 0}, Ellipse::s_pipeline {0};
 
 
 
-	Rectangle::Rectangle(pl::Instance &instance, const pl::blocks::Rectangle::CreateInfo &createInfo) : 
+	Ellipse::Ellipse(pl::Instance &instance, const pl::blocks::Ellipse::CreateInfo &createInfo) : 
 		pl::Block(instance),
 		pl::BlockWithPosition(createInfo.position),
 		pl::BlockWithSize(createInfo.size),
@@ -25,19 +22,19 @@ namespace pl::blocks
 		pl::BlockWithColor(createInfo.color),
 		pl::BlockWithDistortion(createInfo.distortion)
 	{
-		pl::blocks::Rectangle::s_load(m_instance);
+		pl::blocks::Ellipse::s_load(m_instance);
 	}
 
 
 
-	Rectangle::~Rectangle()
+	Ellipse::~Ellipse()
 	{
 
 	}
 
 
 
-	void Rectangle::draw(const glm::mat4 &globalTransformation)
+	void Ellipse::draw(const glm::mat4 &globalTransformation)
 	{
 		glm::vec3 rotationCenter {m_rotationCenter.x * m_size.x, m_rotationCenter.y * m_size.y, 0.f};
 		glm::mat4 transformation {1.f};
@@ -50,7 +47,8 @@ namespace pl::blocks
 		m_instance.getRenderer().usePipeline(s_pipeline);
 			m_instance.getRenderer().setUniformValues(s_pipeline, "vertices", {
 				{"transformation", glm::mat4(globalTransformation * transformation * m_distortion)},
-				{"color", static_cast<glm::vec4> (m_color)}
+				{"color", static_cast<glm::vec4> (m_color)},
+				{"fade", 0.01f * (m_size.x > m_size.y ? m_size.y / m_size.x : m_size.x / m_size.y)}
 			});
 			m_instance.getRenderer().drawVertices(s_vertices);
 		m_instance.getRenderer().usePipeline(0);
@@ -58,7 +56,7 @@ namespace pl::blocks
 
 
 
-	void Rectangle::s_load(pl::Instance &instance)
+	void Ellipse::s_load(pl::Instance &instance)
 	{
 		static bool loaded {false};
 		if (loaded)
@@ -82,13 +80,13 @@ namespace pl::blocks
 
 		pl::graphics::Shader vertexShader {
 			pl::graphics::ShaderType::vertex,
-			"shaders/vertices.vert.spv",
+			"shaders/ellipse.vert.spv",
 			"main"
 		};
 		s_shaders[0] = instance.getRenderer().registerObject(pl::utils::ObjectType::shader, vertexShader);
 		pl::graphics::Shader fragmentShader {
 			pl::graphics::ShaderType::fragment,
-			"shaders/vertices.frag.spv",
+			"shaders/ellipse.frag.spv",
 			"main"
 		};
 		s_shaders[1] = instance.getRenderer().registerObject(pl::utils::ObjectType::shader, fragmentShader);
@@ -98,7 +96,8 @@ namespace pl::blocks
 			{{
 				{
 					{pl::graphics::UniformFieldType::mat4, "transformation"},
-					{pl::graphics::UniformFieldType::vec4, "color"}
+					{pl::graphics::UniformFieldType::vec4, "color"},
+					{pl::graphics::UniformFieldType::floating, "fade"}
 				},
 				"vertices", 0
 			}}

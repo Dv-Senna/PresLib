@@ -1,6 +1,7 @@
 #include <iostream>
 #include <exception>
 
+#include <pl/blocks/ellipse.hpp>
 #include <pl/blocks/group.hpp>
 #include <pl/blocks/rectangle.hpp>
 #include <pl/blocks/triangle.hpp>
@@ -51,6 +52,11 @@ int main(int, char *[])
 			{600, 300},
 			pl::utils::red,
 			3.14159f / 2.f
+		)});
+		auto circle = instance.registerBlock(slide, {pl::Block::Type::ellipse, pl::blocks::Ellipse::CreateInfo(
+			{2000, 500},
+			{500, 1000},
+			pl::utils::green
 		)});
 
 		auto slide2 = instance.registerSlide();
