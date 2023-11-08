@@ -21,7 +21,8 @@ namespace pl
 			{
 				rectangle,
 				triangle,
-				group
+				group,
+				line
 			};
 
 			struct CreateInfo

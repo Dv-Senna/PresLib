@@ -59,6 +59,12 @@ int main(int, char *[])
 			{400.f, 700.f},
 			pl::utils::green
 		)});
+		auto line = instance.registerBlock(slide2, {pl::Block::Type::line, pl::blocks::Line::CreateInfo(
+			{900.f, 200.f},
+			600.f,
+			5.f,
+			pl::utils::orange
+		)});
 
 
 		pl::graphics::Shader vertexShaderInfos {

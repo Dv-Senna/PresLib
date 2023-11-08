@@ -352,6 +352,15 @@ namespace pl
 				);
 				break;
 
+			case pl::Block::Type::line:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Line::CreateInfo))
+					throw std::runtime_error("PL : Can't register line block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Line> (
+					instance, std::any_cast<pl::blocks::Line::CreateInfo> (createInfos.data)
+				);
+				break;
+
 			default:
 				throw std::runtime_error("PL : Can't register new block because type is not valid");
 		}
