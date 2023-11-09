@@ -19,5 +19,6 @@ namespace pl::config
 	inline const pl::graphics::Api defaultGraphicsApi {pl::graphics::Api::OpenGL};
 	inline const std::string defaultPresentationTitle {"PresLib"};
 	inline const pl::graphics::Projection defaultProjection {pl::graphics::Projection::ortho};
+	inline const std::string texFolder {"./latex/"};
 
 } // namespace pl::config

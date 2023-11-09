@@ -3,6 +3,7 @@
 
 #include <pl/blocks/ellipse.hpp>
 #include <pl/blocks/group.hpp>
+#include <pl/blocks/math.hpp>
 #include <pl/blocks/rectangle.hpp>
 #include <pl/blocks/triangle.hpp>
 #include <pl/instance.hpp>
@@ -10,20 +11,9 @@
 #include <pl/graphics/shader.hpp>
 #include <pl/graphics/pipeline.hpp>
 #include <pl/graphics/texture.hpp>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include <pl/utils/loadImage.hpp>
 
 
-class PixelDeleter
-{
-	public:
-		void operator() (unsigned char *pixels)
-		{
-			stbi_image_free(pixels);
-			pixels = nullptr;
-		}
-};
 
 
 int main(int, char *[])
@@ -57,6 +47,12 @@ int main(int, char *[])
 			{2000, 500},
 			{500, 1000},
 			pl::utils::green
+		)});
+		auto math = instance.registerBlock(slide, {pl::Block::Type::math, pl::blocks::Math::CreateInfo(
+			R"(R_{\mu\nu} - \dfrac{1}{2}Rg_{\mu\nu} + \Lambda g_{\mu\nu} + \dfrac{1}{2}\int R\nabla g_{\mu\nu} = \dfrac{8\pi G}{c^4} T_{\mu\nu})",
+			20,
+			{1000, 500},
+			pl::utils::black
 		)});
 
 		auto slide2 = instance.registerSlide();
@@ -121,36 +117,18 @@ int main(int, char *[])
 		});
 
 
-		int channelCount {};
-		int width {}, height {};
-		stbi_set_flip_vertically_on_load(true);
-		std::shared_ptr<unsigned char> pixels {
-			stbi_load("logo.png", &width, &height, &channelCount, 0),
-			PixelDeleter()
-		};
-		if (pixels == nullptr)
-			throw std::runtime_error("Could not load image logo.png");
-
-		pl::graphics::Texture textureInfos {
-			{width, height},
-			pixels,
-			pl::graphics::ColorFormat::r8g8b8a8
-		};
-		auto texture = instance.getRenderer().registerObject(
-			pl::utils::ObjectType::texture,
-			textureInfos
-		);
-
+		glm::vec2 size {};
+		auto texture = pl::utils::loadImage(instance, "logo.png", size);
 
 		pl::graphics::Vertices verticesInfos {
 			{
 				0.f, 0.f,      0.f, 0.f,
-				width / 4.f, height / 4.f,  1.f, 1.f,
-				0.f, height / 4.f,    0.f, 1.f,
+				size.x / 4.f, size.y / 4.f,  1.f, 1.f,
+				0.f, size.y / 4.f,    0.f, 1.f,
 
 				0.f, 0.f,      0.f, 0.f,
-				width / 4.f, 0.f,    1.f, 0.f,
-				width / 4.f, height / 4.f,  1.f, 1.f,
+				size.x / 4.f, 0.f,    1.f, 0.f,
+				size.x / 4.f, size.y / 4.f,  1.f, 1.f,
 			},
 			{{
 					{pl::graphics::VerticesChannel::position, {0, 2}},
