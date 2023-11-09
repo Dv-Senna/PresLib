@@ -8,6 +8,7 @@
 
 #include "blocks/ellipse.hpp"
 #include "blocks/group.hpp"
+#include "blocks/image.hpp"
 #include "blocks/math.hpp"
 #include "blocks/rectangle.hpp"
 #include "blocks/triangle.hpp"
@@ -410,6 +411,15 @@ namespace pl
 
 				return std::make_shared<pl::blocks::Math> (
 					instance, std::any_cast<pl::blocks::Math::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			case pl::Block::Type::image:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Image::CreateInfo))
+					throw std::runtime_error("PL : Can't register image block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Image> (
+					instance, std::any_cast<pl::blocks::Image::CreateInfo> (createInfos.data)
 				);
 				break;
 

@@ -3,6 +3,7 @@
 
 #include <pl/blocks/ellipse.hpp>
 #include <pl/blocks/group.hpp>
+#include <pl/blocks/image.hpp>
 #include <pl/blocks/math.hpp>
 #include <pl/blocks/rectangle.hpp>
 #include <pl/blocks/triangle.hpp>
@@ -13,6 +14,7 @@
 #include <pl/graphics/texture.hpp>
 #include <pl/utils/loadImage.hpp>
 
+#include <glm/gtc/matrix_transform.hpp>
 
 
 
@@ -54,6 +56,16 @@ int main(int, char *[])
 			{1000, 500},
 			pl::utils::black
 		)});
+		auto image = instance.registerBlock(slide, {pl::Block::Type::image, pl::blocks::Image::CreateInfo(
+			"logo.png",
+			{0, 0},
+			pl::utils::white,
+			0.f, {0.5f, 0.5f},
+			glm::scale(glm::mat4(1.f), {0.25f, 0.25f, 1.f})
+		)});
+
+
+
 
 		auto slide2 = instance.registerSlide();
 		auto triangle = instance.registerBlock(slide2, {pl::Block::Type::triangle, pl::blocks::Triangle::CreateInfo(
@@ -67,93 +79,10 @@ int main(int, char *[])
 			5.f,
 			pl::utils::orange
 		)});
+		(void)instance.registerBlock(slide2, image);
 
 
-		pl::graphics::Shader vertexShaderInfos {
-			pl::graphics::ShaderType::vertex,
-			"shaders/test.vert.spv",
-			"main"
-		};
-		pl::graphics::Shader fragmentShaderInfos {
-			pl::graphics::ShaderType::fragment,
-			"shaders/test.frag.spv",
-			"main"
-		};
 
-		auto vertexShader = instance.getRenderer().registerObject(
-			pl::utils::ObjectType::shader,
-			vertexShaderInfos
-		);
-		auto fragmentShader = instance.getRenderer().registerObject(
-			pl::utils::ObjectType::shader,
-			fragmentShaderInfos
-		);
-
-		pl::graphics::Uniform uniformInfos {
-			{
-				{pl::graphics::UniformFieldType::floating, "r"},
-				{pl::graphics::UniformFieldType::floating, "g"},
-				{pl::graphics::UniformFieldType::floating, "b"},
-				{pl::graphics::UniformFieldType::mat4, "scale"}
-			},
-			"uni_Color",
-			0
-		};
-
-		pl::graphics::Pipeline pipelineInfos {
-			{vertexShader, fragmentShader},
-			{uniformInfos}
-		};
-		auto pipeline = instance.getRenderer().registerObject(
-			pl::utils::ObjectType::pipeline,
-			pipelineInfos
-		);
-
-		instance.getRenderer().setUniformValues(pipeline, "uni_Color", {
-			{"r", 1.f},
-			{"g", 0.5f},
-			{"b", 0.1f},
-			{"scale", instance.getTransformation()}
-		});
-
-
-		glm::vec2 size {};
-		auto texture = pl::utils::loadImage(instance, "logo.png", size);
-
-		pl::graphics::Vertices verticesInfos {
-			{
-				0.f, 0.f,      0.f, 0.f,
-				size.x / 4.f, size.y / 4.f,  1.f, 1.f,
-				0.f, size.y / 4.f,    0.f, 1.f,
-
-				0.f, 0.f,      0.f, 0.f,
-				size.x / 4.f, 0.f,    1.f, 0.f,
-				size.x / 4.f, size.y / 4.f,  1.f, 1.f,
-			},
-			{{
-					{pl::graphics::VerticesChannel::position, {0, 2}},
-					{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}},
-				},
-				pl::graphics::VerticesUsage::staticDraw
-			}
-		};
-		auto vertices = instance.getRenderer().registerObject(
-			pl::utils::ObjectType::vertices,
-			verticesInfos
-		);
-
-
-		instance.setRenderingCallback([&]() {
-			instance.getRenderer().setUniformValues(pipeline, "uni_Color", {
-				{"scale", instance.getTransformation()}
-			});
-
-			instance.getRenderer().usePipeline(pipeline);
-				instance.getRenderer().bindTexture(pipeline, texture, 0);
-					instance.getRenderer().drawVertices(vertices);
-				instance.getRenderer().bindTexture(pipeline, 0, 0);
-			instance.getRenderer().usePipeline(0);
-		});
 
 		instance.run();
 	}

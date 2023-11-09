@@ -24,7 +24,8 @@ namespace pl
 				group,
 				line,
 				ellipse,
-				math
+				math,
+				image
 			};
 
 			struct CreateInfo
