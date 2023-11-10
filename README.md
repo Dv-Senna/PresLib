@@ -1,7 +1,7 @@
 # <img src="./logo.png" width="300px" alt="PresLib" />
 
 <p align="center">
-	<img src="https://img.shields.io/badge/version-0.4.0-informational" />
+	<img src="https://img.shields.io/badge/version-0.5.0-informational" />
 	<img src="https://img.shields.io/badge/Windows-success-success" />
 	<img src="https://img.shields.io/badge/Linux-not tested-important" />
 	<img src="https://img.shields.io/badge/MacOS-not tested-important" />
@@ -24,9 +24,9 @@ A C++ presentation library with LaTeX support.
  	```ps
 	git clone https://github.com/Dv-Senna/PresLib.git
 	```
- - Download and compiled (or get directly binaries) [SDL2](https://github.com/libsdl-org/SDL), [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf), [SDL2_image](https://github.com/libsdl-org/SDL_image), [SDL2_latex](https://github.com/Dv-Senna/SDL_latex) and [SDL2_gfx](https://github.com/ferzkopp/SDL_gfx)
+ - Download and compiled (or get directly binaries) [SDL3](https://github.com/libsdl-org/SDL), [freetype2](http://freetype.org/), [glad](https://glad.dav1d.de/), [glm](https://github.com/g-truc/glm), [stb_image](https://github.com/nothings/stb) and [utf8-cpp](https://github.com/nemtrif/utfcpp)
 	- Put each one into vendors/{name_of_the_dep}
-	- Put headers in an include/SDL2 folder
+	- Put headers in an include/{name_of_deps} folder
 	- Put libraries in a lib folder
 	- If there is a dll, copy it into sandbox/bin or next to your own executable
  - Compile with
@@ -44,7 +44,7 @@ You can use directly the project to code your own presentation. Just open `sandb
 > **Warning**  
 It's recommended to encased the code in a `try`-`catch` block. Know that each error will throw an `std::runtime_error(...)`. 
 
-To use the library, start by creating a `pl::Instance<...>`. As a template argument, use the graphics api of your choice. For the moment, only `pl::GraphicsApi::SDL2_renderer` is supported. Then you can create a slide with `pl::Slide slide {instance}`. The order of creation is the order of slides. From here you can create a block of your choice and add it to the slide. The first added block will be the farthest and the last the nearest. Finally you have to run the instance. Here is an example :
+To use the library, start by creating a `pl::Instance`. Most function in PresLib take their paramaters as a `pl::Foo::CreateInfo` structure (like Vulkan). This allow you to name your arguments and to pass only the arguments you want (except for the mandatory ones). Register a new slide to the instance and register a block (here a rectangle) to the slide. Don't forget to run the instance. You're done !
 
 ```cpp
 
@@ -56,11 +56,17 @@ int main(int, char *[])
 {
 	try
 	{
-		pl::Instance<pl::GraphicsApi::SDL2_renderer> instance {};
-		pl::Slide slide {instance};
+		pl::Instance::CreateInfo instanceCreateInfo {};
+		instanceCreateInfo.viewportSize = {1920, 1080};
+		instanceCreateInfo.graphicsApi = pl::graphics::Api::OpenGL;
+		pl::Instance instance {instanceCreateInfo};
 
-		pl::blocks::Rectangle rectangle {instance, {100, 100}, {600, 300}, pl::utils::green, pl::RenderMethod::border};
-		slide.add(&rectangle);
+		auto slide = instance.registerSlide();
+		auto rectangle = instance.registerBlock(slide, {pl::Block::Type::rectangle, pl::blocks::Rectangle::CreateInfo(
+			{800, 200},
+			{600, 300},
+			pl::utils::red
+		)});
 
 		instance.run();
 	}

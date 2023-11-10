@@ -1,23 +1,7 @@
 #include <iostream>
 #include <exception>
 
-#include <pl/blocks/ellipse.hpp>
-#include <pl/blocks/group.hpp>
-#include <pl/blocks/image.hpp>
-#include <pl/blocks/math.hpp>
-#include <pl/blocks/rectangle.hpp>
-#include <pl/blocks/text.hpp>
-#include <pl/blocks/triangle.hpp>
-#include <pl/instance.hpp>
-#include <pl/graphics/vertices.hpp>
-#include <pl/graphics/shader.hpp>
-#include <pl/graphics/pipeline.hpp>
-#include <pl/graphics/texture.hpp>
-#include <pl/utils/loadImage.hpp>
-
-#include <pl/graphics/text.hpp>
-
-#include <glm/gtc/matrix_transform.hpp>
+#include <pl/preslib.hpp>
 
 
 
@@ -93,7 +77,7 @@ int main(int, char *[])
 		)});
 		(void)instance.registerBlock(slide2, image);
 		auto text = instance.registerBlock(slide2, {pl::Block::Type::text, pl::blocks::Text::CreateInfo(
-			"This is a test text with some unicode symbols",
+			"Hello World !",
 			50,
 			"roboto",
 			{1000, 300},
