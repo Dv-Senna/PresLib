@@ -426,6 +426,7 @@ namespace pl::impl::opengl
 				static std::map<pl::graphics::ColorFormat, pl::impl::opengl::Texture::FormatValues> formats {
 					{pl::graphics::ColorFormat::r8g8b8, {24, GL_RGB8, GL_RGB}},
 					{pl::graphics::ColorFormat::r8g8b8a8, {32, GL_RGBA8, GL_RGBA}},
+					{pl::graphics::ColorFormat::r8, {8, GL_R8, GL_RED}}
 				};
 				static std::map<pl::graphics::Filter, GLenum> minFilters {
 					{pl::graphics::Filter::nearest, GL_NEAREST_MIPMAP_LINEAR},
@@ -440,10 +441,13 @@ namespace pl::impl::opengl
 
 				if (infos.multisample == 0)
 				{
+					if (infos.format == pl::graphics::ColorFormat::r8)
+						glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 					glBindTexture(GL_TEXTURE_2D, m_texture);
 						glTexImage2D(
 							GL_TEXTURE_2D,
-							0,  formats[infos.format].internalFormat,
+							0, formats[infos.format].internalFormat,
 							m_size.x, m_size.y,
 							0, formats[infos.format].format, GL_UNSIGNED_BYTE, infos.pixels.get()
 						);
@@ -452,6 +456,9 @@ namespace pl::impl::opengl
 						glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilters[infos.magFilter]);
 
 					glBindTexture(GL_TEXTURE_2D, 0);
+
+					if (infos.format == pl::graphics::ColorFormat::r8)
+						glPixelStorei(GL_UNPACK_ALIGNMENT, 0);
 				}
 
 				else
@@ -1049,10 +1056,16 @@ namespace pl::impl::opengl
 		impl->renderMode = renderMode;
 
 		if (renderMode == pl::graphics::RenderMode::normal)
+		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glEnable(GL_BLEND);
+		}
 
 		else if (renderMode == pl::graphics::RenderMode::wireframe)
+		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glDisable(GL_BLEND);
+		}
 	}
 
 

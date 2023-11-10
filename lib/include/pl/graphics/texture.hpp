@@ -16,7 +16,7 @@ namespace pl::graphics
 
 	enum class ColorFormat
 	{
-		r8g8b8, r8g8b8a8
+		r8g8b8, r8g8b8a8, r8
 	};
 
 

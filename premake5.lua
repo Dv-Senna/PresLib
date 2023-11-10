@@ -21,15 +21,12 @@ project "lib"
 
 	includedirs {
 		"lib/include/pl",
-		"vendors/SDL2/include",
 		"vendors/SDL3/include",
-		"vendors/SDL2/include/SDL2",
-		"vendors/SDL2_ttf/include",
-		"vendors/SDL2_image/include",
-		"vendors/SDL2_latex/include",
 		"vendors/glad/include",
 		"vendors/glm/include",
-		"vendors/stb_image/include"
+		"vendors/stb_image/include",
+		"vendors/utf8/include",
+		"vendors/ft2/include"
 	}
 
 	filter "configurations:debug"
@@ -68,15 +65,13 @@ project "Sandbox"
 	includedirs {
 		"sandbox/include",
 		"lib/include",
-		"vendors/SDL2/include",
 		"vendors/SDL3/include",
-		"vendors/SDL2/include/SDL2",
-		"vendors/SDL2_ttf/include",
-		"vendors/SDL2_image/include",
-		"vendors/SDL2_latex/include",
 		"vendors/glad/include",
 		"vendors/glm/include",
-		"vendors/stb_image/include"
+		"vendors/stb_image/include",
+		"vendors/utf8/include",
+		"vendors/ft2/include"
+
 	}
 
 	libdirs {
@@ -91,13 +86,9 @@ project "Sandbox"
 
 	links {
 		"preslib",
-		--"SDL2_ttf",
-		--"SDL2_latex",
-		--"SDL2_image",
-		--"SDL2",
-		--"SDL2main",
 		"SDL3",
-		"glad"
+		"glad",
+		"freetype"
 	}
 
 

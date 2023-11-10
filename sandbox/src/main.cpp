@@ -6,6 +6,7 @@
 #include <pl/blocks/image.hpp>
 #include <pl/blocks/math.hpp>
 #include <pl/blocks/rectangle.hpp>
+#include <pl/blocks/text.hpp>
 #include <pl/blocks/triangle.hpp>
 #include <pl/instance.hpp>
 #include <pl/graphics/vertices.hpp>
@@ -13,6 +14,8 @@
 #include <pl/graphics/pipeline.hpp>
 #include <pl/graphics/texture.hpp>
 #include <pl/utils/loadImage.hpp>
+
+#include <pl/graphics/text.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -26,9 +29,17 @@ int main(int, char *[])
 		instanceCreateInfo.viewportSize = {2560, 1440};
 		instanceCreateInfo.graphicsApi = pl::graphics::Api::OpenGL;
 		pl::Instance instance {instanceCreateInfo};
+		instance.getFont().registerFont("roboto", "fonts/roboto/Roboto-Regular.ttf");
 
 
 		auto slide = instance.registerSlide();
+		auto copyrightMark = instance.registerBlock(slide, {pl::Block::Type::text, pl::blocks::Text::CreateInfo(
+			"© Dv-Senna 2023",
+			30,
+			"roboto",
+			{2300, 50},
+			{0, 0, 0, 150}
+		)});
 		auto group = instance.registerBlock(slide, {pl::Block::Type::group, pl::blocks::Group::CreateInfo(
 			{0.f, 0.f},
 			{1.f, 1.f},
@@ -68,6 +79,7 @@ int main(int, char *[])
 
 
 		auto slide2 = instance.registerSlide();
+		(void)instance.registerBlock(slide2, copyrightMark);
 		auto triangle = instance.registerBlock(slide2, {pl::Block::Type::triangle, pl::blocks::Triangle::CreateInfo(
 			{500.f, 0.f}, {600.f, 600.f},
 			{400.f, 700.f},
@@ -80,8 +92,13 @@ int main(int, char *[])
 			pl::utils::orange
 		)});
 		(void)instance.registerBlock(slide2, image);
-
-
+		auto text = instance.registerBlock(slide2, {pl::Block::Type::text, pl::blocks::Text::CreateInfo(
+			"This is a test text with some unicode symbols",
+			50,
+			"roboto",
+			{1000, 300},
+			pl::utils::black
+		)});
 
 
 		instance.run();

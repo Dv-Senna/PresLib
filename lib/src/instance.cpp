@@ -11,6 +11,7 @@
 #include "blocks/image.hpp"
 #include "blocks/math.hpp"
 #include "blocks/rectangle.hpp"
+#include "blocks/text.hpp"
 #include "blocks/triangle.hpp"
 #include "graphics/framebuffer.hpp"
 #include "graphics/pipeline.hpp"
@@ -26,6 +27,7 @@ namespace pl
 		m_window {nullptr},
 		m_renderer {nullptr},
 		m_eventManager {},
+		m_fontManager {*this},
 		m_renderingCallback {nullptr},
 		m_vertices {0},
 		m_framebuffer {0},
@@ -356,6 +358,13 @@ namespace pl
 
 
 
+	pl::FontManager &Instance::getFont() noexcept
+	{
+		return m_fontManager;
+	}
+
+
+
 	std::shared_ptr<pl::Block> Instance::s_createBlock(pl::Instance &instance, const pl::Block::CreateInfo &createInfos)
 	{
 		switch (createInfos.type)
@@ -420,6 +429,15 @@ namespace pl
 
 				return std::make_shared<pl::blocks::Image> (
 					instance, std::any_cast<pl::blocks::Image::CreateInfo> (createInfos.data)
+				);
+				break;
+
+			case pl::Block::Type::text:
+				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Text::CreateInfo))
+					throw std::runtime_error("PL : Can't register text block because given data are invalid");
+
+				return std::make_shared<pl::blocks::Text> (
+					instance, std::any_cast<pl::blocks::Text::CreateInfo> (createInfos.data)
 				);
 				break;
 
