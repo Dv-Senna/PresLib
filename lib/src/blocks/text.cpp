@@ -30,6 +30,9 @@ namespace pl::blocks
 		pl::blocks::Text::s_load(m_instance);
 
 		m_vertices = pl::graphics::generateVerticesFromText(m_instance, createInfo.font, createInfo.fontSize, createInfo.text, m_textures);
+
+		if (m_color == pl::utils::undefined)
+			m_color = m_instance.getStyle().colors.text;
 	}
 
 

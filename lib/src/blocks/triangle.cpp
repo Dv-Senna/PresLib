@@ -40,6 +40,9 @@ namespace pl::blocks
 			}
 		};
 		m_vertices = m_instance.getRenderer().registerObject(pl::utils::ObjectType::vertices, vertices);
+
+		if (m_color == pl::utils::undefined)
+			m_color = m_instance.getStyle().colors.shape;
 	}
 
 

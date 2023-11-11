@@ -54,7 +54,7 @@ int main(int, char *[])
 		auto image = instance.registerBlock(slide, {pl::Block::Type::image, pl::blocks::Image::CreateInfo(
 			"logo.png",
 			{0, 0},
-			pl::utils::white,
+			pl::utils::undefined,
 			0.f, {0.5f, 0.5f},
 			glm::scale(glm::mat4(1.f), {0.25f, 0.25f, 1.f})
 		)});
@@ -81,7 +81,7 @@ int main(int, char *[])
 			50,
 			"roboto",
 			{1000, 300},
-			pl::utils::black
+			pl::utils::undefined
 		)});
 
 

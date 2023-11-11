@@ -1,5 +1,5 @@
 workspace "NickelLib"
-	configurations {"debug", "release"}
+	configurations {"debug", "release", "profile"}
 
 
 project "lib"
@@ -29,7 +29,14 @@ project "lib"
 		"vendors/ft2/include"
 	}
 
-	filter "configurations:debug"
+	filter "configurations:profile"
+		flags {"Profile", "ProfileGC"}
+
+	filter {"configurations:profile", "action:gmake*"}
+		buildoptions {"-pg"}
+		linkoptions {"-pg"}
+
+	filter "configurations:debug or configurations:profile"
 		defines {"DEBUG", "PL_DEBUG"}
 		symbols "On"
 
@@ -95,7 +102,14 @@ project "Sandbox"
 	filter {"system:Windows", "toolset:gcc"}
 		links "mingw32"
 
-	filter "configurations:debug"
+	filter "configurations:profile"
+		flags {"Profile", "ProfileGC"}
+
+	filter {"configurations:profile", "action:gmake*"}
+		buildoptions {"-pg"}
+		linkoptions {"-pg"}
+
+	filter "configurations:debug or configurations:profile"
 		defines {"DEBUG", "PL_DEBUG"}
 		symbols "On"
 

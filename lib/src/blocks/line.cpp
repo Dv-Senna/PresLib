@@ -17,6 +17,9 @@ namespace pl::blocks
 		pl::BlockWithDistortion(createInfo.distortion)
 	{
 		pl::blocks::Rectangle::s_load(instance);
+
+		if (m_color == pl::utils::undefined)
+			m_color = m_instance.getStyle().colors.shape;
 	}
 
 

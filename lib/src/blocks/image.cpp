@@ -30,6 +30,9 @@ namespace pl::blocks
 	{
 		pl::blocks::Image::s_load(m_instance);
 		m_texture = pl::utils::loadImage(m_instance, createInfo.path, m_size);
+
+		if (m_color == pl::utils::undefined)
+			m_color = pl::utils::white;
 	}
 
 

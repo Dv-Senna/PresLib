@@ -19,9 +19,16 @@ namespace pl
 				none = 0
 			};
 
+			enum class Type
+			{
+				normal
+			};
+
 			struct CreateInfo
 			{
+				pl::Slide::Type type {pl::Slide::Type::normal};
 				std::string name {""};
+				std::string title {""};
 				pl::Slide::Flag flags {pl::Slide::Flag::none};
 			};
 

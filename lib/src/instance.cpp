@@ -28,6 +28,8 @@ namespace pl
 		m_renderer {nullptr},
 		m_eventManager {},
 		m_fontManager {*this},
+		m_theme {nullptr},
+		m_defaultStyle {},
 		m_renderingCallback {nullptr},
 		m_vertices {0},
 		m_framebuffer {0},
@@ -244,12 +246,21 @@ namespace pl
 				monitoring = !monitoring;
 			}
 
+			pl::utils::Color clearColor {m_defaultStyle.colors.background};
+			if (m_theme != nullptr)
+				clearColor = m_theme->getStyle().colors.background;
 
 			m_renderer->useFramebuffer(m_framebuffer);
-				m_renderer->cleanViewport({100, 100, 100, 255});
+				m_renderer->cleanViewport(clearColor);
+
+				if (m_theme != nullptr)
+					m_theme->preRendering();
 
 				if (m_currentSlide != m_slides.end())
 					(*m_currentSlide)->draw(m_transformation);
+
+				if (m_theme != nullptr)
+					m_theme->postRendering();
 
 				if (m_renderingCallback != nullptr)
 					m_renderingCallback();
@@ -280,6 +291,9 @@ namespace pl
 		m_slides.push_back(std::shared_ptr<pl::Slide> (new pl::Slide(createInfos)));
 		if (m_slides.size() == 1)
 			m_currentSlide = m_slides.begin();
+
+		if (m_theme != nullptr)
+			m_theme->registerSlide(*m_slides.rbegin(), createInfos);
 
 		return *m_slides.rbegin();
 	}
@@ -361,6 +375,23 @@ namespace pl
 	pl::FontManager &Instance::getFont() noexcept
 	{
 		return m_fontManager;
+	}
+
+
+
+	void Instance::useTheme(pl::Theme *theme)
+	{
+		m_theme = theme;
+	}
+
+
+
+	const pl::Style &Instance::getStyle() const noexcept
+	{
+		if (m_theme != nullptr)
+			return m_theme->getStyle();
+
+		return m_defaultStyle;
 	}
 
 

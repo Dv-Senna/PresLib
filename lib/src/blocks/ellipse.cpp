@@ -23,6 +23,9 @@ namespace pl::blocks
 		pl::BlockWithDistortion(createInfo.distortion)
 	{
 		pl::blocks::Ellipse::s_load(m_instance);
+
+		if (m_color == pl::utils::undefined)
+			m_color = m_instance.getStyle().colors.shape;
 	}
 
 

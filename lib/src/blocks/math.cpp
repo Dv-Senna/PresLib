@@ -50,6 +50,9 @@ namespace pl::blocks
 		}
 
 		m_texture = pl::utils::loadImage(m_instance, pl::config::texFolder + stream.str() + ".png", m_size);
+
+		if (m_color == pl::utils::undefined)
+			m_color = m_instance.getStyle().colors.text;
 	}
 
 
