@@ -2,6 +2,7 @@
 #include <map>
 
 #include "impl/opengl/renderer.hpp"
+#include "impl/vulkan/renderer.hpp"
 
 #include "renderer.hpp"
 
@@ -27,6 +28,21 @@ namespace pl
 				pl::impl::opengl::Renderer::useFramebuffer,
 				pl::impl::opengl::Renderer::getFramebufferTexture,
 				pl::impl::opengl::Renderer::setRenderMode
+			}},
+			{pl::graphics::Api::Vulkan, {
+				pl::impl::vulkan::Renderer::setup,
+				pl::impl::vulkan::Renderer::cleanup,
+				pl::impl::vulkan::Renderer::cleanViewport,
+				pl::impl::vulkan::Renderer::updateScreen,
+				pl::impl::vulkan::Renderer::registerObject,
+				pl::impl::vulkan::Renderer::getObjectType,
+				pl::impl::vulkan::Renderer::usePipeline,
+				pl::impl::vulkan::Renderer::drawVertices,
+				pl::impl::vulkan::Renderer::setUniformValues,
+				pl::impl::vulkan::Renderer::bindTexture,
+				pl::impl::vulkan::Renderer::useFramebuffer,
+				pl::impl::vulkan::Renderer::getFramebufferTexture,
+				pl::impl::vulkan::Renderer::setRenderMode
 			}}
 		};
 

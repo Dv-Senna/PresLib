@@ -39,7 +39,8 @@ namespace pl
 		m_viewportSize {createInfo.viewportSize}
 	{
 		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
-			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
+			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL},
+			{pl::graphics::Api::Vulkan, SDL_WINDOW_VULKAN}
 		};
 
 		auto it {flags.find(createInfo.graphicsApi)};
@@ -58,6 +59,7 @@ namespace pl
 		rendererCreateInfo.graphicsApi = createInfo.graphicsApi;
 		rendererCreateInfo.viewportSize = m_viewportSize;
 		rendererCreateInfo.window = m_window;
+		rendererCreateInfo.windowTitle = createInfo.presentationTitle;
 		m_renderer = std::make_unique<pl::Renderer> (rendererCreateInfo);
 
 

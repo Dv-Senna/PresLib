@@ -26,6 +26,7 @@ namespace pl
 				glm::vec2 viewportSize;
 				SDL_Window *window;
 				pl::graphics::Api graphicsApi;
+				std::string windowTitle;
 			};
 
 			struct Implementation;

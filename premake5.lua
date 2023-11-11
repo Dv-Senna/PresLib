@@ -26,7 +26,8 @@ project "lib"
 		"vendors/glm/include",
 		"vendors/stb_image/include",
 		"vendors/utf8/include",
-		"vendors/ft2/include"
+		"vendors/ft2/include",
+		"vendors/vulkan/include"
 	}
 
 	filter "configurations:debug"
@@ -70,25 +71,23 @@ project "Sandbox"
 		"vendors/glm/include",
 		"vendors/stb_image/include",
 		"vendors/utf8/include",
-		"vendors/ft2/include"
-
+		"vendors/ft2/include",
+		"vendors/vulkan/include"
 	}
 
 	libdirs {
 		"lib/bin",
-		"vendors/SDL2/lib",
 		"vendors/SDL3/lib",
-		"vendors/SDL2_ttf/lib",
-		"vendors/SDL2_image/lib",
-		"vendors/SDL2_latex/lib",
 		"vendors/glad/lib",
+		"vendors/vulkan/lib"
 	}
 
 	links {
 		"preslib",
 		"SDL3",
 		"glad",
-		"freetype"
+		"freetype",
+		"vulkan-1"
 	}
 
 

@@ -11,7 +11,7 @@ int main(int, char *[])
 	{
 		pl::Instance::CreateInfo instanceCreateInfo {};
 		instanceCreateInfo.viewportSize = {2560, 1440};
-		instanceCreateInfo.graphicsApi = pl::graphics::Api::OpenGL;
+		instanceCreateInfo.graphicsApi = pl::graphics::Api::Vulkan;
 		pl::Instance instance {instanceCreateInfo};
 		instance.getFont().registerFont("roboto", "fonts/roboto/Roboto-Regular.ttf");
 

@@ -12,6 +12,7 @@
 namespace pl::config
 {
 	inline const glm::vec2 openglVersion {4, 6};
+	inline const glm::vec2 vulkanVerion {1, 3};
 	inline const pl::utils::Color openglBitsPerColor {8, 8, 8};
 	inline const bool useMSAA {true};
 	inline const int MSAASamplesCount {4};
