@@ -22,6 +22,7 @@ namespace pl::impl::vulkan
 		m_swapChain {},
 		m_efficiency {efficiency},
 		m_images {},
+		m_imageViews {},
 		m_format {},
 		m_extent {}
 	{
@@ -47,6 +48,12 @@ namespace pl::impl::vulkan
 	const std::vector<vk::Image> &SwapChain::getImages() const noexcept
 	{
 		return m_images;
+	}
+
+
+	const std::vector<vk::ImageView> &SwapChain::getImageViews() const noexcept
+	{
+		return m_imageViews;
 	}
 
 
@@ -158,12 +165,37 @@ namespace pl::impl::vulkan
 		m_images.resize(count);
 		if (m_device.getDevice().getSwapchainImagesKHR(m_swapChain, &count, m_images.data()) != vk::Result::eSuccess)
 			throw std::runtime_error("PL : Vulkan can't retrieve swapchaine images");
+
+
+		m_imageViews.reserve(m_images.size());
+
+		for (const auto &image : m_images)
+		{
+			vk::ImageViewCreateInfo imageViewCreateInfo {};
+			imageViewCreateInfo.image = image;
+			imageViewCreateInfo.viewType = vk::ImageViewType::e2D;
+			imageViewCreateInfo.format = m_format;
+			imageViewCreateInfo.components.r = vk::ComponentSwizzle::eIdentity;
+			imageViewCreateInfo.components.g = vk::ComponentSwizzle::eIdentity;
+			imageViewCreateInfo.components.b = vk::ComponentSwizzle::eIdentity;
+			imageViewCreateInfo.components.a = vk::ComponentSwizzle::eIdentity;
+			imageViewCreateInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+			imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+			imageViewCreateInfo.subresourceRange.levelCount = 1;
+			imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+			imageViewCreateInfo.subresourceRange.layerCount = 1;
+
+			m_imageViews.push_back(m_device.getDevice().createImageView(imageViewCreateInfo, nullptr));
+		}
 	}
 
 
 
 	void SwapChain::m_unload()
 	{
+		for (const auto &imageView : m_imageViews)
+			m_device.getDevice().destroyImageView(imageView, nullptr);
+
 		m_device.getDevice().destroySwapchainKHR(m_swapChain, nullptr);
 	}
 

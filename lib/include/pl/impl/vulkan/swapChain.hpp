@@ -26,6 +26,7 @@ namespace pl::impl::vulkan
 
 			vk::SwapchainKHR getSwapChain() const noexcept;
 			const std::vector<vk::Image> &getImages() const noexcept;
+			const std::vector<vk::ImageView> &getImageViews() const noexcept;
 			vk::Format getFormat() const noexcept;
 			vk::Extent2D getExtent() const noexcept;
 
@@ -47,6 +48,7 @@ namespace pl::impl::vulkan
 			vk::SwapchainKHR m_swapChain;
 			pl::graphics::Efficency m_efficiency;
 			std::vector<vk::Image> m_images;
+			std::vector<vk::ImageView> m_imageViews;
 			vk::Format m_format;
 			vk::Extent2D m_extent;
 	};
