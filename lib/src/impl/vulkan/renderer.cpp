@@ -6,6 +6,8 @@
 #include "impl/vulkan/device.hpp"
 #include "impl/vulkan/instance.hpp"
 #include "impl/vulkan/renderer.hpp"
+#include "impl/vulkan/surface.hpp"
+#include "impl/vulkan/swapChain.hpp"
 
 
 
@@ -14,17 +16,21 @@ namespace pl::impl::vulkan
 	struct InternalState
 	{
 		std::shared_ptr<pl::impl::vulkan::Instance> instance;
+		std::shared_ptr<pl::impl::vulkan::Surface> surface;
 		std::shared_ptr<pl::impl::vulkan::Device> device;
+		std::shared_ptr<pl::impl::vulkan::SwapChain> swapChain;
 
 
 		bool isComplet()
 		{
-			return instance->isComplet() && device->isComplet();
+			return instance->isComplet() && surface->isComplet() && device->isComplet();
 		}
 
 		~InternalState()
 		{
+			swapChain.reset();
 			device.reset();
+			surface.reset();
 			instance.reset();
 		}
 	};
@@ -55,7 +61,17 @@ namespace pl::impl::vulkan
 		pl::impl::vulkan::InternalState *internalState {static_cast<pl::impl::vulkan::InternalState*> (impl->internalState.get())};
 
 		internalState->instance = std::make_shared<pl::impl::vulkan::Instance> (createInfo);
-		internalState->device = std::make_shared<pl::impl::vulkan::Device> (*internalState->instance, createInfo.efficency);
+		internalState->surface = std::make_shared<pl::impl::vulkan::Surface> (*internalState->instance, createInfo.window);
+		internalState->device = std::make_shared<pl::impl::vulkan::Device> (
+			*internalState->instance, *internalState->surface, createInfo.efficency
+		);
+		internalState->swapChain = std::make_shared<pl::impl::vulkan::SwapChain> (
+			*internalState->instance,
+			*internalState->surface,
+			*internalState->device,
+			createInfo.window,
+			createInfo.efficency
+		);
 	}
 
 
