@@ -60,6 +60,7 @@ namespace pl
 		rendererCreateInfo.viewportSize = m_viewportSize;
 		rendererCreateInfo.window = m_window;
 		rendererCreateInfo.windowTitle = createInfo.presentationTitle;
+		rendererCreateInfo.efficency = createInfo.efficency;
 		m_renderer = std::make_unique<pl::Renderer> (rendererCreateInfo);
 
 

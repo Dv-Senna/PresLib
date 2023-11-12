@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "graphics/api.inl"
+#include "graphics/efficiency.hpp"
 #include "graphics/projection.hpp"
 #include "utils/color.hpp"
 
@@ -21,5 +22,6 @@ namespace pl::config
 	inline const std::string defaultPresentationTitle {"PresLib"};
 	inline const pl::graphics::Projection defaultProjection {pl::graphics::Projection::ortho};
 	inline const std::string texFolder {"./latex/"};
+	inline const pl::graphics::Efficency defaultEfficency {pl::graphics::Efficency::efficient};
 
 } // namespace pl::config

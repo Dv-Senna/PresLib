@@ -87,7 +87,7 @@ namespace pl::impl::vulkan
 				m_logStream << "\t" << layer << "\n";
 		#endif
 
-		m_logStream << std::flush;
+		m_logStream << std::endl;
 	}
 
 
@@ -297,7 +297,7 @@ namespace pl::impl::vulkan
 		void* pUserData
 	)
 	{
-		if (messageSeverity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+		if (messageSeverity < VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)//VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
 			return vk::False;
 
 		std::ostream &stream {*static_cast<std::ostream*> (pUserData)};
@@ -341,7 +341,7 @@ namespace pl::impl::vulkan
 				break;
 		}
 
-		stream << std::flush;
+		stream << std::endl;
 
 		return vk::False;
 	}

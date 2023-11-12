@@ -3,6 +3,7 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include "impl/vulkan/device.hpp"
 #include "impl/vulkan/instance.hpp"
 #include "impl/vulkan/renderer.hpp"
 
@@ -13,15 +14,17 @@ namespace pl::impl::vulkan
 	struct InternalState
 	{
 		std::shared_ptr<pl::impl::vulkan::Instance> instance;
+		std::shared_ptr<pl::impl::vulkan::Device> device;
 
 
 		bool isComplet()
 		{
-			return instance->isComplet();
+			return instance->isComplet() && device->isComplet();
 		}
 
 		~InternalState()
 		{
+			device.reset();
 			instance.reset();
 		}
 	};
@@ -52,6 +55,7 @@ namespace pl::impl::vulkan
 		pl::impl::vulkan::InternalState *internalState {static_cast<pl::impl::vulkan::InternalState*> (impl->internalState.get())};
 
 		internalState->instance = std::make_shared<pl::impl::vulkan::Instance> (createInfo);
+		internalState->device = std::make_shared<pl::impl::vulkan::Device> (*internalState->instance, createInfo.efficency);
 	}
 
 

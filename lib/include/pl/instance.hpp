@@ -11,6 +11,7 @@
 #include "eventManager.hpp"
 #include "fontManager.hpp"
 #include "graphics/api.inl"
+#include "graphics/efficiency.hpp"
 #include "renderer.hpp"
 #include "slide.hpp"
 
@@ -25,6 +26,7 @@ namespace pl
 				std::string presentationTitle {pl::config::defaultPresentationTitle};
 				pl::graphics::Api graphicsApi {pl::config::defaultGraphicsApi};
 				glm::vec2 viewportSize {pl::config::defaultViewportSize};
+				pl::graphics::Efficency efficency {pl::config::defaultEfficency};
 			};
 
 			Instance(const pl::Instance::CreateInfo &createInfo);

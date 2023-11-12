@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "graphics/api.inl"
+#include "graphics/efficiency.hpp"
 #include "graphics/framebuffer.hpp"
 #include "graphics/renderMode.hpp"
 #include "graphics/uniform.hpp"
@@ -27,6 +28,7 @@ namespace pl
 				SDL_Window *window;
 				pl::graphics::Api graphicsApi;
 				std::string windowTitle;
+				pl::graphics::Efficency efficency;
 			};
 
 			struct Implementation;
