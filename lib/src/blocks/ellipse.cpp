@@ -100,7 +100,8 @@ namespace pl::blocks
 					{pl::graphics::UniformFieldType::floating, "fade"}
 				},
 				"vertices", 0
-			}}
+			}},
+			vertices.format
 		};
 		s_pipeline = instance.getRenderer().registerObject(pl::utils::ObjectType::pipeline, pipeline);
 	}

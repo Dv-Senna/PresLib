@@ -100,7 +100,13 @@ namespace pl::blocks
 					{pl::graphics::UniformFieldType::vec4, "color"}
 				},
 				"vertices", 0
-			}}
+			}},
+			{
+				{
+					{pl::graphics::VerticesChannel::color, {0, 2, 0}}
+				},
+				pl::graphics::VerticesUsage::staticDraw
+			}
 		};
 		s_pipeline = instance.getRenderer().registerObject(pl::utils::ObjectType::pipeline, pipeline);
 	}

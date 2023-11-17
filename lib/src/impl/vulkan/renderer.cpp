@@ -5,7 +5,9 @@
 
 #include "impl/vulkan/device.hpp"
 #include "impl/vulkan/instance.hpp"
+#include "impl/vulkan/pipeline.hpp"
 #include "impl/vulkan/renderer.hpp"
+#include "impl/vulkan/shader.hpp"
 #include "impl/vulkan/surface.hpp"
 #include "impl/vulkan/swapChain.hpp"
 
@@ -72,6 +74,30 @@ namespace pl::impl::vulkan
 			createInfo.window,
 			createInfo.efficency
 		);
+
+		pl::impl::vulkan::Shader vertex {
+			*internalState->device,
+			{
+				pl::graphics::ShaderType::vertex,
+				"shaders/test.vert.spv",
+				"main"
+			}
+		};
+		pl::impl::vulkan::Shader fragment {
+			*internalState->device,
+			{
+				pl::graphics::ShaderType::fragment,
+				"shaders/test.frag.spv",
+				"main"
+			}
+		};
+
+		pl::impl::vulkan::Pipeline pipeline {
+			*internalState->device,
+			*internalState->swapChain,
+			{&vertex, &fragment},
+			pl::graphics::Pipeline()
+		};
 	}
 
 

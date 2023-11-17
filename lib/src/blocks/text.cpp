@@ -95,6 +95,10 @@ namespace pl::blocks
 					{pl::graphics::UniformFieldType::vec4, "color"}
 				},
 				"text", 0
+			}},
+			{{
+				{pl::graphics::VerticesChannel::position, {0, 2}},
+				{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}}
 			}}
 		};
 		s_pipeline = instance.getRenderer().registerObject(pl::utils::ObjectType::pipeline, pipeline);
