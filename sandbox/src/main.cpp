@@ -4,6 +4,7 @@
 #include <pl/preslib.hpp>
 
 #include <pl/animations/motion.hpp>
+#include <pl/animations/rotation.hpp>
 
 
 
@@ -42,7 +43,7 @@ int main(int, char *[])
 			pl::utils::red,
 			3.14159f / 2.f
 		)});
-		auto circle = instance.registerBlock(slide, {pl::Block::Type::ellipse, pl::blocks::Ellipse::CreateInfo(
+		auto ellipse = instance.registerBlock(slide, {pl::Block::Type::ellipse, pl::blocks::Ellipse::CreateInfo(
 			{2000, 500},
 			{500, 1000},
 			pl::utils::green
@@ -68,6 +69,15 @@ int main(int, char *[])
 				(pl::blocks::Math*)math.get(),
 				{500, 1000},
 				0.01f, 0.01f
+			)
+		});
+		auto ellipseRotation = instance.registerAnimation(slide, {pl::Animation::Type::rotation, 7.f,
+			pl::Animation::InterpolationFunction::easeInOut,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::EaseInOutRotation::CreateInfo(
+				(pl::blocks::Ellipse*)ellipse.get(),
+				2.f * glm::pi<float> () * 5.f + 0.9f,
+				0.001f, 0.001f
 			)
 		});
 

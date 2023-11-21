@@ -53,7 +53,7 @@ namespace pl::animations
 
 
 	
-	void LinearMotion::run(pl::Millisecond dt)
+	void LinearMotion::run(pl::utils::Millisecond dt)
 	{
 		if (m_duration == 0)
 			return this->skipToEnd();
@@ -80,7 +80,7 @@ namespace pl::animations
 
 
 
-	void EaseInMotion::run(pl::Millisecond dt)
+	void EaseInMotion::run(pl::utils::Millisecond dt)
 	{
 		if (m_duration == 0)
 			return this->skipToEnd();
@@ -109,7 +109,7 @@ namespace pl::animations
 
 
 
-	void EaseOutMotion::run(pl::Millisecond dt)
+	void EaseOutMotion::run(pl::utils::Millisecond dt)
 	{
 		if (m_duration == 0)
 			return this->skipToEnd();
@@ -138,7 +138,7 @@ namespace pl::animations
 
 
 
-	void EaseInOutMotion::run(pl::Millisecond dt)
+	void EaseInOutMotion::run(pl::utils::Millisecond dt)
 	{
 		if (m_duration == 0)
 			return this->skipToEnd();

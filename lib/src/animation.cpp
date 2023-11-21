@@ -14,7 +14,7 @@ namespace pl
 
 
 
-	Animation::Animation(pl::Animation::StartFlag startFlag, pl::Second duration) :
+	Animation::Animation(pl::Animation::StartFlag startFlag, pl::utils::Second duration) :
 		m_isRunning {false},
 		m_startFlag {startFlag},
 		m_duration {duration}
@@ -52,14 +52,14 @@ namespace pl
 
 
 
-	pl::Second Animation::getDuration() const noexcept
+	pl::utils::Second Animation::getDuration() const noexcept
 	{
 		return m_duration;
 	}
 
 
 
-	void Animation::setDuration(pl::Second duration)
+	void Animation::setDuration(pl::utils::Second duration)
 	{
 		m_duration = duration;
 	}

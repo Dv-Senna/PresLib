@@ -2,13 +2,12 @@
 
 #include <any>
 
+#include "utils/types.hpp"
+
 
 
 namespace pl
 {
-	using Second = float;
-	using Millisecond = float;
-
 	class Animation
 	{
 		public:
@@ -28,13 +27,15 @@ namespace pl
 
 			enum class Type
 			{
-				motion
+				motion,
+				rotation,
+				scaling
 			};
 
 			struct CreateInfo
 			{
 				pl::Animation::Type type;
-				pl::Second duration;
+				pl::utils::Second duration;
 				pl::Animation::InterpolationFunction interpolationFunction;
 				pl::Animation::StartFlag startFlag;
 				std::any data;
@@ -42,17 +43,17 @@ namespace pl
 
 
 			Animation();
-			Animation(pl::Animation::StartFlag startFlag, pl::Second duration);
+			Animation(pl::Animation::StartFlag startFlag, pl::utils::Second duration);
 			virtual ~Animation() = default;
 
 			virtual void launch() noexcept;
 			bool isRunning() const noexcept;
 			pl::Animation::StartFlag getStartFlag() const noexcept;
 			void setStartFlag(pl::Animation::StartFlag startFlag) noexcept;
-			pl::Second getDuration() const noexcept;
-			void setDuration(pl::Second duration);
+			pl::utils::Second getDuration() const noexcept;
+			void setDuration(pl::utils::Second duration);
 
-			virtual void run(pl::Millisecond dt) = 0;
+			virtual void run(pl::utils::Millisecond dt) = 0;
 			virtual void skipToEnd() = 0;
 			virtual void goToStart() = 0;
 
@@ -60,7 +61,7 @@ namespace pl
 		protected:
 			bool m_isRunning;
 			pl::Animation::StartFlag m_startFlag;
-			pl::Second m_duration;
+			pl::utils::Second m_duration;
 	};
 
 } // namespace pl

@@ -2,6 +2,7 @@
 
 #include "animationManager.hpp"
 #include "animations/motion.hpp"
+#include "animations/rotation.hpp"
 
 
 
@@ -173,6 +174,54 @@ namespace pl
 					{
 						auto animation {std::make_shared<pl::animations::EaseInOutMotion> (
 							std::any_cast<pl::animations::EaseInOutMotion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					default:
+						throw std::invalid_argument("PL : Invalid given interpolation function");
+				}
+				break;
+
+			case pl::Animation::Type::rotation:
+				switch (createInfo.interpolationFunction)
+				{
+					case pl::Animation::InterpolationFunction::linear:
+					{
+						auto animation {std::make_shared<pl::animations::LinearRotation> (
+							std::any_cast<pl::animations::LinearRotation::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeIn:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInRotation> (
+							std::any_cast<pl::animations::EaseInRotation::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseOutRotation> (
+							std::any_cast<pl::animations::EaseOutRotation::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeInOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInOutRotation> (
+							std::any_cast<pl::animations::EaseInOutRotation::CreateInfo> (createInfo.data)
 						)};
 						animation->setStartFlag(createInfo.startFlag);
 						animation->setDuration(createInfo.duration);

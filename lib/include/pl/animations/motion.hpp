@@ -26,12 +26,12 @@ namespace pl::animations
 			void skipToEnd() override;
 			void goToStart() override;
 
-			virtual void run(pl::Millisecond dt) override = 0;
+			virtual void run(pl::utils::Millisecond dt) override = 0;
 
 
 		protected:
 			pl::animations::Motion::CreateInfo m_generalMotionCreateInfo;
-			pl::Millisecond m_totalRunTime;
+			pl::utils::Millisecond m_totalRunTime;
 	};
 
 
@@ -44,7 +44,7 @@ namespace pl::animations
 			LinearMotion(const pl::animations::LinearMotion::CreateInfo &createInfo);
 			~LinearMotion() override = default;
 
-			void run(pl::Millisecond dt) override;
+			void run(pl::utils::Millisecond dt) override;
 	};
 
 
@@ -63,7 +63,7 @@ namespace pl::animations
 			EaseInMotion(const pl::animations::EaseInMotion::CreateInfo &createInfo);
 			~EaseInMotion() override = default;
 
-			void run(pl::Millisecond dt) override;
+			void run(pl::utils::Millisecond dt) override;
 
 
 		private:
@@ -80,7 +80,7 @@ namespace pl::animations
 			EaseOutMotion(const pl::animations::EaseOutMotion::CreateInfo &createInfo);
 			~EaseOutMotion() override = default;
 
-			void run(pl::Millisecond dt) override;
+			void run(pl::utils::Millisecond dt) override;
 
 
 		private:
@@ -104,7 +104,7 @@ namespace pl::animations
 			EaseInOutMotion(const pl::animations::EaseInOutMotion::CreateInfo &createInfo);
 			~EaseInOutMotion() override = default;
 
-			void run(pl::Millisecond dt) override;
+			void run(pl::utils::Millisecond dt) override;
 
 
 		private:
