@@ -23,7 +23,7 @@ namespace pl
 			inline const pl::Style &getStyle() const noexcept;
 
 
-		private:
+		protected:
 			pl::Instance &m_instance;
 			pl::Style m_style;
 	};
