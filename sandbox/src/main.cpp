@@ -62,11 +62,12 @@ int main(int, char *[])
 		)});
 		
 		auto mathMotion = instance.registerAnimation(slide, {pl::Animation::Type::motion, 2.f,
-			pl::Animation::InterpolationFunction::linear,
-			pl::Animation::StartFlag::withPrevious,
-			pl::animations::LinearMotion::CreateInfo(
+			pl::Animation::InterpolationFunction::easeInOut,
+			pl::Animation::StartFlag::onNext,
+			pl::animations::EaseInOutMotion::CreateInfo(
 				(pl::blocks::Math*)math.get(),
-				{500, 1000}
+				{500, 1000},
+				0.01f, 0.01f
 			)
 		});
 
@@ -96,19 +97,20 @@ int main(int, char *[])
 		)});
 
 		auto triangleMotion = instance.registerAnimation(slide2, {pl::Animation::Type::motion, 1.5f,
-			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::InterpolationFunction::easeIn,
 			pl::Animation::StartFlag::withPrevious,
-			pl::animations::LinearMotion::CreateInfo(
+			pl::animations::EaseInMotion::CreateInfo(
 				(pl::blocks::Triangle*)triangle.get(),
 				{600.f, 300.f}
 			)
 		});
 		auto textMotion = instance.registerAnimation(slide2, {pl::Animation::Type::motion, 0.5f,
-			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::InterpolationFunction::easeOut,
 			pl::Animation::StartFlag::onNext,
-			pl::animations::LinearMotion::CreateInfo(
+			pl::animations::EaseOutMotion::CreateInfo(
 				(pl::blocks::Text*)text.get(),
-				{1500.f, 700.f}
+				{1500.f, 700.f},
+				0.05f
 			)
 		});
 

@@ -149,6 +149,36 @@ namespace pl
 						return animation;
 					}
 
+					case pl::Animation::InterpolationFunction::easeIn:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInMotion> (
+							std::any_cast<pl::animations::EaseInMotion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseOutMotion> (
+							std::any_cast<pl::animations::EaseOutMotion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeInOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInOutMotion> (
+							std::any_cast<pl::animations::EaseInOutMotion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
 					default:
 						throw std::invalid_argument("PL : Invalid given interpolation function");
 				}

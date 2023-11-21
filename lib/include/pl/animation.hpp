@@ -20,7 +20,10 @@ namespace pl
 
 			enum class InterpolationFunction
 			{
-				linear
+				linear,
+				easeIn,
+				easeOut,
+				easeInOut
 			};
 
 			enum class Type
