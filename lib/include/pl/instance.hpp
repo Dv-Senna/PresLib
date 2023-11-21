@@ -7,6 +7,7 @@
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 
+#include "animationManager.hpp"
 #include "config.hpp"
 #include "eventManager.hpp"
 #include "fontManager.hpp"
@@ -38,6 +39,8 @@ namespace pl
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Block> block);
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, const pl::Block::CreateInfo &createInfos);
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block);
+			std::shared_ptr<pl::Animation> registerAnimation(std::shared_ptr<pl::Slide> slide, const pl::Animation::CreateInfo &createInfo);
+			std::shared_ptr<pl::Animation> registerAnimation(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Animation> animation);
 			const glm::mat4 &getTransformation() const noexcept;
 			const pl::EventManager &getEvent() const noexcept;
 			pl::FontManager &getFont() noexcept;
@@ -52,6 +55,7 @@ namespace pl
 
 			SDL_Window *m_window;
 			std::unique_ptr<pl::Renderer> m_renderer;
+			pl::AnimationManager m_animationManager;
 			pl::EventManager m_eventManager;
 			pl::FontManager m_fontManager;
 			pl::Theme *m_theme;

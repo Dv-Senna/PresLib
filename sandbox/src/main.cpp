@@ -3,6 +3,8 @@
 
 #include <pl/preslib.hpp>
 
+#include <pl/animations/motion.hpp>
+
 
 
 int main(int, char *[])
@@ -58,6 +60,15 @@ int main(int, char *[])
 			0.f, {0.5f, 0.5f},
 			glm::scale(glm::mat4(1.f), {0.25f, 0.25f, 1.f})
 		)});
+		
+		auto mathMotion = instance.registerAnimation(slide, {pl::Animation::Type::motion, 2.f,
+			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::LinearMotion::CreateInfo(
+				(pl::blocks::Math*)math.get(),
+				{500, 1000}
+			)
+		});
 
 
 
@@ -83,6 +94,23 @@ int main(int, char *[])
 			{1000, 300},
 			pl::utils::undefined
 		)});
+
+		auto triangleMotion = instance.registerAnimation(slide2, {pl::Animation::Type::motion, 1.5f,
+			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::LinearMotion::CreateInfo(
+				(pl::blocks::Triangle*)triangle.get(),
+				{600.f, 300.f}
+			)
+		});
+		auto textMotion = instance.registerAnimation(slide2, {pl::Animation::Type::motion, 0.5f,
+			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::StartFlag::onNext,
+			pl::animations::LinearMotion::CreateInfo(
+				(pl::blocks::Text*)text.get(),
+				{1500.f, 700.f}
+			)
+		});
 
 
 		instance.run();
