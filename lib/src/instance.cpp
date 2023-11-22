@@ -26,6 +26,7 @@ namespace pl
 	Instance::Instance(const pl::Instance::CreateInfo &createInfo) : 
 		m_window {nullptr},
 		m_renderer {nullptr},
+		m_animationManager {},
 		m_eventManager {},
 		m_fontManager {*this},
 		m_theme {nullptr},
@@ -189,6 +190,9 @@ namespace pl
 		int dtCount {0};
 		bool monitoring {false};
 
+		if (!m_slides.empty() && m_currentSlide != m_slides.end())
+			m_animationManager.wentToNextSlide(*m_currentSlide);
+
 		while (m_eventManager.pollEvent())
 		{
 			if (monitoring)
@@ -202,18 +206,26 @@ namespace pl
 			if (m_eventManager.isKeyDown(SDL_SCANCODE_ESCAPE))
 				return;
 
-			if (m_eventManager.isKeyPressed(SDL_SCANCODE_LEFT))
+			if (m_animationManager.handleEvent(*m_currentSlide, m_eventManager))
 			{
-				if (!m_slides.empty() && m_currentSlide != m_slides.begin())
-					--m_currentSlide;
-			}
+				if (m_eventManager.isKeyPressed(SDL_SCANCODE_LEFT))
+				{
+					if (!m_slides.empty() && m_currentSlide != m_slides.begin())
+						--m_currentSlide;
+				}
 
-			if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
-			{
-				if (!m_slides.empty())
-					++m_currentSlide;
-				if (m_currentSlide == m_slides.end())
-					return;
+				if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
+				{
+					if (!m_slides.empty())
+					{
+						++m_currentSlide;
+						if (m_currentSlide != m_slides.end())
+							m_animationManager.wentToNextSlide(*m_currentSlide);
+					}
+
+					if (m_currentSlide == m_slides.end())
+						return;
+				}
 			}
 
 			if (m_eventManager.isKeyPressed(SDL_SCANCODE_E))
@@ -245,6 +257,10 @@ namespace pl
 
 				monitoring = !monitoring;
 			}
+
+
+			m_animationManager.run(*m_currentSlide, dt);
+
 
 			pl::utils::Color clearColor {m_defaultStyle.colors.background};
 			if (m_theme != nullptr)
@@ -354,6 +370,23 @@ namespace pl
 
 		group->registerBlock(block);
 		return block;
+	}
+
+
+
+	std::shared_ptr<pl::Animation> Instance::registerAnimation(
+		std::shared_ptr<pl::Slide> slide,
+		const pl::Animation::CreateInfo &createInfo
+	)
+	{
+		return m_animationManager.addAnimation(slide, createInfo);
+	}
+
+
+
+	std::shared_ptr<pl::Animation> Instance::registerAnimation(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Animation> animation)
+	{
+		return m_animationManager.addAnimation(slide, animation);
 	}
 
 

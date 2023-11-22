@@ -3,6 +3,11 @@
 
 #include <pl/preslib.hpp>
 
+#include <pl/animations/distortion.hpp>
+#include <pl/animations/motion.hpp>
+#include <pl/animations/rotation.hpp>
+#include <pl/animations/scaling.hpp>
+
 
 
 int main(int, char *[])
@@ -40,7 +45,7 @@ int main(int, char *[])
 			pl::utils::red,
 			3.14159f / 2.f
 		)});
-		auto circle = instance.registerBlock(slide, {pl::Block::Type::ellipse, pl::blocks::Ellipse::CreateInfo(
+		auto ellipse = instance.registerBlock(slide, {pl::Block::Type::ellipse, pl::blocks::Ellipse::CreateInfo(
 			{2000, 500},
 			{500, 1000},
 			pl::utils::green
@@ -58,6 +63,33 @@ int main(int, char *[])
 			0.f, {0.5f, 0.5f},
 			glm::scale(glm::mat4(1.f), {0.25f, 0.25f, 1.f})
 		)});
+		
+		auto mathMotion = instance.registerAnimation(slide, {pl::Animation::Type::motion, 2.f,
+			pl::Animation::InterpolationFunction::easeInOut,
+			pl::Animation::StartFlag::onNext,
+			pl::animations::EaseInOutMotion::CreateInfo(
+				(pl::blocks::Math*)math.get(),
+				{500, 1000},
+				0.01f, 0.01f
+			)
+		});
+		auto mathScaling = instance.registerAnimation(slide, {pl::Animation::Type::scaling, 2.f,
+			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::LinearScaling::CreateInfo(
+				(pl::blocks::Math*)math.get(),
+				{1.25f, 0.825f}
+			)
+		});
+		auto ellipseRotation = instance.registerAnimation(slide, {pl::Animation::Type::rotation, 7.f,
+			pl::Animation::InterpolationFunction::easeInOut,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::EaseInOutRotation::CreateInfo(
+				(pl::blocks::Ellipse*)ellipse.get(),
+				2.f * glm::pi<float> () * 5.f + 0.9f,
+				0.001f, 0.001f
+			)
+		});
 
 
 
@@ -83,6 +115,39 @@ int main(int, char *[])
 			{1000, 300},
 			pl::utils::undefined
 		)});
+
+		auto triangleMotion = instance.registerAnimation(slide2, {pl::Animation::Type::motion, 1.5f,
+			pl::Animation::InterpolationFunction::easeIn,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::EaseInMotion::CreateInfo(
+				(pl::blocks::Triangle*)triangle.get(),
+				{600.f, 300.f}
+			)
+		});
+		auto textMotion = instance.registerAnimation(slide2, {pl::Animation::Type::motion, 0.5f,
+			pl::Animation::InterpolationFunction::easeOut,
+			pl::Animation::StartFlag::onNext,
+			pl::animations::EaseOutMotion::CreateInfo(
+				(pl::blocks::Text*)text.get(),
+				{1500.f, 700.f},
+				0.05f
+			)
+		});
+		auto imageDistortion = instance.registerAnimation(slide2, {pl::Animation::Type::distortion, 0.5f,
+			pl::Animation::InterpolationFunction::easeInOut,
+			pl::Animation::StartFlag::onNext,
+			pl::animations::EaseInOutDistortion::CreateInfo(
+				(pl::blocks::Image*)image.get(),
+				glm::mat4(
+					1.f, 0.f, 0.f, 2.f,
+					0.f, 1.f, 0.f, 0.f,
+					0.f, 0.f, 1.f, 0.f,
+					0.f, 0.f, 0.f, 1.f
+				)
+			)
+		});
+
+		
 
 
 		instance.run();
