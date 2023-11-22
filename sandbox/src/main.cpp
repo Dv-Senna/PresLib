@@ -3,6 +3,7 @@
 
 #include <pl/preslib.hpp>
 
+#include <pl/animations/distortion.hpp>
 #include <pl/animations/motion.hpp>
 #include <pl/animations/rotation.hpp>
 #include <pl/animations/scaling.hpp>
@@ -77,7 +78,7 @@ int main(int, char *[])
 			pl::Animation::StartFlag::withPrevious,
 			pl::animations::LinearScaling::CreateInfo(
 				(pl::blocks::Math*)math.get(),
-				{1.5f, 0.75f}
+				{1.25f, 0.825f}
 			)
 		});
 		auto ellipseRotation = instance.registerAnimation(slide, {pl::Animation::Type::rotation, 7.f,
@@ -132,6 +133,21 @@ int main(int, char *[])
 				0.05f
 			)
 		});
+		auto imageDistortion = instance.registerAnimation(slide2, {pl::Animation::Type::distortion, 0.5f,
+			pl::Animation::InterpolationFunction::easeInOut,
+			pl::Animation::StartFlag::onNext,
+			pl::animations::EaseInOutDistortion::CreateInfo(
+				(pl::blocks::Image*)image.get(),
+				glm::mat4(
+					1.f, 0.f, 0.f, 2.f,
+					0.f, 1.f, 0.f, 0.f,
+					0.f, 0.f, 1.f, 0.f,
+					0.f, 0.f, 0.f, 1.f
+				)
+			)
+		});
+
+		
 
 
 		instance.run();

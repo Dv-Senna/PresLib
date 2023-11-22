@@ -29,7 +29,8 @@ namespace pl
 			{
 				motion,
 				rotation,
-				scaling
+				scaling,
+				distortion
 			};
 
 			struct CreateInfo

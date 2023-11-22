@@ -4,6 +4,7 @@
 #include "animations/motion.hpp"
 #include "animations/rotation.hpp"
 #include "animations/scaling.hpp"
+#include "animations/distortion.hpp"
 
 
 
@@ -271,6 +272,54 @@ namespace pl
 					{
 						auto animation {std::make_shared<pl::animations::EaseInOutScaling> (
 							std::any_cast<pl::animations::EaseInOutScaling::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					default:
+						throw std::invalid_argument("PL : Invalid given interpolation function");
+				}
+				break;
+
+			case pl::Animation::Type::distortion:
+				switch (createInfo.interpolationFunction)
+				{
+					case pl::Animation::InterpolationFunction::linear:
+					{
+						auto animation {std::make_shared<pl::animations::LinearDistortion> (
+							std::any_cast<pl::animations::LinearDistortion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeIn:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInDistortion> (
+							std::any_cast<pl::animations::EaseInDistortion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseOutDistortion> (
+							std::any_cast<pl::animations::EaseOutDistortion::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeInOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInOutDistortion> (
+							std::any_cast<pl::animations::EaseInOutDistortion::CreateInfo> (createInfo.data)
 						)};
 						animation->setStartFlag(createInfo.startFlag);
 						animation->setDuration(createInfo.duration);
