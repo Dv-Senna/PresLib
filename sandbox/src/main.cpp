@@ -5,6 +5,7 @@
 
 #include <pl/animations/motion.hpp>
 #include <pl/animations/rotation.hpp>
+#include <pl/animations/scaling.hpp>
 
 
 
@@ -69,6 +70,14 @@ int main(int, char *[])
 				(pl::blocks::Math*)math.get(),
 				{500, 1000},
 				0.01f, 0.01f
+			)
+		});
+		auto mathScaling = instance.registerAnimation(slide, {pl::Animation::Type::scaling, 2.f,
+			pl::Animation::InterpolationFunction::linear,
+			pl::Animation::StartFlag::withPrevious,
+			pl::animations::LinearScaling::CreateInfo(
+				(pl::blocks::Math*)math.get(),
+				{1.5f, 0.75f}
 			)
 		});
 		auto ellipseRotation = instance.registerAnimation(slide, {pl::Animation::Type::rotation, 7.f,

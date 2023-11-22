@@ -3,6 +3,7 @@
 #include "animationManager.hpp"
 #include "animations/motion.hpp"
 #include "animations/rotation.hpp"
+#include "animations/scaling.hpp"
 
 
 
@@ -222,6 +223,54 @@ namespace pl
 					{
 						auto animation {std::make_shared<pl::animations::EaseInOutRotation> (
 							std::any_cast<pl::animations::EaseInOutRotation::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					default:
+						throw std::invalid_argument("PL : Invalid given interpolation function");
+				}
+				break;
+
+			case pl::Animation::Type::scaling:
+				switch (createInfo.interpolationFunction)
+				{
+					case pl::Animation::InterpolationFunction::linear:
+					{
+						auto animation {std::make_shared<pl::animations::LinearScaling> (
+							std::any_cast<pl::animations::LinearScaling::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeIn:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInScaling> (
+							std::any_cast<pl::animations::EaseInScaling::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseOutScaling> (
+							std::any_cast<pl::animations::EaseOutScaling::CreateInfo> (createInfo.data)
+						)};
+						animation->setStartFlag(createInfo.startFlag);
+						animation->setDuration(createInfo.duration);
+						return animation;
+					}
+
+					case pl::Animation::InterpolationFunction::easeInOut:
+					{
+						auto animation {std::make_shared<pl::animations::EaseInOutScaling> (
+							std::any_cast<pl::animations::EaseInOutScaling::CreateInfo> (createInfo.data)
 						)};
 						animation->setStartFlag(createInfo.startFlag);
 						animation->setDuration(createInfo.duration);
