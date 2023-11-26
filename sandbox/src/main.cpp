@@ -156,6 +156,7 @@ int main(int, char *[])
 	catch (const std::exception &exception)
 	{
 		std::cerr << "ERROR : " << exception.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 
 	return EXIT_SUCCESS;

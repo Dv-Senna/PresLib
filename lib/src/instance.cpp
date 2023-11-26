@@ -89,7 +89,7 @@ namespace pl
 				viewportScaledCentered.x, viewportScaledCentered.y,    1.f, 1.f
 			},
 			{{
-				{pl::graphics::VerticesChannel::color, {0, 2, 0}},
+				{pl::graphics::VerticesChannel::position, {0, 2, 0}},
 				{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}}
 			}}
 		};
@@ -123,10 +123,17 @@ namespace pl
 			"uni_WindowFramebufferBlock",
 			0
 		};
+		pl::graphics::Uniform framebufferVertexShaderUniformInfos {
+			{
+				{pl::graphics::UniformFieldType::mat4, "uni_Transformation"}
+			},
+			"uni_FramebufferTransformation",
+			1
+		};
 
 		pl::graphics::Pipeline pipelineInfos {
 			{m_shaders[0], pl::config::useMSAA ? m_shaders[2] : m_shaders[1]},
-			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({uniformInfos}) : std::vector<pl::graphics::Uniform> ()
+			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({uniformInfos, framebufferVertexShaderUniformInfos}) : std::vector<pl::graphics::Uniform> ({framebufferVertexShaderUniformInfos})
 		};
 		m_pipeline = m_renderer->registerObject(pl::utils::ObjectType::pipeline, pipelineInfos);
 
@@ -137,6 +144,10 @@ namespace pl
 				{"uni_ViewportSize", m_viewportSize}
 			});
 		}
+
+		m_renderer->setUniformValues(m_pipeline, "uni_FramebufferTransformation", {
+			{"uni_Transformation", glm::mat4(1.f)}
+		});
 
 		pl::graphics::Framebuffer framebufferInfos {
 			m_viewportSize,
@@ -262,18 +273,17 @@ namespace pl
 			m_animationManager.run(*m_currentSlide, dt);
 
 
-			pl::utils::Color clearColor {m_defaultStyle.colors.background};
-			if (m_theme != nullptr)
-				clearColor = m_theme->getStyle().colors.background;
+			if (m_currentSlide != m_slides.end())
+					(*m_currentSlide)->drawBlocks();
 
 			m_renderer->useFramebuffer(m_framebuffer);
-				m_renderer->cleanViewport(clearColor);
+				m_renderer->cleanViewport(pl::utils::black);
 
 				if (m_theme != nullptr)
 					m_theme->preRendering();
 
 				if (m_currentSlide != m_slides.end())
-					(*m_currentSlide)->draw(m_transformation);
+					(*m_currentSlide)->draw(glm::mat4(1.f));
 
 				if (m_theme != nullptr)
 					m_theme->postRendering();
@@ -304,7 +314,7 @@ namespace pl
 
 	std::shared_ptr<pl::Slide> Instance::registerSlide(const pl::Slide::CreateInfo &createInfos)
 	{
-		m_slides.push_back(std::shared_ptr<pl::Slide> (new pl::Slide(createInfos)));
+		m_slides.push_back(std::shared_ptr<pl::Slide> (new pl::Slide(*this, createInfos)));
 		if (m_slides.size() == 1)
 			m_currentSlide = m_slides.begin();
 
@@ -425,6 +435,29 @@ namespace pl
 			return m_theme->getStyle();
 
 		return m_defaultStyle;
+	}
+
+
+
+	const glm::vec2 &Instance::getViewportSize() const noexcept
+	{
+		return m_viewportSize;
+	}
+
+
+
+	const glm::vec2 &Instance::getWindowSize() const noexcept
+	{
+		static glm::vec2 windowSize {};
+		static bool loaded {false};
+		if (loaded)
+			return windowSize;
+
+		loaded = true;
+		int width {}, height {};
+		SDL_GetWindowSize(m_window, &width, &height);
+		windowSize = glm::vec2((float)width, (float)height);
+		return windowSize;
 	}
 
 

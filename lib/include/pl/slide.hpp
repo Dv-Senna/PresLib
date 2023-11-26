@@ -5,6 +5,8 @@
 #include <string>
 
 #include "block.hpp"
+#include "utils/id.hpp"
+
 
 
 namespace pl
@@ -34,14 +36,20 @@ namespace pl
 
 			~Slide() = default;
 
+			void drawBlocks();
 			void draw(const glm::mat4 &globalTransformation);
 			void registerBlock(std::shared_ptr<pl::Block> block);
 
 
 		protected:
-			Slide(const pl::Slide::CreateInfo &createInfos);
+			Slide(pl::Instance &instance, const pl::Slide::CreateInfo &createInfos);
+			static void s_load(pl::Instance &instance);
 
+			pl::Instance &m_instance;
 			std::list<std::shared_ptr<pl::Block>> m_blocks;
+			pl::utils::Id m_framebuffer, m_framebufferTexture;
+			static pl::utils::Id s_vertices, s_shader[2], s_pipeline;
+			static glm::mat4 s_transformationMatrix;
 	};
 
 } // namespace pl

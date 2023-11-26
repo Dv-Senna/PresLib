@@ -46,6 +46,8 @@ namespace pl
 			pl::FontManager &getFont() noexcept;
 			void useTheme(pl::Theme *theme);
 			const pl::Style &getStyle() const noexcept;
+			const glm::vec2 &getViewportSize() const noexcept;
+			const glm::vec2 &getWindowSize() const noexcept;
 
 			void run();
 
