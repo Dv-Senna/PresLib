@@ -94,7 +94,9 @@ int main(int, char *[])
 
 
 		instance.registerTransition<pl::transitions::SlideTogether> (slide, {
-			1.f
+			1.f,
+			{},
+			0.5f
 		});
 
 

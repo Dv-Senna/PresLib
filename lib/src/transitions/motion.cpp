@@ -43,7 +43,7 @@ namespace pl::transitions
 			glm::mat4(1.f)
 		);
 
-		if (m_totalRunTime >= m_createInfo.duration * 1000.f)
+		if (m_totalRunTime >= m_createInfo.duration * 1000.f + m_createInfo.delay * 1000.f)
 		{
 			m_isRunning = false;
 			nextSlide = glm::mat4(1.f);
