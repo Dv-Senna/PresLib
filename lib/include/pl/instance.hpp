@@ -28,6 +28,7 @@ namespace pl
 				std::string presentationTitle {pl::config::defaultPresentationTitle};
 				pl::graphics::Api graphicsApi {pl::config::defaultGraphicsApi};
 				glm::vec2 viewportSize {pl::config::defaultViewportSize};
+				int framerate {pl::config::defaultFramerate};
 			};
 
 			Instance(const pl::Instance::CreateInfo &createInfo);
@@ -76,6 +77,7 @@ namespace pl
 			std::list<std::shared_ptr<pl::Slide>>::iterator m_currentSlide;
 			glm::mat4 m_transformation;
 			glm::vec2 m_viewportSize;
+			int m_framerate;
 	};
 
 } // namespace pl

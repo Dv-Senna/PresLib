@@ -20,5 +20,6 @@ namespace pl::config
 	inline const std::string defaultPresentationTitle {"PresLib"};
 	inline const pl::graphics::Projection defaultProjection {pl::graphics::Projection::ortho};
 	inline const std::string texFolder {"./latex/"};
+	inline const int defaultFramerate {60};
 
 } // namespace pl::config

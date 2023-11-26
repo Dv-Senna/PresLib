@@ -2,6 +2,7 @@
 #include <map>
 #include <stdexcept>
 #include <chrono>
+#include <thread>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -40,7 +41,8 @@ namespace pl
 		m_slides {},
 		m_currentSlide {m_slides.end()},
 		m_transformation {1.f},
-		m_viewportSize {createInfo.viewportSize}
+		m_viewportSize {createInfo.viewportSize},
+		m_framerate {createInfo.framerate}
 	{
 		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
 			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
@@ -197,6 +199,7 @@ namespace pl
 		pl::graphics::RenderMode renderMode {pl::graphics::RenderMode::normal};
 		auto startTime {std::chrono::steady_clock::now()};
 		float dt {1.f};
+		float targetedDt {1000.f / (float)m_framerate};
 		
 		glm::mat4 oldSlideTransformation {1.f}, nextSlideTransformation {1.f};
 
@@ -351,6 +354,13 @@ namespace pl
 
 			dt = std::chrono::duration_cast<std::chrono::duration<float, std::milli>> (
 				std::chrono::steady_clock::now() - startTime).count();
+
+			if (!monitoring && dt < targetedDt)
+			{
+				SDL_Delay((uint32_t)(targetedDt - dt));
+				dt = targetedDt;
+			}
+
 			startTime = std::chrono::steady_clock::now();
 		}
 	}

@@ -17,6 +17,7 @@ int main(int, char *[])
 		pl::Instance::CreateInfo instanceCreateInfo {};
 		instanceCreateInfo.viewportSize = {2560, 1440};
 		instanceCreateInfo.graphicsApi = pl::graphics::Api::OpenGL;
+		instanceCreateInfo.framerate = 240;
 		pl::Instance instance {instanceCreateInfo};
 		instance.getFont().registerFont("roboto", "fonts/roboto/Roboto-Regular.ttf");
 
@@ -93,7 +94,7 @@ int main(int, char *[])
 
 
 		instance.registerTransition<pl::transitions::SlideTogether> (slide, {
-			2.f
+			1.f
 		});
 
 
