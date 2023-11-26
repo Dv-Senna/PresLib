@@ -224,6 +224,18 @@ namespace pl
 			if (m_eventManager.isKeyDown(SDL_SCANCODE_ESCAPE))
 				return;
 
+			if (m_transitionManager.isRunning())
+			{
+				if (m_eventManager.isKeyPressed(SDL_SCANCODE_LEFT))
+				{
+					isGettingBack = true;
+					m_transitionManager.stop();
+				}
+
+				if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
+					m_transitionManager.stop();
+			}
+
 			if (m_animationManager.handleEvent(*m_currentSlide, m_eventManager))
 			{
 				if (m_eventManager.isKeyPressed(SDL_SCANCODE_LEFT))
@@ -232,27 +244,18 @@ namespace pl
 						--m_currentSlide;
 
 					isGettingBack = true;
-
-					if (m_transitionManager.isRunning())
-						m_transitionManager.stop();
 				}
 
 				if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
 				{
-					if (m_transitionManager.isRunning())
-						m_transitionManager.stop();
-
-					else
+					if (!m_slides.empty())
 					{
-						if (!m_slides.empty())
-						{
-							m_transitionManager.launch(m_currentSlide);
-							++m_currentSlide;
-						}
-
-						if (m_currentSlide == m_slides.end())
-							return;
+						m_transitionManager.launch(m_currentSlide);
+						++m_currentSlide;
 					}
+
+					if (m_currentSlide == m_slides.end())
+						return;
 				}
 			}
 
