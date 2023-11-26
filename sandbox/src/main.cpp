@@ -92,6 +92,11 @@ int main(int, char *[])
 		});
 
 
+		instance.registerTransition<pl::transitions::SlideTogether> (slide, {
+			2.f
+		});
+
+
 
 
 		auto slide2 = instance.registerSlide();
@@ -145,6 +150,10 @@ int main(int, char *[])
 					0.f, 0.f, 0.f, 1.f
 				)
 			)
+		});
+
+		instance.registerTransition<pl::transitions::SlideTogether> (slide2, {
+			2.f
 		});
 
 		

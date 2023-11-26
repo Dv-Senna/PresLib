@@ -29,6 +29,7 @@ namespace pl
 		m_animationManager {},
 		m_eventManager {},
 		m_fontManager {*this},
+		m_transitionManager {*this},
 		m_theme {nullptr},
 		m_defaultStyle {},
 		m_renderingCallback {nullptr},
@@ -197,15 +198,21 @@ namespace pl
 		auto startTime {std::chrono::steady_clock::now()};
 		float dt {1.f};
 		
+		glm::mat4 oldSlideTransformation {1.f}, nextSlideTransformation {1.f};
+
 		float dtSum {0.f};
 		int dtCount {0};
 		bool monitoring {false};
+		bool wasTransitionRunning {false};
+		bool isGettingBack {false};
 
 		if (!m_slides.empty() && m_currentSlide != m_slides.end())
 			m_animationManager.wentToNextSlide(*m_currentSlide);
 
 		while (m_eventManager.pollEvent())
 		{
+			isGettingBack = false;
+
 			if (monitoring)
 			{
 				++dtCount;
@@ -223,19 +230,29 @@ namespace pl
 				{
 					if (!m_slides.empty() && m_currentSlide != m_slides.begin())
 						--m_currentSlide;
+
+					isGettingBack = true;
+
+					if (m_transitionManager.isRunning())
+						m_transitionManager.stop();
 				}
 
 				if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
 				{
-					if (!m_slides.empty())
-					{
-						++m_currentSlide;
-						if (m_currentSlide != m_slides.end())
-							m_animationManager.wentToNextSlide(*m_currentSlide);
-					}
+					if (m_transitionManager.isRunning())
+						m_transitionManager.stop();
 
-					if (m_currentSlide == m_slides.end())
-						return;
+					else
+					{
+						if (!m_slides.empty())
+						{
+							m_transitionManager.launch(m_currentSlide);
+							++m_currentSlide;
+						}
+
+						if (m_currentSlide == m_slides.end())
+							return;
+					}
 				}
 			}
 
@@ -270,11 +287,29 @@ namespace pl
 			}
 
 
+			if (!isGettingBack && !m_transitionManager.isRunning() && wasTransitionRunning && m_currentSlide != m_slides.end())
+				m_animationManager.wentToNextSlide(*m_currentSlide);
+
+			wasTransitionRunning = m_transitionManager.isRunning();
+
+
 			m_animationManager.run(*m_currentSlide, dt);
 
 
 			if (m_currentSlide != m_slides.end())
-					(*m_currentSlide)->drawBlocks();
+				(*m_currentSlide)->drawBlocks();
+
+
+			oldSlideTransformation = glm::mat4(1.f);
+			nextSlideTransformation = glm::mat4(1.f);
+			if (m_transitionManager.isRunning() && m_currentSlide != m_slides.begin())
+			{
+				--m_currentSlide;
+				(*m_currentSlide)->drawBlocks();
+				++m_currentSlide;
+				m_transitionManager.run(dt, oldSlideTransformation, nextSlideTransformation);
+			}
+
 
 			m_renderer->useFramebuffer(m_framebuffer);
 				m_renderer->cleanViewport(pl::utils::black);
@@ -283,7 +318,14 @@ namespace pl
 					m_theme->preRendering();
 
 				if (m_currentSlide != m_slides.end())
-					(*m_currentSlide)->draw(glm::mat4(1.f));
+					(*m_currentSlide)->draw(nextSlideTransformation);
+
+				if (m_transitionManager.isRunning() && m_currentSlide != m_slides.begin())
+				{
+					--m_currentSlide;
+					(*m_currentSlide)->draw(oldSlideTransformation);
+					++m_currentSlide;
+				}
 
 				if (m_theme != nullptr)
 					m_theme->postRendering();

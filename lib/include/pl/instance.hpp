@@ -15,6 +15,7 @@
 #include "renderer.hpp"
 #include "slide.hpp"
 #include "theme.hpp"
+#include "transitionManager.hpp"
 
 
 namespace pl
@@ -41,6 +42,12 @@ namespace pl
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block);
 			std::shared_ptr<pl::Animation> registerAnimation(std::shared_ptr<pl::Slide> slide, const pl::Animation::CreateInfo &createInfo);
 			std::shared_ptr<pl::Animation> registerAnimation(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Animation> animation);
+			template <class T>
+			requires (std::is_base_of_v<pl::Transition, T>)
+			void registerTransition(
+				std::shared_ptr<pl::Slide> slide,
+				const pl::Transition::CreateInfo &createInfo
+			);
 			const glm::mat4 &getTransformation() const noexcept;
 			const pl::EventManager &getEvent() const noexcept;
 			pl::FontManager &getFont() noexcept;
@@ -60,6 +67,7 @@ namespace pl
 			pl::AnimationManager m_animationManager;
 			pl::EventManager m_eventManager;
 			pl::FontManager m_fontManager;
+			pl::TransitionManager m_transitionManager;
 			pl::Theme *m_theme;
 			pl::Style m_defaultStyle;
 			std::function<void()> m_renderingCallback;
@@ -71,3 +79,7 @@ namespace pl
 	};
 
 } // namespace pl
+
+
+
+#include "instance.inl"
