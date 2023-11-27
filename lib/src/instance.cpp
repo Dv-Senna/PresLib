@@ -165,7 +165,7 @@ namespace pl
 		pl::graphics::Framebuffer framebufferInfos {
 			m_viewportSize,
 			pl::config::useMSAA ? pl::config::MSAASamplesCount : 0,
-			pl::graphics::ColorFormat::r8g8b8a8
+			pl::graphics::ColorFormat::r8g8b8
 		};
 		m_framebuffer = m_renderer->registerObject(pl::utils::ObjectType::framebuffer, framebufferInfos);
 
