@@ -4,10 +4,11 @@
 
 namespace pl
 {
-	Transition::Transition(const pl::Transition::CreateInfo &createInfo) : 
+	Transition::Transition(const pl::Transition::CreateInfo &createInfo, const glm::vec2 &viewportSize) : 
 		m_createInfo {createInfo},
 		m_isRunning {false},
-		m_totalRunTime {0.f}
+		m_totalRunTime {0.f},
+		m_viewportSize {viewportSize}
 	{
 
 	}

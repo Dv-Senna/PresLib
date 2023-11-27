@@ -37,7 +37,7 @@ namespace pl
 			~Slide() = default;
 
 			void drawBlocks();
-			void draw(const glm::mat4 &globalTransformation);
+			void draw(const glm::mat4 &globalTransformation, const pl::utils::Color &color);
 			void registerBlock(std::shared_ptr<pl::Block> block);
 
 

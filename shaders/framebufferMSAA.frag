@@ -10,6 +10,10 @@ layout (std140, binding = 0) uniform uni_WindowFramebufferBlock
 	float uni_SamplesCount;
 	vec2 uni_ViewportSize;
 };
+layout (std140, binding = 2) uniform uni_FramebufferColor
+{
+	vec4 uni_Color;
+};
 
 layout (binding = 0) uniform sampler2DMS texture0;
 
@@ -22,5 +26,5 @@ void main()
 	for (int i = 0; i < uni_SamplesCount; i++)
 		color += texelFetch(texture0, normalizedTexCoord0, i);
 
-	out_Color = color / uni_SamplesCount;
+	out_Color = uni_Color * color / uni_SamplesCount;
 }

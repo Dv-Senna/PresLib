@@ -19,6 +19,33 @@ namespace pl::utils
 			return r == color.r && g == color.g && b == color.b && a == color.a && undefined == color.undefined;
 		}
 
+		const pl::utils::Color &operator+=(const pl::utils::Color &color) noexcept
+		{
+			r += color.r;
+			g += color.g;
+			b += color.b;
+			a += color.a;
+			return *this;
+		}
+
+		const pl::utils::Color &operator-=(const pl::utils::Color &color) noexcept
+		{
+			r -= color.r;
+			g -= color.g;
+			b -= color.b;
+			a -= color.a;
+			return *this;
+		}
+
+		const pl::utils::Color &operator*=(float scalar) noexcept
+		{
+			r = (float)r * scalar;
+			g = (float)g * scalar;
+			b = (float)b * scalar;
+			a = (float)a * scalar;
+			return *this;
+		}
+
 		operator SDL_Color() const
 		{
 			SDL_Color color {r, g, b, a};
@@ -50,8 +77,26 @@ namespace pl::utils
 
 	inline std::ostream &operator<<(std::ostream &stream, const pl::utils::Color &color)
 	{
-		stream << "(r = " << color.r << ", g = " << color.g << ", b = " << color.b << ", a = " << color.a << ")";
+		stream << "(r = " << (int)color.r << ", g = " << (int)color.g << ", b = " << (int)color.b << ", a = " << (int)color.a << ")";
 		return stream;
+	}
+
+	inline pl::utils::Color operator+(pl::utils::Color a, const pl::utils::Color &b)
+	{
+		a += b;
+		return a;
+	}
+
+	inline pl::utils::Color operator-(pl::utils::Color a, const pl::utils::Color &b)
+	{
+		a -= b;
+		return a;
+	}
+
+	inline pl::utils::Color operator*(pl::utils::Color a, float scalar)
+	{
+		a *= scalar;
+		return a;
 	}
 
 

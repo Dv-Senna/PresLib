@@ -15,7 +15,7 @@ namespace pl
 		if (it == m_slides.end())
 			throw std::invalid_argument("PL : Can't add transition to the given slide because the slide wasn't registered");
 
-		m_transitionManager.registerTransition<T> (it, createInfo);
+		m_transitionManager.registerTransition<T> (it, createInfo, m_viewportSize);
 	}
 
 

@@ -48,10 +48,13 @@ namespace pl
 
 
 
-	void Slide::draw(const glm::mat4 &globalTransformation)
+	void Slide::draw(const glm::mat4 &globalTransformation, const pl::utils::Color &color)
 	{
 		m_instance.getRenderer().setUniformValues(s_pipeline, "uni_FramebufferTransformation", {
 			{"uni_Transformation", globalTransformation}
+		});
+		m_instance.getRenderer().setUniformValues(s_pipeline, "uni_FramebufferColor", {
+			{"uni_Color", static_cast<glm::vec4> (color)}
 		});
 
 		m_instance.getRenderer().usePipeline(s_pipeline);
@@ -126,10 +129,17 @@ namespace pl
 			"uni_FramebufferTransformation",
 			1
 		};
+		pl::graphics::Uniform fragmentColorUniform {
+			{
+				{pl::graphics::UniformFieldType::vec4, "uni_Color"}
+			},
+			"uni_FramebufferColor",
+			2
+		};
 
 		pl::graphics::Pipeline pipeline {
 			{s_shader[0], s_shader[1]},
-			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({fragmentUniforms, vertexUniforms}) : std::vector<pl::graphics::Uniform> ({vertexUniforms})
+			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({fragmentUniforms, vertexUniforms, fragmentColorUniform}) : std::vector<pl::graphics::Uniform> ({vertexUniforms, fragmentColorUniform})
 		};
 		s_pipeline = instance.getRenderer().registerObject(pl::utils::ObjectType::pipeline, pipeline);
 

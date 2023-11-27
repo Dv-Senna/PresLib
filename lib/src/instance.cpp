@@ -133,10 +133,17 @@ namespace pl
 			"uni_FramebufferTransformation",
 			1
 		};
+		pl::graphics::Uniform framebufferFragmentColorUniformInfos {
+			{
+				{pl::graphics::UniformFieldType::vec4, "uni_Color"}
+			},
+			"uni_FramebufferColor",
+			2
+		};
 
 		pl::graphics::Pipeline pipelineInfos {
 			{m_shaders[0], pl::config::useMSAA ? m_shaders[2] : m_shaders[1]},
-			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({uniformInfos, framebufferVertexShaderUniformInfos}) : std::vector<pl::graphics::Uniform> ({framebufferVertexShaderUniformInfos})
+			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({uniformInfos, framebufferVertexShaderUniformInfos, framebufferFragmentColorUniformInfos}) : std::vector<pl::graphics::Uniform> ({framebufferVertexShaderUniformInfos, framebufferFragmentColorUniformInfos})
 		};
 		m_pipeline = m_renderer->registerObject(pl::utils::ObjectType::pipeline, pipelineInfos);
 
@@ -151,10 +158,14 @@ namespace pl
 		m_renderer->setUniformValues(m_pipeline, "uni_FramebufferTransformation", {
 			{"uni_Transformation", glm::mat4(1.f)}
 		});
+		m_renderer->setUniformValues(m_pipeline, "uni_FramebufferColor", {
+			{"uni_Color", static_cast<glm::vec4> (pl::utils::white)}
+		});
 
 		pl::graphics::Framebuffer framebufferInfos {
 			m_viewportSize,
-			pl::config::useMSAA ? pl::config::MSAASamplesCount : 0
+			pl::config::useMSAA ? pl::config::MSAASamplesCount : 0,
+			pl::graphics::ColorFormat::r8g8b8a8
 		};
 		m_framebuffer = m_renderer->registerObject(pl::utils::ObjectType::framebuffer, framebufferInfos);
 
@@ -202,6 +213,7 @@ namespace pl
 		float targetedDt {1000.f / (float)m_framerate};
 		
 		glm::mat4 oldSlideTransformation {1.f}, nextSlideTransformation {1.f};
+		pl::utils::Color oldSlideColor {pl::utils::white}, nextSlideColor {pl::utils::white};
 
 		float dtSum {0.f};
 		int dtCount {0};
@@ -308,12 +320,20 @@ namespace pl
 
 			oldSlideTransformation = glm::mat4(1.f);
 			nextSlideTransformation = glm::mat4(1.f);
+			oldSlideColor = pl::utils::white;
+			nextSlideColor = pl::utils::white;
 			if (m_transitionManager.isRunning() && m_currentSlide != m_slides.begin())
 			{
 				--m_currentSlide;
 				(*m_currentSlide)->drawBlocks();
 				++m_currentSlide;
-				m_transitionManager.run(dt, oldSlideTransformation, nextSlideTransformation);
+				m_transitionManager.run(
+					dt,
+					oldSlideTransformation,
+					nextSlideTransformation,
+					oldSlideColor,
+					nextSlideColor
+				);
 			}
 
 
@@ -324,12 +344,12 @@ namespace pl
 					m_theme->preRendering();
 
 				if (m_currentSlide != m_slides.end())
-					(*m_currentSlide)->draw(nextSlideTransformation);
+					(*m_currentSlide)->draw(nextSlideTransformation, nextSlideColor);
 
 				if (m_transitionManager.isRunning() && m_currentSlide != m_slides.begin())
 				{
 					--m_currentSlide;
-					(*m_currentSlide)->draw(oldSlideTransformation);
+					(*m_currentSlide)->draw(oldSlideTransformation, oldSlideColor);
 					++m_currentSlide;
 				}
 

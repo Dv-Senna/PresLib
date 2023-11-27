@@ -24,10 +24,17 @@ namespace pl
 			requires (std::is_base_of_v<pl::Transition, T>)
 			void registerTransition(
 				const std::list<std::shared_ptr<pl::Slide>>::iterator &slide,
-				const pl::Transition::CreateInfo &createInfo
+				const pl::Transition::CreateInfo &createInfo,
+				const glm::vec2 &viewportSize
 			);
 			bool isRunning() const noexcept;
-			void run(pl::utils::Millisecond dt, glm::mat4 &oldSlide, glm::mat4 &newSlide);
+			void run(
+				pl::utils::Millisecond dt,
+				glm::mat4 &oldSlide,
+				glm::mat4 &newSlide,
+				pl::utils::Color &oldColor,
+				pl::utils::Color &nextColor
+			);
 			void stop();
 
 

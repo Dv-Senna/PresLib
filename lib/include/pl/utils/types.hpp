@@ -10,4 +10,10 @@ namespace pl::utils
 	using Second = float;
 	using Millisecond = float;
 
+	enum class Axis
+	{
+		x, y, z,
+		rx, ry, rz
+	};
+
 } // namespace pl::utils

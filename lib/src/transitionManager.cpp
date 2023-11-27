@@ -37,13 +37,19 @@ namespace pl
 
 
 
-	void TransitionManager::run(pl::utils::Millisecond dt, glm::mat4 &oldSlide, glm::mat4 &newSlide)
+	void TransitionManager::run(
+		pl::utils::Millisecond dt,
+		glm::mat4 &oldSlide,
+		glm::mat4 &newSlide,
+		pl::utils::Color &oldColor,
+		pl::utils::Color &nextColor
+	)
 	{
 		auto it {m_transitions.find(m_currentSlide)};
 		if (it == m_transitions.end())
 			return;
 
-		it->second->run(dt, oldSlide, newSlide);
+		it->second->run(dt, oldSlide, newSlide, oldColor, nextColor);
 	}
 
 

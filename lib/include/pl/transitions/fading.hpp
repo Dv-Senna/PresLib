@@ -7,17 +7,16 @@
 
 namespace pl::transitions
 {
-	class SlideTogether final : public pl::Transition
+	class Fade final : public pl::Transition
 	{
 		public:
 			struct CreateInfo
 			{
-				pl::utils::Axis axis {pl::utils::Axis::x};
-				float spaceBetweenSlides {2.f};
+				pl::utils::Color colorShift {pl::utils::black};
 			};
 
-			SlideTogether(const pl::Transition::CreateInfo &createInfo, const glm::vec2 &viewportSize);
-			~SlideTogether() override = default;
+			Fade(const pl::Transition::CreateInfo &createInfo, const glm::vec2 &viewportSize);
+			~Fade() override = default;
 
 			void launch() override;
 			void run(
@@ -30,6 +29,6 @@ namespace pl::transitions
 
 
 		private:
-			pl::transitions::SlideTogether::CreateInfo m_specificCreateInfo;
+			pl::transitions::Fade::CreateInfo m_specificCreateInfo;
 	};
 } // namespace pl::transitions
