@@ -15,6 +15,7 @@
 #include "renderer.hpp"
 #include "slide.hpp"
 #include "theme.hpp"
+#include "transitionManager.hpp"
 
 
 namespace pl
@@ -27,6 +28,7 @@ namespace pl
 				std::string presentationTitle {pl::config::defaultPresentationTitle};
 				pl::graphics::Api graphicsApi {pl::config::defaultGraphicsApi};
 				glm::vec2 viewportSize {pl::config::defaultViewportSize};
+				int framerate {pl::config::defaultFramerate};
 			};
 
 			Instance(const pl::Instance::CreateInfo &createInfo);
@@ -41,11 +43,19 @@ namespace pl
 			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block);
 			std::shared_ptr<pl::Animation> registerAnimation(std::shared_ptr<pl::Slide> slide, const pl::Animation::CreateInfo &createInfo);
 			std::shared_ptr<pl::Animation> registerAnimation(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Animation> animation);
+			template <class T>
+			requires (std::is_base_of_v<pl::Transition, T>)
+			void registerTransition(
+				std::shared_ptr<pl::Slide> slide,
+				const pl::Transition::CreateInfo &createInfo
+			);
 			const glm::mat4 &getTransformation() const noexcept;
 			const pl::EventManager &getEvent() const noexcept;
 			pl::FontManager &getFont() noexcept;
 			void useTheme(pl::Theme *theme);
 			const pl::Style &getStyle() const noexcept;
+			const glm::vec2 &getViewportSize() const noexcept;
+			const glm::vec2 &getWindowSize() const noexcept;
 
 			void run();
 
@@ -58,6 +68,7 @@ namespace pl
 			pl::AnimationManager m_animationManager;
 			pl::EventManager m_eventManager;
 			pl::FontManager m_fontManager;
+			pl::TransitionManager m_transitionManager;
 			pl::Theme *m_theme;
 			pl::Style m_defaultStyle;
 			std::function<void()> m_renderingCallback;
@@ -66,6 +77,11 @@ namespace pl
 			std::list<std::shared_ptr<pl::Slide>>::iterator m_currentSlide;
 			glm::mat4 m_transformation;
 			glm::vec2 m_viewportSize;
+			int m_framerate;
 	};
 
 } // namespace pl
+
+
+
+#include "instance.inl"

@@ -17,6 +17,7 @@ int main(int, char *[])
 		pl::Instance::CreateInfo instanceCreateInfo {};
 		instanceCreateInfo.viewportSize = {2560, 1440};
 		instanceCreateInfo.graphicsApi = pl::graphics::Api::OpenGL;
+		instanceCreateInfo.framerate = 60;
 		pl::Instance instance {instanceCreateInfo};
 		instance.getFont().registerFont("roboto", "fonts/roboto/Roboto-Regular.ttf");
 
@@ -92,6 +93,14 @@ int main(int, char *[])
 		});
 
 
+		instance.registerTransition<pl::transitions::Fade> (slide, {
+			1.f,
+			pl::transitions::Fade::CreateInfo(
+				pl::utils::black
+			)
+		});
+
+
 
 
 		auto slide2 = instance.registerSlide();
@@ -147,6 +156,10 @@ int main(int, char *[])
 			)
 		});
 
+		instance.registerTransition<pl::transitions::SlideTogether> (slide2, {
+			2.f
+		});
+
 		
 
 
@@ -156,6 +169,7 @@ int main(int, char *[])
 	catch (const std::exception &exception)
 	{
 		std::cerr << "ERROR : " << exception.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 
 	return EXIT_SUCCESS;

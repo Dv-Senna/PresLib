@@ -51,8 +51,5 @@ sandbox/bin/*
 # LaTeX
 latex/*
 
-# Shaders
-*.spv
-
 # Logs
 *.log
