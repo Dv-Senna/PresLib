@@ -14,6 +14,14 @@ namespace pl {
 			if (freeMethod != nullptr)
 				freeMethod(ref);
 		}
+
+		inline T *operator->() const noexcept {
+			return ref;
+		}
+
+		inline operator T*() const noexcept {
+			return ref;
+		}
 	};
 
 } // namespace pl

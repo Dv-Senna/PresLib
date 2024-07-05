@@ -10,6 +10,7 @@
 int main(int, char *[]) {
 	try {
 		pl::Instance::CreateInfos instanceCreateInfos {};
+		instanceCreateInfos.blockHeapSize = 1024*1024;
 		pl::Instance instance {instanceCreateInfos};
 	}
 
