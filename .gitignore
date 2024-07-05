@@ -31,22 +31,14 @@
 *.out
 *.app
 
-# Vendors
-vendors/*
-
 # vs code
 .vscode/*
 
 # Windows script
 *.bat
 
-# Makefiles
-Makefile
-*.make
-
 # Output
-lib/bin/*
-sandbox/bin/*
+build/*
 
 # LaTeX
 latex/*
