@@ -6,7 +6,7 @@ namespace pl {
 	class Component {
 		public:
 			Component() = default;
-			~Component() = default;
+			virtual ~Component() = default;
 	};
 
 } // namespace pl
