@@ -1,21 +1,20 @@
 set(CMAKE_PROJECT_MINIMUM_VERSION 3.20)
 cmake_minimum_required(VERSION 3.20)
 
-project(preslib
+project(PresLib
 	VERSION 0.6.0
-	LANGUAGES CXX
+	LANGUAGES CXX C
 )
 
 set(PROJECT_ACRONYM pl)
 string(TOUPPER ${PROJECT_ACRONYM} PROJECT_ACRONYM_UPPERCASE)
 set(PROJECT_CPP_DIALECT 23)
+set(PROJECT_C_DIALECT 23)
 
-
+# external dependencies
 
 find_package(SDL2 CONFIG REQUIRED)
 set(WSI_PROVIDER SDL2)
-set(WSI_PROVIDER_INCLUDE_DIRS ${SDL2_INCLUDE_DIRS})
-set(WSI_PROVIDER_LIBRARIES ${SDL2_LIBRARIES})
 if (WIN32)
 	function(CLONE_SDL2_DLL target)
 		add_custom_command(
@@ -28,28 +27,22 @@ if (WIN32)
 endif()
 
 
-if (NOT DEFINED PL_VENDORS_FOLDER)
-	set(PL_VENDORS_FOLDER vendors)
-endif()
-
-add_subdirectory(${PL_VENDORS_FOLDER}/glad)
-add_subdirectory(${PL_VENDORS_FOLDER}/freetype2)
-#add_subdirectory(${PL_VENDORS_FOLDER}/utfcpp)
-#add_subdirectory(${PL_VENDORS_FOLDER}/stb)
+add_subdirectory(vendors/freetype2)
+add_subdirectory(vendors/glad)
 
 
 set(DEPS_INCLUDE_DIRS
 	${SDL2_INCLUDE_DIRS}
-	${PL_VENDORS_FOLDER}/glad/include
-	${PL_VENDORS_FOLDER}/freetype2/include
-	${PL_VENDORS_FOLDER}/utfcpp/source
-	${PL_VENDORS_FOLDER}/stb
-	${PL_VENDORS_FOLDER}/SteelEngine-Malge/se-malge/include
+	${CMAKE_SOURCE_DIR}/vendors/freetype2/include
+	${SE_GLAD_INCLUDE_DIR}
+	${CMAKE_SOURCE_DIR}/vendors/stb
+	${CMAKE_SOURCE_DIR}/vendors/SteelEngine-Malge/se-malge/include
+	${CMAKE_SOURCE_DIR}/vendors/utfcpp/source
 )
-
-message("DEPS INCLUDE DIRS : ${DEPS_INCLUDE_DIRS}")
-
 set(DEPS_LIBRARIES ${SDL2_LIBRARIES} glad freetype)
+
+message("Dependencies include path : " ${DEPS_INCLUDE_DIRS})
+message("Dependencies libraries : " ${DEPS_LIBRARIES})
 
 
 if (WIN32)
@@ -61,7 +54,6 @@ elseif (APPLE)
 else()
 	message(FATAL_ERROR "Platforms other than Windows, Linux and MacOS aren't supported for now")
 endif()
-
 
 add_subdirectory(lib)
 add_subdirectory(sandbox)

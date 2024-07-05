@@ -34,8 +34,9 @@
 # vs code
 .vscode/*
 
-# Windows script
+# Scripts
 *.bat
+*.sh
 
 # Output
 build/*
