@@ -3,6 +3,8 @@
 
 #include <pl/preslib.hpp>
 
+#include <pl/memory/heapAllocator.hpp>
+
 
 
 int main(int, char *[]) {

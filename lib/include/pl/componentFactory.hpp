@@ -10,8 +10,8 @@
 namespace pl {
 	class PL_CORE ComponentFactory final {
 		public:
-			ComponentFactory();
-			~ComponentFactory();
+			ComponentFactory() = default;
+			~ComponentFactory() = default;
 
 			template <typename T>
 			PL_REQUIRES(pl::concepts::IsComponent<T>)
