@@ -14,7 +14,7 @@ namespace pl::memory {
 
 
 	Manager::~Manager() {
-		PL_ASSERT(m_allocationCount != 0, "You have leaked some memory (" + std::to_string(m_allocationCount) + " allocations)");
+		PL_ASSERT(m_allocationCount == 0, "You have leaked some memory (" + std::to_string(m_allocationCount) + " allocations)");
 	}
 
 

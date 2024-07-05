@@ -9,6 +9,7 @@ namespace pl::memory {
 	T *Manager::allocate(Args ...args) {
 		PL_ASSERT(m_allocator != nullptr, "Can't allocate memory from a non-defined allocator");
 
+		++m_allocationCount;
 		T *buffer {reinterpret_cast<T*> (m_allocator->allocate(sizeof(T), alignas(T)))};
 		T *ptr {new(buffer) T(args...)};
 		return ptr;
@@ -19,12 +20,15 @@ namespace pl::memory {
 	void Manager::free(T *ptr) {
 		PL_ASSERT(m_allocator != nullptr, "Can't free memory from a non-defined allocator");
 
+		--m_allocationCount;
 		ptr->~T();
 		m_allocator->free(ptr);
 	}
 
 
 	void Manager::setAllocator(pl::memory::Allocator *allocator) noexcept {
+		PL_ASSERT(m_allocationCount != 0, "Can't change allocator when not all your allocation have been freed. This may cause crashes");
+
 		m_allocator = allocator;
 	}
 
