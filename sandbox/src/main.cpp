@@ -7,7 +7,7 @@
 
 int main(int, char *[]) {
 	try {
-		pl::InstanceCreateInfos instanceCreateInfos {};
+		pl::Instance::CreateInfos instanceCreateInfos {};
 		pl::Instance instance {instanceCreateInfos};
 	}
 

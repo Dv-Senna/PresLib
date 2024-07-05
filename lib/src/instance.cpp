@@ -8,7 +8,7 @@
 
 
 namespace pl {
-	Instance::Instance(const pl::InstanceCreateInfos &createInfos) {
+	Instance::Instance(const pl::Instance::CreateInfos &createInfos) {
 		std::cout << "Create Instance of PresLib" << std::endl;
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
 			throw std::runtime_error("Can't init SDL2 : " + std::string(SDL_GetError()));
