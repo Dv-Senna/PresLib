@@ -16,7 +16,8 @@ namespace pl {
 		}},
 		m_window {nullptr},
 		m_slides {},
-		m_slidesOrder {}
+		m_slidesOrder {},
+		m_currentSlide {0}
 	{
 		std::cout << "Create Instance of PresLib" << std::endl;
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -55,6 +56,20 @@ namespace pl {
 		PL_ASSERT(index < m_slidesOrder.size(), "Invalid slide index");
 		auto it {m_slidesOrder[index]};
 		return it->second;
+	}
+
+
+	bool Instance::nextSlide() {
+		++m_currentSlide;
+		if (m_currentSlide >= m_slidesOrder.size())
+			return true;
+		return false;
+	}
+
+
+	void Instance::previousSlide() {
+		if (m_currentSlide > 0)
+			--m_currentSlide;
 	}
 
 

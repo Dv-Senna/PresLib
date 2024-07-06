@@ -28,6 +28,9 @@ namespace pl {
 			pl::Slide *getSlide(const std::string &name);
 			pl::Slide *getSlide(pl::Count index);
 
+			bool nextSlide();
+			void previousSlide();
+
 			template <typename T, typename CreateInfos>
 			inline pl::Reference<T> createBlock(const CreateInfos &createInfos) {
 				return m_blockFactory.create<T> (createInfos);
@@ -42,6 +45,7 @@ namespace pl {
 			pl::Window *m_window;
 			SlideMap m_slides;
 			std::vector<SlideMap::iterator> m_slidesOrder;
+			pl::Count m_currentSlide;
 	};
 
 } // namespace pl
