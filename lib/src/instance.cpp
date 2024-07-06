@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "pl/assertation.hpp"
+
 
 
 namespace pl {
@@ -12,7 +14,9 @@ namespace pl {
 		m_blockFactory {{
 			.heapSize = createInfos.blockHeapSize
 		}},
-		m_window {nullptr}
+		m_window {nullptr},
+		m_slides {},
+		m_slidesOrder {}
 	{
 		std::cout << "Create Instance of PresLib" << std::endl;
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -30,6 +34,27 @@ namespace pl {
 		if (m_window != nullptr)
 			delete m_window;
 		SDL_Quit();
+	}
+
+
+	void Instance::registerSlide(const std::string &name, pl::Slide *slide) {
+		m_slides[name] = slide;
+		auto it {m_slides.find(name)};
+		m_slidesOrder.push_back(it);
+	}
+
+
+	pl::Slide *Instance::getSlide(const std::string &name) {
+		auto it {m_slides.find(name)};
+		PL_ASSERT(it != m_slides.end(), "Invalid slide name");
+		return it->second;
+	}
+
+
+	pl::Slide *Instance::getSlide(pl::Count index) {
+		PL_ASSERT(index < m_slidesOrder.size(), "Invalid slide index");
+		auto it {m_slidesOrder[index]};
+		return it->second;
 	}
 
 
