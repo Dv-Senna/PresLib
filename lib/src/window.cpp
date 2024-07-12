@@ -2,6 +2,8 @@
 
 #include <stdexcept>
 
+#include <glad/glad.h>
+
 
 
 namespace pl {
@@ -30,6 +32,9 @@ namespace pl {
 		m_context = SDL_GL_CreateContext(m_window);
 		if (m_context == nullptr)
 			throw std::runtime_error("Can't create an SDL2 OpenGL 4.6 context : " + std::string(SDL_GetError()));
+
+		if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+			throw std::runtime_error("Can't load OpenGL function with GLAD");
 	}
 
 
@@ -48,7 +53,7 @@ namespace pl {
 
 
 	void Window::setFullscreen(bool fullscreen) {
-		pl::Uint32 flag {fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0};
+		pl::Uint32 flag {fullscreen ? (pl::Uint32)SDL_WINDOW_FULLSCREEN_DESKTOP : 0};
 		SDL_SetWindowFullscreen(m_window, flag);
 	}
 

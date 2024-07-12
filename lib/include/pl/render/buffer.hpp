@@ -26,7 +26,7 @@ namespace pl::render {
 			Buffer(const pl::render::Buffer::CreateInfos &createInfos);
 			~Buffer();
 
-			void write(pl::ByteCount offset, pl::ByteCount size, pl::Byte *data);
+			void write(pl::ByteCount offset, pl::ByteCount size, const pl::Byte *data);
 
 			inline const pl::render::BufferType &getType() const noexcept {return m_type;}
 			inline const pl::ByteCount &getSize() const noexcept {return m_size;}

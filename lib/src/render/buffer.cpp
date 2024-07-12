@@ -35,7 +35,7 @@ namespace pl::render {
 	}
 
 
-	void Buffer::write(pl::ByteCount offset, pl::ByteCount size, pl::Byte *data) {
+	void Buffer::write(pl::ByteCount offset, pl::ByteCount size, const pl::Byte *data) {
 		PL_ASSERT(this->isValid(), "Can't write undefined buffer");
 		glNamedBufferSubData(m_buffer, offset, size, data);
 	}
