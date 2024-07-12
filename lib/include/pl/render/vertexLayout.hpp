@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "pl/core.hpp"
+#include "pl/render/buffer.hpp"
 #include "pl/types.hpp"
 #include "pl/utils/hash.hpp"
 
@@ -39,6 +40,12 @@ namespace pl::render {
 			~VertexLayout();
 
 			bool operator==(const pl::render::VertexLayout &layout);
+			inline bool isValid() const noexcept {return m_vao != 0;}
+
+			void linkBuffer(const pl::render::Buffer *buffer);
+
+			inline const pl::Uint32 &getVAO() const noexcept {return m_vao;}
+
 
 		private:
 			pl::Uint32 m_binding;
@@ -47,6 +54,7 @@ namespace pl::render {
 			pl::Hash m_hash;
 			pl::Uint32 m_vao;
 			pl::ByteCount m_stride;
+			const pl::render::Buffer *m_linkedBuffer;
 	};
 
 } // namespace pl::render

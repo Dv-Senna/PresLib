@@ -4,6 +4,8 @@
 
 #include <glad/gl.h>
 
+#include "pl/assertation.hpp"
+
 
 
 namespace pl::render {
@@ -13,7 +15,8 @@ namespace pl::render {
 		m_rate {createInfos.rate},
 		m_hash {},
 		m_vao {0},
-		m_stride {0}
+		m_stride {0},
+		m_linkedBuffer {nullptr}
 	{
 		static const std::map<pl::render::VertexComponentType, GLenum> typeMap {
 			{pl::render::VertexComponentType::eFloat32, GL_FLOAT},
@@ -54,6 +57,19 @@ namespace pl::render {
 
 	bool VertexLayout::operator==(const pl::render::VertexLayout &layout) {
 		return m_hash == layout.m_hash;
+	}
+
+
+	void VertexLayout::linkBuffer(const pl::render::Buffer *buffer) {
+		PL_ASSERT(this->isValid(), "Can't link buffer to invalid vertex layout");
+		if (m_linkedBuffer == buffer)
+			return;
+
+		PL_ASSERT(buffer->isValid(), "Can't link invalid buffer");
+		PL_ASSERT(buffer->getType() == pl::render::BufferType::eVertex, "Can't link buffer of wrong type");
+
+		m_linkedBuffer = buffer;
+		glVertexArrayVertexBuffer(m_vao, m_binding, buffer->getBuffer(), 0, m_stride);
 	}
 
 
