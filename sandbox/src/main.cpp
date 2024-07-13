@@ -3,6 +3,7 @@
 
 #include <pl/preslib.hpp>
 
+#include <pl/render/framebuffer.hpp>
 #include <pl/memory/heapAllocator.hpp>
 #include <pl/render/vertexLayout.hpp>
 
@@ -37,6 +38,13 @@ int main(int, char *[]) {
 		verticesBuffer.write(0, vertices.size() * sizeof(pl::Float32), (const pl::Byte*)vertices.data());
 
 
+		pl::render::Framebuffer::CreateInfos framebufferCreateInfos {};
+		framebufferCreateInfos.colorFormat = pl::render::FramebufferColorFormat::eR11fG11fB10f;
+		framebufferCreateInfos.hasDepth = true;
+		framebufferCreateInfos.size = instance.getWindow().getSize();
+		pl::render::Framebuffer framebuffer {framebufferCreateInfos};
+
+
 		bool running {true};
 		while (running) {
 			SDL_Event event {};
@@ -51,6 +59,11 @@ int main(int, char *[]) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
 						instance.previousSlide();
 						continue;
+					}
+
+					if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+						running = false;
+						break;
 					}
 
 					continue;
