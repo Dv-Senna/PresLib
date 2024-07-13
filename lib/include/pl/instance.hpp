@@ -27,6 +27,8 @@ namespace pl {
 			Instance(const pl::Instance::CreateInfos &createInfos);
 			~Instance();
 
+			void mainloop();
+
 			void registerSlide(const std::string &name, pl::Slide *slide);
 			pl::Slide *getSlide(const std::string &name);
 			pl::Slide *getSlide(pl::Count index);

@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "pl/assertation.hpp"
+#include "pl/inputManager.hpp"
 
 
 
@@ -41,6 +42,26 @@ namespace pl {
 		if (m_window != nullptr)
 			m_objectHeapManager.free(m_window);
 		SDL_Quit();
+	}
+
+
+	void Instance::mainloop() {
+		while (pl::InputManager::isRunning()) {
+			pl::InputManager::update();
+			if (pl::InputManager::isKeyDown(pl::Key::eEscape))
+				return;
+			
+			if (pl::InputManager::wasKeyPressed(pl::Key::eSpace) || pl::InputManager::wasKeyPressed(pl::Key::eRight)) {
+				if (this->nextSlide())
+					return;
+			}
+
+			if (pl::InputManager::wasKeyPressed(pl::Key::eLeft))
+				this->previousSlide();
+
+			if (pl::InputManager::wasWindowResized())
+				m_window->handleResize();
+		}
 	}
 
 

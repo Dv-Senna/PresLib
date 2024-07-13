@@ -37,45 +37,7 @@ int main(int, char *[]) {
 		verticesBuffer.write(0, vertices.size() * sizeof(pl::Float32), (const pl::Byte*)vertices.data());
 
 
-		bool running {true};
-		while (running) {
-			SDL_Event event {};
-			while (SDL_PollEvent(&event)) {
-				if (event.type == SDL_KEYDOWN) {
-					if (event.key.keysym.scancode == SDL_SCANCODE_SPACE || event.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-						if (instance.nextSlide())
-							running = false;
-						continue;
-					}
-
-					if (event.key.keysym.scancode == SDL_SCANCODE_LEFT) {
-						instance.previousSlide();
-						continue;
-					}
-
-					if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-						running = false;
-						break;
-					}
-
-					continue;
-				}
-
-				if (event.type == SDL_WINDOWEVENT) {
-					if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-						instance.getWindow().handleResize();
-						continue;
-					}
-
-					continue;
-				}
-
-				if (event.type == SDL_QUIT) {
-					running = false;
-					break;
-				}
-			}
-		}
+		instance.mainloop();
 	}
 
 	catch (const std::exception &exception) {
