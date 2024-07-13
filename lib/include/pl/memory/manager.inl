@@ -10,7 +10,7 @@ namespace pl::memory {
 		PL_ASSERT(m_allocator != nullptr, "Can't allocate memory from a non-defined allocator");
 
 		++m_allocationCount;
-		T *buffer {reinterpret_cast<T*> (m_allocator->allocate(sizeof(T), alignas(T)))};
+		T *buffer {reinterpret_cast<T*> (m_allocator->allocate(sizeof(T), alignof(T)))};
 		T *ptr {new(buffer) T(args...)};
 		return ptr;
 	}

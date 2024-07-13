@@ -17,7 +17,13 @@ namespace pl {
 		m_window {nullptr},
 		m_slides {},
 		m_slidesOrder {},
-		m_currentSlide {0}
+		m_currentSlide {0},
+		m_objectHeapAllocator {{
+			.size = createInfos.objectHeapSize
+		}},
+		m_objectHeapManager {{
+			.allocator = &m_objectHeapAllocator
+		}}
 	{
 		std::cout << "Create Instance of PresLib" << std::endl;
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -26,14 +32,14 @@ namespace pl {
 		pl::Window::CreateInfos windowCreateInfos {};
 		windowCreateInfos.title = createInfos.presentationName;
 		windowCreateInfos.size = createInfos.viewportSize;
-		m_window = new pl::Window(windowCreateInfos);
+		m_window = m_objectHeapManager.allocate<pl::Window> (windowCreateInfos);
 	}
 
 
 	Instance::~Instance() {
 		std::cout << "Destroy Instance of PresLib" << std::endl;
 		if (m_window != nullptr)
-			delete m_window;
+			m_objectHeapManager.free(m_window);
 		SDL_Quit();
 	}
 

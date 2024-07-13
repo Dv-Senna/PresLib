@@ -33,4 +33,4 @@ namespace pl::memory {
 } // namespace pl::memory
 
 
-#include "pl/memory/manager.hpp"
+#include "pl/memory/manager.inl"
