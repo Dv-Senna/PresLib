@@ -24,6 +24,11 @@ namespace pl {
 	}
 
 
+	void Slide::update() {
+		
+	}
+
+
 	void Slide::draw() {
 
 	}

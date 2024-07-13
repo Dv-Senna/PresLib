@@ -18,6 +18,7 @@ namespace pl {
 			Slide();
 			virtual ~Slide();
 
+			virtual void update();
 			void draw();
 			void registerBlock(pl::Block *block);
 

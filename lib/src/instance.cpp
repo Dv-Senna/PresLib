@@ -46,6 +46,9 @@ namespace pl {
 
 
 	void Instance::mainloop() {
+		for (auto &slide : m_slides)
+			slide.second->compile(this);
+
 		while (pl::InputManager::isRunning()) {
 			pl::InputManager::update();
 			if (pl::InputManager::isKeyDown(pl::Key::eEscape))
@@ -61,6 +64,9 @@ namespace pl {
 
 			if (pl::InputManager::wasWindowResized())
 				m_window->handleResize();
+
+			m_slidesOrder[m_currentSlide]->second->update();
+			m_slidesOrder[m_currentSlide]->second->draw();
 		}
 	}
 
