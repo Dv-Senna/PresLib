@@ -1,4 +1,3 @@
-set(CMAKE_PROJECT_MINIMUM_VERSION 3.20)
 cmake_minimum_required(VERSION 3.20)
 
 project(PresLib
@@ -26,6 +25,9 @@ if (WIN32)
 	endfunction(CLONE_SDL2_DLL)
 endif()
 
+find_package(Vulkan REQUIRED)
+message(${Vulkan_glslc_FOUND})
+message(${Vulkan_GLSLC_EXECUTABLE})
 
 add_subdirectory(vendors/freetype2)
 add_subdirectory(vendors/glad)
@@ -57,3 +59,4 @@ endif()
 
 add_subdirectory(lib)
 add_subdirectory(sandbox)
+add_subdirectory(shaders)

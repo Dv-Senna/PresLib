@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pl/render/descriptor.hpp"
 #include "pl/types.hpp"
 
 
@@ -13,6 +14,7 @@ namespace pl {
 		pl::Vec3f position {0.f, 0.f, 0.f};
 		pl::Vec4f rotation {0.f, 0.f, 0.f, 0.f};
 		pl::Vec3f zoom {1.f, 1.f, 1.f};
+		pl::render::Descriptor renderDescriptor;
 	};
 
 	template <>
