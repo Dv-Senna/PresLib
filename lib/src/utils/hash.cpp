@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "pl/render/pipeline.hpp"
+
 
 
 namespace pl::utils {
@@ -43,6 +45,19 @@ namespace pl::utils {
 		for (const auto &part : parts)
 			output ^= part;
 		return output;
+	}
+
+
+	/*
+	 * This specialization hash the state of a pipeline
+	 */
+	template <>
+	pl::Hash hash<pl::render::Pipeline::State> (const pl::render::Pipeline::State &value) {
+		std::vector<pl::Byte> hashData {};
+		hashData.resize(sizeof(bool) + sizeof(pl::render::Shader*) * value.shaders.size());
+		memcpy(hashData.data(), &value.faceCulling, sizeof(bool));
+		memcpy(hashData.data() + sizeof(bool), value.shaders.data(), sizeof(pl::render::Shader*) * value.shaders.size());
+		return pl::utils::hash(hashData);
 	}
 
 } // namespace pl::utils

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <map>
 #include <string>
 
 #include "pl/core.hpp"
+#include "pl/types.hpp"
 #include "pl/utils/hash.hpp"
 
 
@@ -25,6 +27,8 @@ namespace pl::render {
 			~Shader();
 
 			bool operator==(const pl::render::Shader &shader);
+
+			inline const pl::Uint32 &getShader() const noexcept {return m_shader;}
 
 
 		private:

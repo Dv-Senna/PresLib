@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pl/core.hpp"
 #include "pl/types.hpp"
 
 
@@ -9,6 +10,6 @@ namespace pl {
 
 namespace pl::utils {
 	template <typename T>
-	pl::Hash hash(const T &value);
+	PL_CORE pl::Hash hash(const T &value);
 
 } // namespace pl::utils

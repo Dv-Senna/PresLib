@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "pl/assertation.hpp"
+#include "pl/config.hpp"
 #include "pl/inputManager.hpp"
 
 
@@ -67,6 +68,9 @@ namespace pl {
 
 			m_slidesOrder[m_currentSlide]->second->update();
 			m_slidesOrder[m_currentSlide]->second->draw();
+
+			if (pl::Config::getCustomRenderCallback() != nullptr)
+				pl::Config::getCustomRenderCallback()();
 		}
 	}
 

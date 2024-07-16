@@ -18,6 +18,17 @@ namespace pl {
 	}
 
 
+	void Config::setCustomRenderCallback(const std::function<void()> &callback) {
+		s_customRenderCallback = callback;
+	}
+
+
+	const std::function<void()> &Config::getCustomRenderCallback() {
+		return s_customRenderCallback;
+	}
+
+
 	std::string Config::s_shaderFolderPath {"shaders/"};
+	std::function<void()> Config::s_customRenderCallback {nullptr};
 
 } // namespace pl

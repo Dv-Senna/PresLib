@@ -24,13 +24,17 @@ namespace pl::render {
 		};
 
 		std::vector<pl::Byte> hashData {};
-		hashData.resize(sizeof(pl::render::ShaderStage) + createInfos.path.size() + createInfos.entryPoint.size());
-		memcpy(hashData.data(), &m_stage, sizeof(pl::render::ShaderStage));
-		memcpy(hashData.data() + sizeof(pl::render::ShaderStage), createInfos.path.data(), createInfos.path.size());
-		memcpy(
-			hashData.data() + sizeof(pl::render::ShaderStage) + createInfos.path.size(),
-			createInfos.entryPoint.data(), createInfos.entryPoint.size()
+		hashData.resize(
+			sizeof(pl::render::ShaderStage) + createInfos.path.size() * sizeof(char) + createInfos.entryPoint.size() * sizeof(char)
 		);
+		memcpy(hashData.data(), &m_stage, sizeof(pl::render::ShaderStage));
+		memcpy(hashData.data() + sizeof(pl::render::ShaderStage), createInfos.path.c_str(), createInfos.path.size() * sizeof(char));
+		memcpy(
+			hashData.data() + sizeof(pl::render::ShaderStage) + createInfos.path.size() * sizeof(char),
+			createInfos.entryPoint.c_str(), createInfos.entryPoint.size() * sizeof(char)
+		);
+		std::cout << &hashData << std::endl;
+		std::cout << (void*)hashData.data() << std::endl;
 		m_hash = pl::utils::hash(hashData);
 
 		auto it {s_loadedShaders.find(m_hash)};
