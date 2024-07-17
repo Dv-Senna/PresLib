@@ -12,15 +12,24 @@ string(TOUPPER ${SHADERS_NAME} SHADERS_NAME_UPPERCASE)
 file(GLOB_RECURSE VERT_SHADER_SRC *.vert)
 file(GLOB_RECURSE FRAG_SHADER_SRC *.frag)
 
-message("----------------- SHADERS SOURCES : ${CMAKE_SOURCE_DIR} -----------------")
-message("Test debug $<$<CONFIG:Debug>:-g>")
+set(SHADER_SRC_FILES ${VERT_SHADER_SRC} ${FRAG_SHADER_SRC})
+set(SHADER_SPIRV_FILES "")
+
+foreach(file ${SHADER_SRC_FILES})
+	list(APPEND SHADER_SPIRV_FILES "${file}.spv")
+	add_custom_command(
+		OUTPUT
+			${file}.spv
+		COMMAND
+			${Vulkan_GLSLC_EXECUTABLE} ${file} -o ${file}.spv $<$<CONFIG:Debug>:-g>
+		DEPENDS
+			${file}
+	)
+endforeach(file ${SHADER_SRC_FILES})
+
+
 
 add_custom_target(${SHADERS_NAME}
-	DEPENDS
-		${VERT_SHADER_SRC}
-		${FRAG_SHADER_SRC}
-	WORKING_DIRECTORY
-		${CMAKE_SOURCE_DIR}/shaders
-	COMMAND
-		${Vulkan_GLSLC_EXECUTABLE} -c ${VERT_SHADER_SRC} ${FRAG_SHADER_SRC} $<$<CONFIG:Debug>:-g>
+	ALL DEPENDS
+		${SHADER_SPIRV_FILES}
 )
