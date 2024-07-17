@@ -34,9 +34,9 @@ namespace pl::utils {
 			}
 
 			pl::Hash tmp {};
-			memcpy(&tmp, value.data() + it, value.size());
+			memcpy(&tmp, value.data() + it, leftover);
 			pl::Hash zero {0};
-			memcpy((pl::Byte*)&tmp + value.size(), &zero, sizeof(pl::Hash) - value.size());
+			memcpy((pl::Byte*)&tmp + leftover, &zero, sizeof(pl::Hash) - leftover);
 			parts.push_back(tmp);
 			break;
 		}

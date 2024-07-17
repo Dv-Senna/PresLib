@@ -22,6 +22,7 @@ namespace pl {
 
 			void handleResize();
 			void setFullscreen(bool fullscreen);
+			void swap();
 
 			inline const pl::Vec2i &getSize() const noexcept {return m_size;}
 

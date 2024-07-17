@@ -107,4 +107,9 @@ namespace pl {
 	}
 
 
+	void Window::swap() {
+		SDL_GL_SwapWindow(m_window);
+	}
+
+
 } // namespace pl

@@ -33,8 +33,6 @@ namespace pl::render {
 			hashData.data() + sizeof(pl::render::ShaderStage) + createInfos.path.size() * sizeof(char),
 			createInfos.entryPoint.c_str(), createInfos.entryPoint.size() * sizeof(char)
 		);
-		std::cout << &hashData << std::endl;
-		std::cout << (void*)hashData.data() << std::endl;
 		m_hash = pl::utils::hash(hashData);
 
 		auto it {s_loadedShaders.find(m_hash)};

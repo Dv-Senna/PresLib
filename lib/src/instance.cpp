@@ -71,6 +71,8 @@ namespace pl {
 
 			if (pl::Config::getCustomRenderCallback() != nullptr)
 				pl::Config::getCustomRenderCallback()();
+
+			m_window->swap();
 		}
 	}
 

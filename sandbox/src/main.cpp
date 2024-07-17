@@ -40,7 +40,6 @@ int main(int, char *[]) {
 		pl::render::Buffer verticesBuffer {bufferCreateInfos};
 		verticesBuffer.write(0, vertices.size() * sizeof(pl::Float32), (const pl::Byte*)vertices.data());
 
-		std::cout << "VERTEX LAYOUT" << std::endl;
 		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
 		vertexLayoutCreateInfos.binding = 0;
 		vertexLayoutCreateInfos.components = {
@@ -51,35 +50,31 @@ int main(int, char *[]) {
 		pl::render::VertexLayout vertexLayout {vertexLayoutCreateInfos};
 
 
-		std::cout << "SHADER1" << std::endl;
 		pl::render::Shader::CreateInfos shaderCreateInfos {};
 		shaderCreateInfos.entryPoint = "main";
 		shaderCreateInfos.stage = pl::render::ShaderStage::eVertex;
 		shaderCreateInfos.path = "test.vert";
 		pl::render::Shader vertexShader {shaderCreateInfos};
 
-		std::cout << "SHADER2" << std::endl;
 		shaderCreateInfos.stage = pl::render::ShaderStage::eFragment;
 		shaderCreateInfos.path = "test.frag";
 		pl::render::Shader fragmentShader {shaderCreateInfos};
 
-		std::cout << "PIPELINE" << std::endl;
 		pl::render::Pipeline::CreateInfos pipelineCreateInfos {};
 		pipelineCreateInfos.state.faceCulling = false;
 		pipelineCreateInfos.state.shaders = {&vertexShader, &fragmentShader};
 		pl::render::Pipeline pipeline {pipelineCreateInfos};
 
 
-		std::cout << "RENDER" << std::endl;
+		vertexLayout.linkBuffer(&verticesBuffer);
+
 		pl::Config::setCustomRenderCallback([&] () {
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		});
 
 		glBindVertexArray(vertexLayout.getVAO());
 		glUseProgram(pipeline.getProgram());
-		glBindBuffer(GL_ARRAY_BUFFER, verticesBuffer.getBuffer());
 		instance.mainloop();
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glUseProgram(0);
 		glBindVertexArray(0);
 	}
