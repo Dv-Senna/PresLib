@@ -54,7 +54,7 @@ namespace pl::render {
 	}
 
 
-	bool Pipeline::operator==(const pl::render::Pipeline &pipeline) {
+	bool Pipeline::operator==(const pl::render::Pipeline &pipeline) const noexcept {
 		return m_hash == pipeline.m_hash;
 	}
 

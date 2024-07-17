@@ -39,7 +39,7 @@ namespace pl::render {
 			VertexLayout(const pl::render::VertexLayout::CreateInfos &createInfos);
 			~VertexLayout();
 
-			bool operator==(const pl::render::VertexLayout &layout);
+			bool operator==(const pl::render::VertexLayout &layout) const noexcept;
 			inline bool isValid() const noexcept {return m_vao != 0;}
 
 			void linkBuffer(const pl::render::Buffer *buffer);

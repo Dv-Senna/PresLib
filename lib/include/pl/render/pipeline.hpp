@@ -25,7 +25,7 @@ namespace pl::render {
 			Pipeline(const pl::render::Pipeline::CreateInfos &createInfos);
 			~Pipeline();
 
-			bool operator==(const pl::render::Pipeline &pipeline);
+			bool operator==(const pl::render::Pipeline &pipeline) const noexcept;
 
 			inline const pl::Uint32 &getProgram() const noexcept {return m_program;}
 

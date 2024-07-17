@@ -56,7 +56,7 @@ namespace pl::render {
 	}
 
 
-	bool VertexLayout::operator==(const pl::render::VertexLayout &layout) {
+	bool VertexLayout::operator==(const pl::render::VertexLayout &layout) const noexcept {
 		return m_hash == layout.m_hash;
 	}
 
