@@ -54,9 +54,10 @@ namespace pl::utils {
 	template <>
 	pl::Hash hash<pl::render::Pipeline::State> (const pl::render::Pipeline::State &value) {
 		std::vector<pl::Byte> hashData {};
-		hashData.resize(sizeof(bool) + sizeof(pl::render::Shader*) * value.shaders.size());
+		hashData.resize(sizeof(bool) + sizeof(pl::Hash) * value.shaders.size());
 		memcpy(hashData.data(), &value.faceCulling, sizeof(bool));
-		memcpy(hashData.data() + sizeof(bool), value.shaders.data(), sizeof(pl::render::Shader*) * value.shaders.size());
+		for (pl::Count i {0}; i < value.shaders.size(); ++i)
+			memcpy(hashData.data() + sizeof(bool) + i * sizeof(pl::Hash), &value.shaders[i]->getHash(), sizeof(pl::Hash));
 		return pl::utils::hash(hashData);
 	}
 

@@ -28,7 +28,25 @@ namespace pl {
 	}
 
 
+	void Config::setFramerate(pl::Uint fps) {
+		s_framerate = fps;
+		s_frameDuration = 1000.f / static_cast<pl::Float> (fps);
+	}
+
+
+	const pl::Uint &Config::getFramerate() {
+		return s_framerate;
+	}
+
+
+	const pl::Float &Config::getFrameDuration() {
+		return s_frameDuration;
+	}
+
+
 	std::string Config::s_shaderFolderPath {"shaders/"};
 	std::function<void()> Config::s_customRenderCallback {nullptr};
+	pl::Uint Config::s_framerate {60};
+	pl::Float Config::s_frameDuration {1000.f/60.f};
 
 } // namespace pl

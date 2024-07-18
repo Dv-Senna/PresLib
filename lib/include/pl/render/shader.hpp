@@ -29,6 +29,7 @@ namespace pl::render {
 			bool operator==(const pl::render::Shader &shader);
 
 			inline const pl::Uint32 &getShader() const noexcept {return m_shader;}
+			inline const pl::Hash &getHash() const noexcept {return m_hash;}
 
 
 		private:

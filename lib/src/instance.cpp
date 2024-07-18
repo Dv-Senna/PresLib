@@ -50,11 +50,14 @@ namespace pl {
 		for (auto &slide : m_slides)
 			slide.second->compile(this);
 
+		pl::Float deltaTime {0};
+		pl::Uint32 startFrameTime {SDL_GetTicks()};
+
 		while (pl::InputManager::isRunning()) {
 			pl::InputManager::update();
 			if (pl::InputManager::isKeyDown(pl::Key::eEscape))
 				return;
-			
+
 			if (pl::InputManager::wasKeyPressed(pl::Key::eSpace) || pl::InputManager::wasKeyPressed(pl::Key::eRight)) {
 				if (this->nextSlide())
 					return;
@@ -73,6 +76,16 @@ namespace pl {
 				pl::Config::getCustomRenderCallback()();
 
 			m_window->swap();
+
+			pl::Uint32 endFrameTime {SDL_GetTicks()};
+			pl::Float elapsedTime {static_cast<pl::Float> (endFrameTime - startFrameTime)};
+			if (elapsedTime < deltaTime) {
+				SDL_Delay(static_cast<pl::Uint32> (deltaTime - elapsedTime));
+				deltaTime = pl::Config::getFrameDuration();
+			}
+			else
+				deltaTime = elapsedTime;
+			startFrameTime = SDL_GetTicks();
 		}
 	}
 
