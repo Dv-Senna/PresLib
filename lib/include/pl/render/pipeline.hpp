@@ -27,7 +27,11 @@ namespace pl::render {
 
 			bool operator==(const pl::render::Pipeline &pipeline) const noexcept;
 
+			void use();
+			void useFrom(const pl::render::Pipeline *oldPipeline);
+
 			inline const pl::Uint32 &getProgram() const noexcept {return m_program;}
+			inline const pl::render::Pipeline::State &getState() const noexcept {return m_state;}
 
 		private:
 			static std::map<pl::Hash, pl::Uint32> s_loadedPipelines;

@@ -9,6 +9,7 @@ namespace pl {
 	Slide::Slide() :
 		m_blocks {},
 		m_framebuffer {nullptr},
+		m_renderer {},
 		m_instance {nullptr}
 	{
 
@@ -25,12 +26,12 @@ namespace pl {
 
 
 	void Slide::update() {
-		
+
 	}
 
 
 	void Slide::draw() {
-
+		m_renderer.draw(/*m_framebuffer*/nullptr);
 	}
 
 
@@ -52,6 +53,8 @@ namespace pl {
 
 		for (auto &block : m_blocks)
 			block->compile(instance);
+
+		m_renderer.compile(m_instance, m_blocks);
 	}
 
 

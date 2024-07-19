@@ -59,6 +59,27 @@ namespace pl::render {
 	}
 
 
+	void Pipeline::use() {
+		if (m_state.faceCulling)
+			glEnable(GL_CULL_FACE);
+		else
+			glDisable(GL_CULL_FACE);
+
+		glUseProgram(m_program);
+	}
+
+
+	void Pipeline::useFrom(const pl::render::Pipeline *oldPipeline) {
+		if (oldPipeline == nullptr)
+			return this->use();
+
+		if (m_state.faceCulling && !oldPipeline->m_state.faceCulling)
+			glEnable(GL_CULL_FACE);
+		else if (!m_state.faceCulling && oldPipeline->m_state.faceCulling)
+			glDisable(GL_CULL_FACE);
+	}
+
+
 	std::map<pl::Hash, pl::Uint32> Pipeline::s_loadedPipelines {};
 	std::map<pl::Hash, pl::Count> Pipeline::s_loadedPipelineCounts {};
 

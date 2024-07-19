@@ -74,4 +74,9 @@ namespace pl::render {
 	}
 
 
+	void VertexLayout::use() {
+		glBindVertexArray(m_vao);
+	}
+
+
 } // namespace pl::render

@@ -43,8 +43,10 @@ namespace pl::render {
 			inline bool isValid() const noexcept {return m_vao != 0;}
 
 			void linkBuffer(const pl::render::Buffer *buffer);
+			void use();
 
 			inline const pl::Uint32 &getVAO() const noexcept {return m_vao;}
+			inline const pl::ByteCount &getStride() const noexcept {return m_stride;}
 
 
 		private:

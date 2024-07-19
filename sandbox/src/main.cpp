@@ -25,8 +25,8 @@ int main(int, char *[]) {
 		pl::Slide slide1 {};
 		pl::Slide slide2 {};
 
-		instance.registerSlide("slide2", &slide2);
 		instance.registerSlide("slide1", &slide1);
+		instance.registerSlide("slide2", &slide2);
 
 		pl::blocks::Triangle::CreateInfos triangleCreateInfos {};
 		triangleCreateInfos.color = {1.f, 0.f, 0.f};
@@ -38,6 +38,16 @@ int main(int, char *[]) {
 		};
 		pl::blocks::Triangle triangle {triangleCreateInfos};
 		slide1.registerBlock(&triangle);
+
+		triangleCreateInfos.color = {0.f, 1.f, 0.f};
+		triangleCreateInfos.position = {0.f, 0.f, 0.f};
+		triangleCreateInfos.vertices = {
+			pl::Vec3f(0.5f, 0.5f, 0.f),
+			pl::Vec3f(1.f, -0.5f, 0.f),
+			pl::Vec3f(-0.5f, -0.5f, 0.f)
+		};
+		pl::blocks::Triangle triangle2 {triangleCreateInfos};
+		slide1.registerBlock(&triangle2);
 
 
 		/*vertexLayout.linkBuffer(&verticesBuffer);

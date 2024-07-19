@@ -22,7 +22,8 @@ namespace pl::blocks {
 			UNPACK_VEC3(createInfos.vertices[2]), UNPACK_VEC3(createInfos.color)
 		};
 
-		m_state.vertices.assign(vertices.data(), vertices.data() + vertices.size());
+		m_state.vertices.resize(sizeof(pl::Float) * vertices.size());
+		memcpy(m_state.vertices.data(), vertices.data(), sizeof(pl::Float) * vertices.size());
 	}
 
 
@@ -55,7 +56,7 @@ namespace pl::blocks {
 		m_fragmentShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
 
 		pl::render::Pipeline::CreateInfos pipelineCreateInfos {};
-		pipelineCreateInfos.state.faceCulling = true;
+		pipelineCreateInfos.state.faceCulling = false;
 		pipelineCreateInfos.state.shaders = {m_vertexShader, m_fragmentShader};
 		m_state.renderDescriptor.pipeline = m_instance->allocateObject<pl::render::Pipeline> (pipelineCreateInfos);
 

@@ -28,6 +28,8 @@ namespace pl::render {
 			void resize(const pl::Vec2i &size);
 			void clear(const pl::Vec3f &color);
 
+			inline const pl::Uint32 &getFramebuffer() const noexcept {return m_framebuffer;}
+
 		private:
 			void m_create(bool depthBuffer);
 			void m_destroy();

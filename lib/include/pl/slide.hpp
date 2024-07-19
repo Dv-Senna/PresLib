@@ -5,6 +5,7 @@
 #include "pl/block.hpp"
 #include "pl/core.hpp"
 #include "pl/render/framebuffer.hpp"
+#include "pl/render/renderer.hpp"
 
 
 
@@ -28,6 +29,7 @@ namespace pl {
 
 			std::vector<pl::Block*> m_blocks;
 			pl::render::Framebuffer *m_framebuffer;
+			pl::render::Renderer m_renderer;
 			pl::Instance *m_instance;
 	};
 
