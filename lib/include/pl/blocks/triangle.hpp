@@ -20,7 +20,7 @@ namespace pl::blocks {
 			Triangle(const pl::blocks::Triangle::CreateInfos &createInfos);
 			~Triangle() override;
 
-			void compile(pl::Instance &instance) override;
+			void compile(pl::Instance *instance) override;
 
 		private:
 			pl::Instance *m_instance;

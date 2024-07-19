@@ -38,7 +38,7 @@ namespace pl {
 			virtual void setRotation(const pl::Vec3f &axis, pl::Float angle) = 0;
 			virtual void setZoom(const pl::Vec3f &zoom) = 0;
 
-			virtual void compile(pl::Instance &instance) = 0;
+			virtual void compile(pl::Instance *instance) = 0;
 	};
 
 	template <>
@@ -59,7 +59,7 @@ namespace pl {
 			inline void setRotation(const pl::Vec3f &axis, pl::Float angle) override;
 			inline void setZoom(const pl::Vec3f &zoom) override;
 
-			virtual void compile(pl::Instance &instance) override = 0;
+			virtual void compile(pl::Instance *instance) override = 0;
 
 		protected:
 			pl::_BlockState m_state;

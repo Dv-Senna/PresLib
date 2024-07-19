@@ -6,6 +6,7 @@
 #include <pl/preslib.hpp>
 #include <pl/config.hpp>
 
+#include <pl/blocks/triangle.hpp>
 #include <pl/memory/heapAllocator.hpp>
 #include <pl/render/vertexLayout.hpp>
 #include <pl/render/pipeline.hpp>
@@ -17,7 +18,7 @@ int main(int, char *[]) {
 		pl::Instance::CreateInfos instanceCreateInfos {};
 		instanceCreateInfos.presentationName = "Example";
 		instanceCreateInfos.viewportSize = {16*70, 9*70};
-		instanceCreateInfos.blockHeapSize = 1024*1024;
+		instanceCreateInfos.objectHeapSize = 1024*1024;
 		pl::Instance instance {instanceCreateInfos};
 
 
@@ -27,56 +28,29 @@ int main(int, char *[]) {
 		instance.registerSlide("slide2", &slide2);
 		instance.registerSlide("slide1", &slide1);
 
-		std::vector<pl::Float32> vertices {
-			0.0f, 0.5f, 0.f,       1.f, 0.f, 0.f,
-			0.5f, -0.5f, 0.f,      0.f, 1.f, 0.f,
-			-0.5f, -0.5f, 0.f,     0.f, 0.f, 1.f,
+		pl::blocks::Triangle::CreateInfos triangleCreateInfos {};
+		triangleCreateInfos.color = {1.f, 0.f, 0.f};
+		triangleCreateInfos.position = {0.f, 0.f, 0.f};
+		triangleCreateInfos.vertices = {
+			pl::Vec3f(0.f, 0.5f, 0.f),
+			pl::Vec3f(0.5f, -0.5f, 0.f),
+			pl::Vec3f(-0.5f, -0.5f, 0.f)
 		};
-
-		pl::render::Buffer::CreateInfos bufferCreateInfos {};
-		bufferCreateInfos.type = pl::render::BufferType::eVertex;
-		bufferCreateInfos.usage = pl::render::BufferUsage::eStatic;
-		bufferCreateInfos.size = sizeof(pl::Float32) * vertices.size();
-		pl::render::Buffer verticesBuffer {bufferCreateInfos};
-		verticesBuffer.write(0, vertices.size() * sizeof(pl::Float32), (const pl::Byte*)vertices.data());
-
-		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
-		vertexLayoutCreateInfos.binding = 0;
-		vertexLayoutCreateInfos.components = {
-			{0, 3, pl::render::VertexComponentType::eFloat32},
-			{1, 3, pl::render::VertexComponentType::eFloat32}
-		};
-		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
-		pl::render::VertexLayout vertexLayout {vertexLayoutCreateInfos};
+		pl::blocks::Triangle triangle {triangleCreateInfos};
+		slide1.registerBlock(&triangle);
 
 
-		pl::render::Shader::CreateInfos shaderCreateInfos {};
-		shaderCreateInfos.entryPoint = "main";
-		shaderCreateInfos.stage = pl::render::ShaderStage::eVertex;
-		shaderCreateInfos.path = "test.vert";
-		pl::render::Shader vertexShader {shaderCreateInfos};
-
-		shaderCreateInfos.stage = pl::render::ShaderStage::eFragment;
-		shaderCreateInfos.path = "test.frag";
-		pl::render::Shader fragmentShader {shaderCreateInfos};
-
-		pl::render::Pipeline::CreateInfos pipelineCreateInfos {};
-		pipelineCreateInfos.state.faceCulling = false;
-		pipelineCreateInfos.state.shaders = {&vertexShader, &fragmentShader};
-		pl::render::Pipeline pipeline {pipelineCreateInfos};
-
-
-		vertexLayout.linkBuffer(&verticesBuffer);
+		/*vertexLayout.linkBuffer(&verticesBuffer);
 
 		pl::Config::setCustomRenderCallback([&] () {
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 		});
 
 		glBindVertexArray(vertexLayout.getVAO());
-		glUseProgram(pipeline.getProgram());
+		glUseProgram(pipeline.getProgram());*/
 		instance.mainloop();
-		glUseProgram(0);
-		glBindVertexArray(0);
+		/*glUseProgram(0);
+		glBindVertexArray(0);*/
 	}
 
 	catch (const std::exception &exception) {

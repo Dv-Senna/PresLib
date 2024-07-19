@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "pl/blockFactory.hpp"
 #include "pl/core.hpp"
 #include "pl/memory/heapAllocator.hpp"
 #include "pl/memory/manager.hpp"
@@ -20,7 +19,6 @@ namespace pl {
 			struct CreateInfos {
 				std::string presentationName;
 				pl::Vec2i viewportSize;
-				pl::ByteCount blockHeapSize {1024*1024};
 				pl::ByteCount objectHeapSize {1024*1024};
 			};
 
@@ -36,9 +34,14 @@ namespace pl {
 			bool nextSlide();
 			void previousSlide();
 
-			template <typename T, typename CreateInfos>
-			inline pl::Reference<T> createBlock(const CreateInfos &createInfos) {
-				return m_blockFactory.create<T> (createInfos);
+			template <typename T, typename ...Args>
+			inline T *allocateObject(Args ...args) {
+				return m_objectHeapManager.allocate<T> (args...);
+			}
+
+			template <typename T>
+			inline void freeObject(T *obj) {
+				m_objectHeapManager.free<T> (obj);
 			}
 
 			inline pl::Window &getWindow() const noexcept {return *m_window;}
@@ -47,7 +50,6 @@ namespace pl {
 		private:
 			using SlideMap = std::map<std::string, pl::Slide*>;
 
-			pl::BlockFactory m_blockFactory;
 			pl::Window *m_window;
 			SlideMap m_slides;
 			std::vector<SlideMap::iterator> m_slidesOrder;

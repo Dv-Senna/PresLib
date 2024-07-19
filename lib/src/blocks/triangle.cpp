@@ -29,26 +29,44 @@ namespace pl::blocks {
 	Triangle::~Triangle() {
 		if (m_instance == nullptr)
 			return;
+
+		if (m_state.renderDescriptor.vertexLayout != nullptr)
+			m_instance->freeObject(m_state.renderDescriptor.vertexLayout);
+		if (m_state.renderDescriptor.pipeline != nullptr)
+			m_instance->freeObject(m_state.renderDescriptor.pipeline);
+		if (m_fragmentShader != nullptr)
+			m_instance->freeObject(m_fragmentShader);
+		if (m_vertexShader != nullptr)
+			m_instance->freeObject(m_vertexShader);
 	}
 
 
-	void Triangle::compile(pl::Instance &instance) {
-		m_instance = &instance;
+	void Triangle::compile(pl::Instance *instance) {
+		m_instance = instance;
 
 		pl::render::Shader::CreateInfos shaderCreateInfos {};
 		shaderCreateInfos.entryPoint = "main";
 		shaderCreateInfos.path = "test.vert";
 		shaderCreateInfos.stage = pl::render::ShaderStage::eVertex;
-		m_vertexShader = m_instance->getObjectHeap().allocate<pl::render::Shader> (shaderCreateInfos);
+		m_vertexShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
 
 		shaderCreateInfos.path = "test.frag";
 		shaderCreateInfos.stage = pl::render::ShaderStage::eFragment;
-		m_fragmentShader = m_instance->getObjectHeap().allocate<pl::render::Shader> (shaderCreateInfos);
+		m_fragmentShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
 
 		pl::render::Pipeline::CreateInfos pipelineCreateInfos {};
 		pipelineCreateInfos.state.faceCulling = true;
 		pipelineCreateInfos.state.shaders = {m_vertexShader, m_fragmentShader};
-		m_state.renderDescriptor.pipeline = m_instance->getObjectHeap().allocate<pl::render::Pipeline> (pipelineCreateInfos);
+		m_state.renderDescriptor.pipeline = m_instance->allocateObject<pl::render::Pipeline> (pipelineCreateInfos);
+
+		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
+		vertexLayoutCreateInfos.binding = 0;
+		vertexLayoutCreateInfos.components = {
+			{.location = 0, .dimension = 3, .type = pl::render::VertexComponentType::eFloat32},
+			{.location = 1, .dimension = 3, .type = pl::render::VertexComponentType::eFloat32}
+		};
+		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
+		m_state.renderDescriptor.vertexLayout = m_instance->allocateObject<pl::render::VertexLayout> (vertexLayoutCreateInfos);
 	}
 
 

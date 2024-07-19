@@ -13,9 +13,6 @@
 
 namespace pl {
 	Instance::Instance(const pl::Instance::CreateInfos &createInfos) :
-		m_blockFactory {{
-			.heapSize = createInfos.blockHeapSize
-		}},
 		m_window {nullptr},
 		m_slides {},
 		m_slidesOrder {},

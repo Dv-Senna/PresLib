@@ -20,7 +20,7 @@ namespace pl {
 			return;
 
 		if (m_framebuffer != nullptr)
-			m_instance->getObjectHeap().free(m_framebuffer);
+			m_instance->freeObject(m_framebuffer);
 	}
 
 
@@ -48,7 +48,10 @@ namespace pl {
 		framebufferCreateInfos.colorFormat = pl::render::FramebufferColorFormat::eRGB8;
 		framebufferCreateInfos.size = m_instance->getWindow().getSize();
 		framebufferCreateInfos.hasDepth = false;
-		m_framebuffer = m_instance->getObjectHeap().allocate<pl::render::Framebuffer> (framebufferCreateInfos);
+		m_framebuffer = m_instance->allocateObject<pl::render::Framebuffer> (framebufferCreateInfos);
+
+		for (auto &block : m_blocks)
+			block->compile(instance);
 	}
 
 
