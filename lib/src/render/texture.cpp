@@ -37,8 +37,11 @@ namespace pl::render {
 		if (m_multisample)
 			glTextureStorage2DMultisample(m_texture, 4, internalFormat, m_size.x, m_size.y, GL_TRUE);
 
-		else
+		else {
 			glTextureStorage2D(m_texture, m_mipmapLevelCount, internalFormat, m_size.x, m_size.y);
+			glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+		}
 
 		if (createInfos.data != nullptr) {
 			glTextureSubImage2D(m_texture, 0, 0, 0, m_size.x, m_size.y, internalFormat, GL_UNSIGNED_BYTE, createInfos.data);

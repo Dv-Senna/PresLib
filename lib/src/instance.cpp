@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <glad/gl.h>
 #include <SDL2/SDL.h>
 
 #include "pl/assertation.hpp"
@@ -66,8 +67,20 @@ namespace pl {
 			if (pl::InputManager::wasWindowResized())
 				m_window->handleResize();
 
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glClearColor(0.f, 0.f, 0.f, 1.f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
 			m_slidesOrder[m_currentSlide]->second->update();
 			m_slidesOrder[m_currentSlide]->second->draw();
+
+			glBlitNamedFramebuffer(
+				m_slidesOrder[m_currentSlide]->second->getFramebuffer().getFramebuffer(),
+				0,
+				0, 0, m_window->getSize().x, m_window->getSize().y,
+				0, 0, m_window->getSize().x, m_window->getSize().y,
+				GL_COLOR_BUFFER_BIT, GL_NEAREST
+			);
 
 			if (pl::Config::getCustomRenderCallback() != nullptr)
 				pl::Config::getCustomRenderCallback()();

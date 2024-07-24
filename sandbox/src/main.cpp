@@ -49,7 +49,6 @@ int main(int, char *[]) {
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
 		slide1.registerBlock(&triangle2);
 
-
 		/*vertexLayout.linkBuffer(&verticesBuffer);
 
 		pl::Config::setCustomRenderCallback([&] () {

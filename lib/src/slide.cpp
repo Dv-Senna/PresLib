@@ -8,6 +8,7 @@
 namespace pl {
 	Slide::Slide() :
 		m_blocks {},
+		m_framebufferMSAA {nullptr},
 		m_framebuffer {nullptr},
 		m_renderer {},
 		m_instance {nullptr}
@@ -22,6 +23,8 @@ namespace pl {
 
 		if (m_framebuffer != nullptr)
 			m_instance->freeObject(m_framebuffer);
+		if (m_framebufferMSAA != nullptr)
+			m_instance->freeObject(m_framebufferMSAA);
 	}
 
 
@@ -31,7 +34,8 @@ namespace pl {
 
 
 	void Slide::draw() {
-		m_renderer.draw(/*m_framebuffer*/nullptr);
+		m_renderer.draw(m_framebufferMSAA);
+		m_framebuffer->resolveMSAA(*m_framebufferMSAA);
 	}
 
 
@@ -46,9 +50,13 @@ namespace pl {
 		m_instance = instance;
 
 		pl::render::Framebuffer::CreateInfos framebufferCreateInfos {};
-		framebufferCreateInfos.colorFormat = pl::render::FramebufferColorFormat::eRGB8;
+		framebufferCreateInfos.colorFormat = pl::render::TextureFormat::eRGB8;
 		framebufferCreateInfos.size = m_instance->getWindow().getSize();
 		framebufferCreateInfos.hasDepth = false;
+		framebufferCreateInfos.multisampled = true;
+		m_framebufferMSAA = m_instance->allocateObject<pl::render::Framebuffer> (framebufferCreateInfos);
+
+		framebufferCreateInfos.multisampled = false;
 		m_framebuffer = m_instance->allocateObject<pl::render::Framebuffer> (framebufferCreateInfos);
 
 		for (auto &block : m_blocks)

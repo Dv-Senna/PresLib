@@ -23,11 +23,14 @@ namespace pl {
 			void draw();
 			void registerBlock(pl::Block *block);
 
+			inline const pl::render::Framebuffer &getFramebuffer() const noexcept {return *m_framebuffer;}
+
 
 		protected:
 			void compile(pl::Instance *instance);
 
 			std::vector<pl::Block*> m_blocks;
+			pl::render::Framebuffer *m_framebufferMSAA;
 			pl::render::Framebuffer *m_framebuffer;
 			pl::render::Renderer m_renderer;
 			pl::Instance *m_instance;
