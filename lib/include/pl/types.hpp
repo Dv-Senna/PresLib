@@ -13,4 +13,11 @@ namespace pl {
 	using Count = pl::Uint64;
 	using Byte = pl::Uint8;
 
+	struct Rect2i {
+		pl::Int x;
+		pl::Int y;
+		pl::Int w;
+		pl::Int h;
+	};
+
 } // namespace pl

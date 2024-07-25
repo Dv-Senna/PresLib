@@ -90,11 +90,17 @@ namespace pl::render {
 
 
 	void Renderer::draw(pl::render::Framebuffer *framebuffer) {
-		if (framebuffer != nullptr)
+		if (framebuffer != nullptr) {
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer->getFramebuffer());
+			glViewport(0, 0, framebuffer->getSize().x, framebuffer->getSize().y);
+		}
+
 		else
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
+
+		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
 		pl::render::Pipeline *oldPipeline {nullptr};
 		for (const auto &group : m_renderGroups) {

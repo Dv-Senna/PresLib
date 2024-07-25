@@ -6,11 +6,13 @@
 
 
 namespace pl {
-	Slide::Slide() :
+	Slide::Slide(const pl::Slide::CreateInfos &createInfos) :
 		m_blocks {},
 		m_framebufferMSAA {nullptr},
 		m_framebuffer {nullptr},
 		m_renderer {},
+		m_viewportSize {createInfos.viewportSize},
+		m_originalViewportSize {},
 		m_instance {nullptr}
 	{
 
@@ -49,9 +51,16 @@ namespace pl {
 
 		m_instance = instance;
 
+		if (m_viewportSize.x <= 0)
+			m_viewportSize.x = m_instance->getWindow().getSize().x;
+		if (m_viewportSize.y <= 0)
+			m_viewportSize.y = m_instance->getWindow().getSize().y;
+
+		m_originalViewportSize = m_viewportSize;
+
 		pl::render::Framebuffer::CreateInfos framebufferCreateInfos {};
 		framebufferCreateInfos.colorFormat = pl::render::TextureFormat::eRGB8;
-		framebufferCreateInfos.size = m_instance->getWindow().getSize();
+		framebufferCreateInfos.size = m_viewportSize;
 		framebufferCreateInfos.hasDepth = false;
 		framebufferCreateInfos.multisampled = true;
 		m_framebufferMSAA = m_instance->allocateObject<pl::render::Framebuffer> (framebufferCreateInfos);
@@ -63,6 +72,13 @@ namespace pl {
 			block->compile(instance);
 
 		m_renderer.compile(m_instance, m_blocks);
+	}
+
+
+	void Slide::resize(const pl::Vec2i &size) {
+		m_framebufferMSAA->resize(size);
+		m_framebuffer->resize(size);
+		m_viewportSize = size;
 	}
 
 

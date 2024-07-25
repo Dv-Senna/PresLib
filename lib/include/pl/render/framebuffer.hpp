@@ -25,6 +25,7 @@ namespace pl::render {
 			void resolveMSAA(const pl::render::Framebuffer &framebuffer);
 
 			inline const pl::Uint32 &getFramebuffer() const noexcept {return m_framebuffer;}
+			inline const pl::Vec2i &getSize() const noexcept {return m_size;}
 
 		private:
 			void m_create(bool depthBuffer);

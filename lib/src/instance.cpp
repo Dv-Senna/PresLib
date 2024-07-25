@@ -23,7 +23,8 @@ namespace pl {
 		}},
 		m_objectHeapManager {{
 			.allocator = &m_objectHeapAllocator
-		}}
+		}},
+		m_viewportRect {0, 0, createInfos.viewportSize.x, createInfos.viewportSize.y}
 	{
 		std::cout << "Create Instance of PresLib" << std::endl;
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -48,6 +49,8 @@ namespace pl {
 		for (auto &slide : m_slides)
 			slide.second->compile(this);
 
+		this->m_calculateViewportRect();
+
 		pl::Float deltaTime {0};
 		pl::Uint32 startFrameTime {SDL_GetTicks()};
 
@@ -65,7 +68,7 @@ namespace pl {
 				this->previousSlide();
 
 			if (pl::InputManager::wasWindowResized())
-				m_window->handleResize();
+				this->handleResize();
 
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -77,8 +80,8 @@ namespace pl {
 			glBlitNamedFramebuffer(
 				m_slidesOrder[m_currentSlide]->second->getFramebuffer().getFramebuffer(),
 				0,
-				0, 0, m_window->getSize().x, m_window->getSize().y,
-				0, 0, m_window->getSize().x, m_window->getSize().y,
+				0, 0, m_slidesOrder[m_currentSlide]->second->getViewportSize().x, m_slidesOrder[m_currentSlide]->second->getViewportSize().y,
+				m_viewportRect.x, m_viewportRect.y, m_viewportRect.x + m_viewportRect.w, m_viewportRect.y + m_viewportRect.h,
 				GL_COLOR_BUFFER_BIT, GL_NEAREST
 			);
 
@@ -125,13 +128,51 @@ namespace pl {
 		++m_currentSlide;
 		if (m_currentSlide >= m_slidesOrder.size())
 			return true;
+		this->m_calculateViewportRect();
 		return false;
 	}
 
 
 	void Instance::previousSlide() {
-		if (m_currentSlide > 0)
-			--m_currentSlide;
+		if (m_currentSlide <= 0)
+			return;
+		--m_currentSlide;
+		this->m_calculateViewportRect();
+	}
+
+
+	void Instance::handleResize() {
+		m_window->handleResize();
+		this->m_calculateViewportRect();
+	}
+
+
+	void Instance::m_calculateViewportRect() {
+		const pl::Vec2i &viewportSize {m_slidesOrder[m_currentSlide]->second->getOriginalViewportSize()};
+
+		pl::Float32 ratioScreen {m_window->getSize().x / static_cast<pl::Float32> (m_window->getSize().y)};
+		pl::Float32 ratioViewport {viewportSize.x / static_cast<pl::Float32> (viewportSize.y)};
+
+		if (ratioScreen == ratioViewport)
+			m_viewportRect = {0, 0, m_window->getSize().x, m_window->getSize().y};
+
+		else if (ratioScreen < ratioViewport) {
+			pl::Float32 ratio {ratioScreen / ratioViewport};
+			m_viewportRect.x = 0;
+			m_viewportRect.w = m_window->getSize().x;
+			m_viewportRect.h = ratio * m_window->getSize().y;
+			m_viewportRect.y = (m_window->getSize().y - m_viewportRect.h) * 0.5f;
+		}
+
+		else {
+			pl::Float32 ratio {ratioViewport / ratioScreen};
+			m_viewportRect.y = 0;
+			m_viewportRect.h = m_window->getSize().y;
+			m_viewportRect.w = ratio * m_window->getSize().x;
+			m_viewportRect.x = (m_window->getSize().x - m_viewportRect.w) * 0.5f;
+		}
+
+		m_slidesOrder[m_currentSlide]->second->resize({m_viewportRect.w, m_viewportRect.h});
 	}
 
 

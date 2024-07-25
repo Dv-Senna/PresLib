@@ -22,8 +22,10 @@ int main(int, char *[]) {
 		pl::Instance instance {instanceCreateInfos};
 
 
-		pl::Slide slide1 {};
-		pl::Slide slide2 {};
+		pl::Slide::CreateInfos slideCreateInfos {};
+		slideCreateInfos.viewportSize = {-1, -1};
+		pl::Slide slide1 {slideCreateInfos};
+		pl::Slide slide2 {slideCreateInfos};
 
 		instance.registerSlide("slide1", &slide1);
 		instance.registerSlide("slide2", &slide2);
