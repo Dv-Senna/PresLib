@@ -30,6 +30,18 @@ namespace pl::render {
 			{pl::render::TextureFormat::eR11fG11fB10f, GL_R11F_G11F_B10F},
 		};
 
+		static const std::map<pl::render::TextureFormat, GLenum> colorFormatNoSizeMap {
+			{pl::render::TextureFormat::eR8,           GL_RED},
+			{pl::render::TextureFormat::eR32f,         GL_RED},
+			{pl::render::TextureFormat::eRG8,          GL_RG},
+			{pl::render::TextureFormat::eRG32f,        GL_RG},
+			{pl::render::TextureFormat::eRGB8,         GL_RGB},
+			{pl::render::TextureFormat::eRGBA8,        GL_RGBA},
+			{pl::render::TextureFormat::eRGB32f,       GL_RGB},
+			{pl::render::TextureFormat::eRGBA32f,      GL_RGBA},
+			{pl::render::TextureFormat::eR11fG11fB10f, GL_RGB},
+		};
+
 		GLenum internalFormat {colorFormatMap.find(m_format)->second};
 
 
@@ -44,7 +56,12 @@ namespace pl::render {
 		}
 
 		if (createInfos.data != nullptr) {
-			glTextureSubImage2D(m_texture, 0, 0, 0, m_size.x, m_size.y, internalFormat, GL_UNSIGNED_BYTE, createInfos.data);
+			glTextureSubImage2D(
+				m_texture, 0, 0, 0, m_size.x, m_size.y,
+				colorFormatNoSizeMap.find(m_format)->second,
+				GL_UNSIGNED_BYTE, createInfos.data
+			);
+
 			if (m_mipmapLevelCount != 1)
 				glGenerateTextureMipmap(m_texture);
 		}

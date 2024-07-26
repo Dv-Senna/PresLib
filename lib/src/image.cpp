@@ -51,7 +51,7 @@ namespace pl {
 		textureCreateInfos.format = channelsCountMap.find(channelsCount)->second;
 		textureCreateInfos.size = size;
 		textureCreateInfos.mipmapLevelCount = 5;
-		textureCreateInfos.multisample = 1;
+		textureCreateInfos.multisample = false;
 		m_texture = m_instance->allocateObject<pl::render::Texture> (textureCreateInfos);
 
 		stbi_image_free(data);

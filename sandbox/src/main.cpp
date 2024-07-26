@@ -54,6 +54,7 @@ int main(int, char *[]) {
 
 		auto image {pl::ResourceManager::load<pl::Image, std::filesystem::path> ("logo.png")};
 		std::cout << "Loaded images : " << pl::ResourceManager::getImages().size() << std::endl;
+		image->compile(&instance);
 
 		instance.mainloop();
 

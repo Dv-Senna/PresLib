@@ -57,8 +57,6 @@ namespace pl {
 			static void create(const pl::ResourceManager::CreateInfos &createInfos);
 			static void destroy();
 
-			static void compile();
-
 		private:
 			static pl::Instance *s_instance;
 			static pl::memory::HeapAllocator *s_heapAllocator;

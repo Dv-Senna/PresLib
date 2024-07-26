@@ -70,11 +70,6 @@ namespace pl {
 	}
 
 
-	void ResourceManager::compile() {
-		
-	}
-
-
 	pl::Instance *ResourceManager::s_instance {nullptr};
 	pl::memory::HeapAllocator *ResourceManager::s_heapAllocator {nullptr};
 	pl::memory::Manager *ResourceManager::s_memoryManager {nullptr};
