@@ -3,18 +3,23 @@
 
 
 namespace pl {
-	void Config::setShaderFolderPath(const std::string &path) {
+	void Config::setShaderFolderPath(const std::filesystem::path &path) {
 		s_shaderFolderPath = path;
-		if (s_shaderFolderPath.size() == 0)
-			return;
-
-		if (s_shaderFolderPath[s_shaderFolderPath.size() - 1] != '/')
-			s_shaderFolderPath.push_back('/');
 	}
 
 
-	const std::string &Config::getShaderFolderPath() {
+	const std::filesystem::path &Config::getShaderFolderPath() {
 		return s_shaderFolderPath;
+	}
+
+
+	void Config::setImageFolderPath(const std::filesystem::path &path) {
+		s_imageFolderPath = path;
+	}
+
+
+	const std::filesystem::path &Config::getImageFolderPath() {
+		return s_imageFolderPath;
 	}
 
 
@@ -44,7 +49,8 @@ namespace pl {
 	}
 
 
-	std::string Config::s_shaderFolderPath {"shaders/"};
+	std::filesystem::path Config::s_shaderFolderPath {"shaders/"};
+	std::filesystem::path Config::s_imageFolderPath {"images/"};
 	std::function<void()> Config::s_customRenderCallback {nullptr};
 	pl::Uint Config::s_framerate {60};
 	pl::Float Config::s_frameDuration {1000.f/60.f};

@@ -25,12 +25,12 @@ namespace pl::render {
 
 		std::vector<pl::Byte> hashData {};
 		hashData.resize(
-			sizeof(pl::render::ShaderStage) + createInfos.path.size() * sizeof(char) + createInfos.entryPoint.size() * sizeof(char)
+			sizeof(pl::render::ShaderStage) + createInfos.path.string().size() * sizeof(char) + createInfos.entryPoint.size() * sizeof(char)
 		);
 		memcpy(hashData.data(), &m_stage, sizeof(pl::render::ShaderStage));
-		memcpy(hashData.data() + sizeof(pl::render::ShaderStage), createInfos.path.c_str(), createInfos.path.size() * sizeof(char));
+		memcpy(hashData.data() + sizeof(pl::render::ShaderStage), createInfos.path.c_str(), createInfos.path.string().size() * sizeof(char));
 		memcpy(
-			hashData.data() + sizeof(pl::render::ShaderStage) + createInfos.path.size() * sizeof(char),
+			hashData.data() + sizeof(pl::render::ShaderStage) + createInfos.path.string().size() * sizeof(char),
 			createInfos.entryPoint.c_str(), createInfos.entryPoint.size() * sizeof(char)
 		);
 		m_hash = pl::utils::hash(hashData);
@@ -44,7 +44,7 @@ namespace pl::render {
 
 
 
-		std::string shaderPath {pl::Config::getShaderFolderPath() + createInfos.path + ".spv"};
+		std::string shaderPath {(pl::Config::getShaderFolderPath() / createInfos.path).string() + ".spv"};
 		std::ifstream shaderFile {shaderPath, std::ios::binary};
 		std::vector<pl::Byte> shaderData {pl::utils::readBinaryFile(shaderFile)};
 

@@ -1,6 +1,9 @@
 #pragma once
 
+#include <map>
+
 #include "pl/core.hpp"
+#include "pl/image.hpp"
 #include "pl/memory/heapAllocator.hpp"
 #include "pl/memory/manager.hpp"
 #include "pl/types.hpp"
@@ -41,6 +44,9 @@ namespace pl {
 			template <typename T>
 			static void unload(const pl::Resource<T> &resource);
 
+			static std::vector<pl::Resource<pl::Image>> getImages();
+			static pl::Count getImageReferenceCount(const pl::Resource<pl::Image> &image);
+
 
 		protected:
 			struct CreateInfos {
@@ -51,10 +57,13 @@ namespace pl {
 			static void create(const pl::ResourceManager::CreateInfos &createInfos);
 			static void destroy();
 
+			static void compile();
+
 		private:
 			static pl::Instance *s_instance;
 			static pl::memory::HeapAllocator *s_heapAllocator;
 			static pl::memory::Manager *s_memoryManager;
+			static std::map<pl::Image*, pl::Count> s_imageCounts;
 	};
 
 } // namespace pl

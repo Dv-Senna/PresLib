@@ -5,6 +5,8 @@
 
 #include <glad/gl.h>
 #include <SDL2/SDL.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include "pl/assertation.hpp"
 #include "pl/config.hpp"

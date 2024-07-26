@@ -10,6 +10,7 @@
 #include <pl/memory/heapAllocator.hpp>
 #include <pl/render/vertexLayout.hpp>
 #include <pl/render/pipeline.hpp>
+#include <pl/resourceManager.hpp>
 
 
 
@@ -51,7 +52,12 @@ int main(int, char *[]) {
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
 		slide1.registerBlock(&triangle2);
 
+		auto image {pl::ResourceManager::load<pl::Image, std::filesystem::path> ("logo.png")};
+		std::cout << "Loaded images : " << pl::ResourceManager::getImages().size() << std::endl;
+
 		instance.mainloop();
+
+		pl::ResourceManager::unload(image);
 	}
 
 	catch (const std::exception &exception) {

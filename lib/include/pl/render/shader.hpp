@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <map>
 #include <string>
 
@@ -19,7 +20,7 @@ namespace pl::render {
 		public:
 			struct CreateInfos {
 				pl::render::ShaderStage stage;
-				std::string path;
+				std::filesystem::path path;
 				std::string entryPoint;
 			};
 
