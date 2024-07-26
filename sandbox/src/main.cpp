@@ -51,17 +51,7 @@ int main(int, char *[]) {
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
 		slide1.registerBlock(&triangle2);
 
-		/*vertexLayout.linkBuffer(&verticesBuffer);
-
-		pl::Config::setCustomRenderCallback([&] () {
-			glDrawArrays(GL_TRIANGLES, 0, 3);
-		});
-
-		glBindVertexArray(vertexLayout.getVAO());
-		glUseProgram(pipeline.getProgram());*/
 		instance.mainloop();
-		/*glUseProgram(0);
-		glBindVertexArray(0);*/
 	}
 
 	catch (const std::exception &exception) {

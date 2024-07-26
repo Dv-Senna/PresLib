@@ -20,6 +20,7 @@ namespace pl {
 				std::string presentationName;
 				pl::Vec2i viewportSize;
 				pl::ByteCount objectHeapSize {1024*1024};
+				pl::ByteCount resourceHeapSize {128*1024*1024};
 			};
 
 			Instance(const pl::Instance::CreateInfos &createInfos);

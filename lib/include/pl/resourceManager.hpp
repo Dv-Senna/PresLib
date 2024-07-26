@@ -21,12 +21,15 @@ namespace pl {
 			Resource(const pl::Resource<T> &resource);
 			const pl::Resource<T> &operator=(const pl::Resource<T> &resource);
 
+			T &operator*() const noexcept;
+			T *operator->() const noexcept;
+
 		protected:
 			Resource(T *ptr);
-
-		private:
-			T *ptr;
+			T *m_ptr;
 	};
+
+
 
 	class PL_CORE ResourceManager final {
 		friend class pl::Instance;
@@ -55,3 +58,6 @@ namespace pl {
 	};
 
 } // namespace pl
+
+
+#include "pl/resourceManager.inl"

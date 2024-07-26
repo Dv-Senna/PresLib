@@ -9,6 +9,7 @@
 #include "pl/assertation.hpp"
 #include "pl/config.hpp"
 #include "pl/inputManager.hpp"
+#include "pl/resourceManager.hpp"
 
 
 
@@ -34,11 +35,18 @@ namespace pl {
 		windowCreateInfos.title = createInfos.presentationName;
 		windowCreateInfos.size = createInfos.viewportSize;
 		m_window = m_objectHeapManager.allocate<pl::Window> (windowCreateInfos);
+
+		pl::ResourceManager::CreateInfos resourceManagerCreateInfos {};
+		resourceManagerCreateInfos.instance = this;
+		resourceManagerCreateInfos.heapSize = createInfos.resourceHeapSize;
+		pl::ResourceManager::create(resourceManagerCreateInfos);
 	}
 
 
 	Instance::~Instance() {
 		std::cout << "Destroy Instance of PresLib" << std::endl;
+		pl::ResourceManager::destroy();
+
 		if (m_window != nullptr)
 			m_objectHeapManager.free(m_window);
 		SDL_Quit();
