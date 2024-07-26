@@ -12,6 +12,7 @@ namespace pl::render {
 	struct Descriptor {
 		pl::render::VertexLayout *vertexLayout;
 		pl::render::Pipeline *pipeline;
+		std::vector<pl::Uint32> textureUnits;
 
 		bool operator==(const pl::render::Descriptor &descriptor);
 	};

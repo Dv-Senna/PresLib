@@ -5,7 +5,8 @@
 namespace pl::render {
 	bool Descriptor::operator==(const pl::render::Descriptor &descriptor) {
 		return *vertexLayout == *descriptor.vertexLayout
-			&& *pipeline == *descriptor.pipeline;
+			&& *pipeline == *descriptor.pipeline
+			&& textureUnits == descriptor.textureUnits;
 	}
 
 } // namespace pl::render
