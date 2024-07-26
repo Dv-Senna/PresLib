@@ -17,7 +17,7 @@ namespace pl {
 
 		public:
 			struct CreateInfos {
-				pl::Vec2i viewportSize;
+				pl::Vec2i viewportSize {-1, -1};
 			};
 
 			Slide(const pl::Slide::CreateInfos &createInfos);
