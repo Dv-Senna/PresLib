@@ -58,6 +58,7 @@ int main(int, char *[]) {
 		imageCreateInfos.position = {0.5f, 0.f};
 		imageCreateInfos.scale = {.2f, .2f};
 		pl::blocks::Image image {imageCreateInfos};
+		image.setRotation({0.f, -1.f, 0.f});
 		slide1.registerBlock(&image);
 
 		imageCreateInfos.path = "spritesheet.png";
@@ -67,6 +68,10 @@ int main(int, char *[]) {
 		slide2.registerBlock(&image2);
 
 		std::cout << "Loaded images : " << pl::ResourceManager::getImages().size() << std::endl;
+
+		pl::Config::setCustomRenderCallback([&] () {
+			image.rotate(3.14159f * 2.f / 60.f);
+		});
 
 		instance.mainloop();
 	}

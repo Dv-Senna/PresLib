@@ -20,6 +20,8 @@ namespace pl {
 		pl::Vec2f zoom {1.f, 1.f};
 		pl::render::Descriptor renderDescriptor;
 		std::vector<pl::Byte> vertices;
+		pl::Mat3f transform {1.f};
+		bool hasChanged {false};
 	};
 
 	template <>
@@ -39,6 +41,7 @@ namespace pl {
 			virtual void setZoom(const pl::Vec2f &zoom) = 0;
 
 			virtual void compile(pl::Instance *instance) = 0;
+			virtual void updateTransform() = 0;
 	};
 
 	template <>
@@ -60,6 +63,7 @@ namespace pl {
 			inline void setZoom(const pl::Vec2f &zoom) override;
 
 			virtual void compile(pl::Instance *instance) override = 0;
+			inline virtual void updateTransform() override;
 
 		protected:
 			pl::_BlockState m_state;

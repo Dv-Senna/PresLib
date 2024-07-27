@@ -34,6 +34,7 @@ namespace pl::render {
 			~Renderer();
 
 			void compile(pl::Instance *instance, const std::vector<pl::Block*> &blocks);
+			void update();
 			void draw(pl::render::Framebuffer *framebuffer);
 
 		private:

@@ -31,7 +31,7 @@ namespace pl {
 
 
 	void Slide::update() {
-
+		m_renderer.update();
 	}
 
 
@@ -68,8 +68,10 @@ namespace pl {
 		framebufferCreateInfos.multisampled = false;
 		m_framebuffer = m_instance->allocateObject<pl::render::Framebuffer> (framebufferCreateInfos);
 
-		for (auto &block : m_blocks)
+		for (auto &block : m_blocks) {
 			block->compile(instance);
+			block->updateTransform();
+		}
 
 		m_renderer.compile(m_instance, m_blocks);
 	}
