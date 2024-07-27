@@ -25,6 +25,7 @@ namespace pl::render {
 		pl::Uint32 location;
 		pl::Uint32 dimension;
 		pl::render::VertexComponentType type {pl::render::VertexComponentType::eFloat32};
+		bool isPosition {false};
 	};
 
 
@@ -47,6 +48,7 @@ namespace pl::render {
 
 			inline const pl::Uint32 &getVAO() const noexcept {return m_vao;}
 			inline const pl::ByteCount &getStride() const noexcept {return m_stride;}
+			inline const std::vector<pl::render::VertexComponentLayout> &getComponents() const noexcept {return m_components;}
 
 
 		private:

@@ -12,8 +12,8 @@ namespace pl::blocks {
 	class PL_CORE Triangle final : public pl::Block {
 		public:
 			struct CreateInfos {
-				pl::Vec3f position;
-				std::array<pl::Vec3f, 3> vertices;
+				pl::Vec2f position;
+				std::array<pl::Vec2f, 3> vertices;
 				pl::Vec3f color;
 			};
 

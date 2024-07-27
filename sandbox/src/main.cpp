@@ -34,31 +34,37 @@ int main(int, char *[]) {
 
 		pl::blocks::Triangle::CreateInfos triangleCreateInfos {};
 		triangleCreateInfos.color = {1.f, 0.f, 0.f};
-		triangleCreateInfos.position = {0.f, 0.f, 0.f};
+		triangleCreateInfos.position = {0.f, 0.f};
 		triangleCreateInfos.vertices = {
-			pl::Vec3f(0.f, 0.5f, 0.f),
-			pl::Vec3f(0.5f, -0.5f, 0.f),
-			pl::Vec3f(-0.5f, -0.5f, 0.f)
+			pl::Vec2f(0.f, 0.5f),
+			pl::Vec2f(0.5f, -0.5f),
+			pl::Vec2f(-0.5f, -0.5f)
 		};
 		pl::blocks::Triangle triangle {triangleCreateInfos};
 		slide1.registerBlock(&triangle);
 
 		triangleCreateInfos.color = {0.f, 1.f, 0.f};
-		triangleCreateInfos.position = {0.f, 0.f, 0.f};
+		triangleCreateInfos.position = {0.f, 0.f};
 		triangleCreateInfos.vertices = {
-			pl::Vec3f(0.5f, 0.5f, 0.f),
-			pl::Vec3f(1.f, -0.5f, 0.f),
-			pl::Vec3f(-0.5f, -0.5f, 0.f)
+			pl::Vec2f(0.5f, 0.5f),
+			pl::Vec2f(1.f, -0.5f),
+			pl::Vec2f(-0.5f, -0.5f)
 		};
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
 		slide1.registerBlock(&triangle2);
 
 		pl::blocks::Image::CreateInfos imageCreateInfos {};
 		imageCreateInfos.path = "logo.png";
-		imageCreateInfos.position = {0.f, 0.f, 0.f};
-		imageCreateInfos.scale = {1.f, 1.f};
+		imageCreateInfos.position = {0.5f, 0.f};
+		imageCreateInfos.scale = {.2f, .2f};
 		pl::blocks::Image image {imageCreateInfos};
 		slide1.registerBlock(&image);
+
+		imageCreateInfos.path = "spritesheet.png";
+		imageCreateInfos.position = {0.f, 0.f};
+		imageCreateInfos.scale = {1.f, 1.f};
+		pl::blocks::Image image2 {imageCreateInfos};
+		slide2.registerBlock(&image2);
 
 		std::cout << "Loaded images : " << pl::ResourceManager::getImages().size() << std::endl;
 

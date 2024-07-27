@@ -8,47 +8,32 @@ namespace pl {
 	}
 
 
-	void BlockImplementation<false>::move(const pl::Vec3f &offset) {
+	void BlockImplementation<false>::move(const pl::Vec2f &offset) {
 		m_state.position += offset;
 	}
 
 
-	void BlockImplementation<false>::rotate(const pl::Vec3f &axis, pl::Float angle) {
-		pl::Float initialSin {sinf(m_state.rotation.w * 0.5f)};
-		pl::Float initialCos {cosf(m_state.rotation.w * 0.5f)};
-		pl::Vec3f initialAxis {m_state.rotation.x, m_state.rotation.y, m_state.rotation.z};
-		pl::Vec3f initialNormalizedAxis {initialSin * initialAxis};
-
-		pl::Float offsetSin {sinf(angle * 0.5f)};
-		pl::Float offsetCos {cosf(angle * 0.5f)};
-		pl::Vec3f offsetNormalizedAxis {offsetSin * axis};
-
-		pl::Float finalAngle {2.f * acosf(offsetCos * initialCos - pl::dot(offsetNormalizedAxis, initialNormalizedAxis))};
-		pl::Vec3f finalAxis { 
-			(offsetCos * initialNormalizedAxis + initialCos * offsetNormalizedAxis + pl::cross(offsetNormalizedAxis, initialNormalizedAxis))
-			/ (cosf(finalAngle * 0.5f))
-		};
-
-		m_state.rotation = pl::Vec4f(finalAxis, finalAngle);
+	void BlockImplementation<false>::rotate(pl::Float angle) {
+		m_state.rotation.x += angle;
 	}
 
 
-	void BlockImplementation<false>::zoom(const pl::Vec3f &zoom) {
+	void BlockImplementation<false>::zoom(const pl::Vec2f &zoom) {
 		m_state.zoom *= zoom;
 	}
 
 
-	void BlockImplementation<false>::setPosition(const pl::Vec3f &position) {
+	void BlockImplementation<false>::setPosition(const pl::Vec2f &position) {
 		m_state.position = position;
 	}
 
 
-	void BlockImplementation<false>::setRotation(const pl::Vec3f &axis, pl::Float angle) {
-		m_state.rotation = pl::Vec4f(axis, angle);
+	void BlockImplementation<false>::setRotation(pl::Vec3f angle) {
+		m_state.rotation = angle;
 	}
 
 
-	void BlockImplementation<false>::setZoom(const pl::Vec3f &zoom) {
+	void BlockImplementation<false>::setZoom(const pl::Vec2f &zoom) {
 		m_state.zoom = zoom;
 	}
 

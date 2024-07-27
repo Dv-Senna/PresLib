@@ -17,7 +17,7 @@ namespace pl::blocks {
 		public:
 			struct CreateInfos {
 				std::filesystem::path path;
-				pl::Vec3f position;
+				pl::Vec2f position;
 				pl::Vec2f scale {1.f, 1.f};
 			};
 

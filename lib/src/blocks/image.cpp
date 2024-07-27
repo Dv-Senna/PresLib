@@ -15,8 +15,8 @@ namespace pl::blocks {
 
 		m_state.parent = nullptr;
 		m_state.position = createInfos.position;
-		m_state.rotation = {};
-		m_state.zoom = {createInfos.scale, 1.f};
+		m_state.rotation = 0.f;
+		m_state.zoom = createInfos.scale;
 		m_state.renderDescriptor.pipeline = nullptr;
 		m_state.renderDescriptor.vertexLayout = nullptr;
 	}
@@ -63,7 +63,7 @@ namespace pl::blocks {
 		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
 		vertexLayoutCreateInfos.binding = 0;
 		vertexLayoutCreateInfos.components = {
-			{.location = 0, .dimension = 3, .type = pl::render::VertexComponentType::eFloat32},
+			{.location = 0, .dimension = 2, .type = pl::render::VertexComponentType::eFloat32, .isPosition = true},
 			{.location = 1, .dimension = 2, .type = pl::render::VertexComponentType::eFloat32}
 		};
 		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
@@ -71,20 +71,20 @@ namespace pl::blocks {
 
 
 		pl::Vec2f halfNormalizedSize {
-			0.5f * m_image->getTexture().getSize().x / (pl::Float32)m_instance->getWindow().getSize().x / 10.f,
-			0.5f * m_image->getTexture().getSize().y / (pl::Float32)m_instance->getWindow().getSize().y / 10.f
+			0.5f * m_image->getTexture().getSize().x / (pl::Float32)m_instance->getWindow().getSize().x,
+			0.5f * m_image->getTexture().getSize().y / (pl::Float32)m_instance->getWindow().getSize().y
 		};
 
 		std::cout << "IMAGE SIZE : " << halfNormalizedSize << std::endl;
 
 		std::vector<pl::Float> vertices {
-			-halfNormalizedSize.x, -halfNormalizedSize.y, 0.f,    0.f, 0.f,
-			halfNormalizedSize.x, -halfNormalizedSize.y,  0.f,    1.f, 0.f,
-			-halfNormalizedSize.x, halfNormalizedSize.y,  0.f,    0.f, 1.f,
+			-halfNormalizedSize.x, -halfNormalizedSize.y,    0.f, 0.f,
+			halfNormalizedSize.x, -halfNormalizedSize.y,     1.f, 0.f,
+			-halfNormalizedSize.x, halfNormalizedSize.y,     0.f, 1.f,
 
-			halfNormalizedSize.x, halfNormalizedSize.y,   0.f,    1.f, 1.f,
-			-halfNormalizedSize.x, halfNormalizedSize.y,  0.f,    0.f, 1.f,
-			halfNormalizedSize.x, -halfNormalizedSize.y,  0.f,    1.f, 0.f,
+			halfNormalizedSize.x, halfNormalizedSize.y,      1.f, 1.f,
+			-halfNormalizedSize.x, halfNormalizedSize.y,     0.f, 1.f,
+			halfNormalizedSize.x, -halfNormalizedSize.y,     1.f, 0.f,
 		};
 
 		m_state.vertices.resize(sizeof(pl::Float) * vertices.size());

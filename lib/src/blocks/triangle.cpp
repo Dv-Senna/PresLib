@@ -2,6 +2,7 @@
 
 #include "pl/instance.hpp"
 
+#define UNPACK_VEC2(vec) vec.x, vec.y
 #define UNPACK_VEC3(vec) vec.x, vec.y, vec.z
 
 
@@ -11,15 +12,15 @@ namespace pl::blocks {
 	{
 		m_state.parent = nullptr;
 		m_state.position = createInfos.position;
-		m_state.rotation = {};
-		m_state.zoom = {1.f, 1.f, 1.f};
+		m_state.rotation = 0.f;
+		m_state.zoom = {1.f, 1.f};
 		m_state.renderDescriptor.pipeline = nullptr;
 		m_state.renderDescriptor.vertexLayout = nullptr;
 
 		std::vector<pl::Float> vertices {
-			UNPACK_VEC3(createInfos.vertices[0]), UNPACK_VEC3(createInfos.color),
-			UNPACK_VEC3(createInfos.vertices[1]), UNPACK_VEC3(createInfos.color),
-			UNPACK_VEC3(createInfos.vertices[2]), UNPACK_VEC3(createInfos.color)
+			UNPACK_VEC2(createInfos.vertices[0]), UNPACK_VEC3(createInfos.color),
+			UNPACK_VEC2(createInfos.vertices[1]), UNPACK_VEC3(createInfos.color),
+			UNPACK_VEC2(createInfos.vertices[2]), UNPACK_VEC3(createInfos.color)
 		};
 
 		m_state.vertices.resize(sizeof(pl::Float) * vertices.size());
@@ -63,7 +64,7 @@ namespace pl::blocks {
 		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
 		vertexLayoutCreateInfos.binding = 0;
 		vertexLayoutCreateInfos.components = {
-			{.location = 0, .dimension = 3, .type = pl::render::VertexComponentType::eFloat32},
+			{.location = 0, .dimension = 2, .type = pl::render::VertexComponentType::eFloat32, .isPosition = true},
 			{.location = 1, .dimension = 3, .type = pl::render::VertexComponentType::eFloat32}
 		};
 		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
