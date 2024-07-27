@@ -24,6 +24,9 @@ namespace pl {
 			Resource(const pl::Resource<T> &resource);
 			const pl::Resource<T> &operator=(const pl::Resource<T> &resource);
 
+			bool operator==(const pl::Resource<T> &resource) const noexcept;
+			inline bool isValid() const noexcept {return m_ptr != nullptr;}
+
 			T &operator*() const noexcept;
 			T *operator->() const noexcept;
 

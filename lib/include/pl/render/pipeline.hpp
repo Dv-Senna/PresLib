@@ -11,11 +11,17 @@
 
 
 namespace pl::render {
+	enum class BlendMode {
+		eNone,
+		eBlend
+	};
+
 	class PL_CORE Pipeline final {
 		public:
 			struct State {
 				bool faceCulling;
 				std::vector<pl::render::Shader*> shaders;
+				pl::render::BlendMode blendMode {pl::render::BlendMode::eBlend};
 			};
 
 			struct CreateInfos {

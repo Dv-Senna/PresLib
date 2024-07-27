@@ -50,7 +50,7 @@ namespace pl {
 		textureCreateInfos.data = data;
 		textureCreateInfos.format = channelsCountMap.find(channelsCount)->second;
 		textureCreateInfos.size = size;
-		textureCreateInfos.mipmapLevelCount = 5;
+		textureCreateInfos.mipmapLevelCount = 1;//5;
 		textureCreateInfos.multisample = false;
 		m_texture = m_instance->allocateObject<pl::render::Texture> (textureCreateInfos);
 

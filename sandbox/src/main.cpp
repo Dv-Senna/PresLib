@@ -6,6 +6,7 @@
 #include <pl/preslib.hpp>
 #include <pl/config.hpp>
 
+#include <pl/blocks/image.hpp>
 #include <pl/blocks/triangle.hpp>
 #include <pl/memory/heapAllocator.hpp>
 #include <pl/render/vertexLayout.hpp>
@@ -52,13 +53,16 @@ int main(int, char *[]) {
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
 		slide1.registerBlock(&triangle2);
 
-		auto image {pl::ResourceManager::load<pl::Image, std::filesystem::path> ("logo.png")};
+		pl::blocks::Image::CreateInfos imageCreateInfos {};
+		imageCreateInfos.path = "logo.png";
+		imageCreateInfos.position = {0.f, 0.f, 0.f};
+		imageCreateInfos.scale = {1.f, 1.f};
+		pl::blocks::Image image {imageCreateInfos};
+		slide1.registerBlock(&image);
+
 		std::cout << "Loaded images : " << pl::ResourceManager::getImages().size() << std::endl;
-		image->compile(&instance);
 
 		instance.mainloop();
-
-		pl::ResourceManager::unload(image);
 	}
 
 	catch (const std::exception &exception) {

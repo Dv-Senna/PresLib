@@ -29,6 +29,12 @@ namespace pl {
 
 
 	template <typename T>
+	bool Resource<T>::operator==(const pl::Resource<T> &resource) const noexcept {
+		return m_ptr == resource.m_ptr;
+	}
+
+
+	template <typename T>
 	T &Resource<T>::operator*() const noexcept {
 		PL_ASSERT(m_ptr != nullptr, "Can't dereference null resource");
 		return *m_ptr;

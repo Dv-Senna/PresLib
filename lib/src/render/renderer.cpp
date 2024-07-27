@@ -54,7 +54,8 @@ namespace pl::render {
 
 	bool isSame(const pl::render::RenderGroup &group, const pl::render::Descriptor &descriptor) {
 		return *group.pipeline == *descriptor.pipeline
-			&& *group.vertexLayout == *descriptor.vertexLayout;
+			&& *group.vertexLayout == *descriptor.vertexLayout
+			&& group.textures == descriptor.textures;
 	}
 
 
@@ -81,6 +82,7 @@ namespace pl::render {
 			group.pipeline = block->getState().renderDescriptor.pipeline;
 			group.vertexLayout = block->getState().renderDescriptor.vertexLayout;
 			group.vertexBuffer = nullptr;
+			group.textures = block->getState().renderDescriptor.textures;
 			m_renderGroups.push_back(group);
 		}
 
@@ -109,7 +111,13 @@ namespace pl::render {
 			group.vertexLayout->use();
 			group.pipeline->useFrom(oldPipeline);
 
+			for (const auto &texture : group.textures)
+				glBindTextureUnit(texture.first, texture.second->getTexture());
+
 			glDrawArrays(GL_TRIANGLES, 0, group.vertexBuffer->getSize() / group.vertexLayout->getStride());
+
+			for (const auto &texture : group.textures)
+				glBindTextureUnit(texture.first, 0);
 
 			oldPipeline = group.pipeline;
 		}

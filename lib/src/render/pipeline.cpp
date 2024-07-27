@@ -65,6 +65,18 @@ namespace pl::render {
 		else
 			glDisable(GL_CULL_FACE);
 
+		switch (m_state.blendMode) {
+			case pl::render::BlendMode::eBlend:
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+
+			case pl::render::BlendMode::eNone:
+				glDisable(GL_BLEND);
+				glBlendFunc(GL_ONE, GL_ZERO);
+				break;
+		}
+
 		glUseProgram(m_program);
 	}
 
@@ -77,6 +89,18 @@ namespace pl::render {
 			glEnable(GL_CULL_FACE);
 		else if (!m_state.faceCulling && oldPipeline->m_state.faceCulling)
 			glDisable(GL_CULL_FACE);
+
+		if (m_state.blendMode == pl::render::BlendMode::eBlend && oldPipeline->m_state.blendMode == pl::render::BlendMode::eNone) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		else if (m_state.blendMode == pl::render::BlendMode::eNone && oldPipeline->m_state.blendMode == pl::render::BlendMode::eBlend) {
+			glDisable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ZERO);
+		}
+
+		glUseProgram(m_program);
 	}
 
 

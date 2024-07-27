@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <vector>
 
 #include "pl/block.hpp"
@@ -7,6 +8,7 @@
 #include "pl/render/buffer.hpp"
 #include "pl/render/framebuffer.hpp"
 #include "pl/render/pipeline.hpp"
+#include "pl/render/texture.hpp"
 #include "pl/render/vertexLayout.hpp"
 #include "pl/types.hpp"
 
@@ -23,6 +25,7 @@ namespace pl::render {
 		pl::render::Pipeline *pipeline;
 		pl::render::VertexLayout *vertexLayout;
 		std::vector<pl::Block*> blocks;
+		std::map<pl::Uint32, const pl::render::Texture*> textures;
 	};
 
 	class Renderer {

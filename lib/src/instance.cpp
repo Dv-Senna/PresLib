@@ -42,6 +42,8 @@ namespace pl {
 		resourceManagerCreateInfos.instance = this;
 		resourceManagerCreateInfos.heapSize = createInfos.resourceHeapSize;
 		pl::ResourceManager::create(resourceManagerCreateInfos);
+
+		stbi_set_flip_vertically_on_load(true);
 	}
 
 
