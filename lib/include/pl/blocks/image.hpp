@@ -26,6 +26,8 @@ namespace pl::blocks {
 
 			void compile(pl::Instance *instance) override;
 
+			inline const pl::Vec2i &getSize() const noexcept {return m_image->getTexture().getSize();}
+
 		private:
 			pl::Instance *m_instance;
 			pl::render::Shader *m_vertexShader;

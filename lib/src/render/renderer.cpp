@@ -175,10 +175,8 @@ namespace pl::render {
 			for (const auto &texture : group.textures)
 				glBindTextureUnit(texture.first, texture.second->getTexture());
 
-			for (const auto &uniform : group.uniforms) {
+			for (const auto &uniform : group.uniforms)
 				glBindBufferBase(GL_UNIFORM_BUFFER, uniform.first, uniform.second->getBuffer());
-			//	std::cout << "Uniform " << uniform.first << " bound" << std::endl;
-			}
 
 			glDrawArrays(GL_TRIANGLES, 0, group.vertexBuffer->getSize() / group.vertexLayout->getStride());
 

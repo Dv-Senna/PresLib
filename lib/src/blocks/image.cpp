@@ -75,8 +75,6 @@ namespace pl::blocks {
 			0.5f * m_image->getTexture().getSize().y
 		};
 
-		std::cout << "IMAGE SIZE : " << halfNormalizedSize << std::endl;
-
 		std::vector<pl::Float> vertices {
 			-halfNormalizedSize.x, -halfNormalizedSize.y,    0.f, 0.f,
 			halfNormalizedSize.x, -halfNormalizedSize.y,     1.f, 0.f,
@@ -97,6 +95,9 @@ namespace pl::blocks {
 		m_state.renderDescriptor.uniforms = {
 			{0, m_instance->getViewportUniform()}
 		};
+
+		m_state.rotation.x *= halfNormalizedSize.x;
+		m_state.rotation.y *= halfNormalizedSize.y;
 	}
 
 
