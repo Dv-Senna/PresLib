@@ -69,8 +69,8 @@ namespace pl::render {
 	}
 
 
-	void Uniform::write(const std::vector<pl::render::_UniformComponentValue> &components) {
-		void *buffer {glMapNamedBuffer(m_buffer, GL_WRITE_ONLY)};
+	void Uniform::write(const std::vector<pl::render::UniformComponentValue> &components) {
+		pl::Byte *buffer {reinterpret_cast<pl::Byte*> (glMapNamedBuffer(m_buffer, GL_WRITE_ONLY))};
 
 		for (const auto &component : components) {
 			auto it {m_memoryLayout.find(component.name)};
@@ -80,43 +80,43 @@ namespace pl::render {
 
 			switch (memoryLayout.type) {
 				case pl::render::UniformComponentType::eFloat32: {
-					pl::Float32 value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Float32>*> (&component)->value};
+					pl::Float32 value {std::any_cast<pl::Float32> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
 
 				case pl::render::UniformComponentType::eVec2f: {
-					pl::Vec2f value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Vec2f>*> (&component)->value};
+					pl::Vec2f value {std::any_cast<pl::Vec2f> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
 
 				case pl::render::UniformComponentType::eVec3f: {
-					pl::Vec3f value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Vec3f>*> (&component)->value};
+					pl::Vec3f value {std::any_cast<pl::Vec3f> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
 
 				case pl::render::UniformComponentType::eVec4f: {
-					pl::Vec4f value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Vec4f>*> (&component)->value};
+					pl::Vec4f value {std::any_cast<pl::Vec4f> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
 
 				case pl::render::UniformComponentType::eMat2f: {
-					pl::Mat2f value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Mat2f>*> (&component)->value};
+					pl::Mat2f value {std::any_cast<pl::Mat2f> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
 
 				case pl::render::UniformComponentType::eMat3f: {
-					pl::Mat3f value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Mat3f>*> (&component)->value};
+					pl::Mat3f value {std::any_cast<pl::Mat3f> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
 
 				case pl::render::UniformComponentType::eMat4f: {
-					pl::Mat4f value {reinterpret_cast<const pl::render::UniformComponentValue<pl::Mat4f>*> (&component)->value};
+					pl::Mat4f value {std::any_cast<pl::Mat4f> (component.value)};
 					memcpy(buffer + memoryLayout.start, &value, memoryLayout.size);
 					break;
 				}
@@ -124,11 +124,6 @@ namespace pl::render {
 		}
 
 		glUnmapNamedBuffer(m_buffer);
-	}
-
-
-	void Uniform::bind(pl::Count index) {
-		glBindBufferBase(GL_UNIFORM_BUFFER, index, m_buffer);
 	}
 
 

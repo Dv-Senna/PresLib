@@ -9,6 +9,7 @@
 #include "pl/render/framebuffer.hpp"
 #include "pl/render/pipeline.hpp"
 #include "pl/render/texture.hpp"
+#include "pl/render/uniform.hpp"
 #include "pl/render/vertexLayout.hpp"
 #include "pl/types.hpp"
 
@@ -26,6 +27,7 @@ namespace pl::render {
 		pl::render::VertexLayout *vertexLayout;
 		std::vector<pl::Block*> blocks;
 		std::map<pl::Uint32, const pl::render::Texture*> textures;
+		std::map<pl::Uint32, const pl::render::Uniform*> uniforms;
 	};
 
 	class Renderer {

@@ -7,6 +7,7 @@
 #include "pl/core.hpp"
 #include "pl/memory/heapAllocator.hpp"
 #include "pl/memory/manager.hpp"
+#include "pl/render/uniform.hpp"
 #include "pl/slide.hpp"
 #include "pl/types.hpp"
 #include "pl/window.hpp"
@@ -49,9 +50,11 @@ namespace pl {
 
 			inline pl::Window &getWindow() const noexcept {return *m_window;}
 			inline pl::memory::Manager &getObjectHeap() noexcept {return m_objectHeapManager;}
+			inline const pl::render::Uniform *const &getViewportUniform() const noexcept {return m_viewportUniform;}
 
 		private:
 			void m_calculateViewportRect();
+			void m_updateViewportUniform();
 
 			using SlideMap = std::map<std::string, pl::Slide*>;
 
@@ -62,6 +65,7 @@ namespace pl {
 			pl::memory::HeapAllocator m_objectHeapAllocator;
 			pl::memory::Manager m_objectHeapManager;
 			pl::Rect2i m_viewportRect;
+			pl::render::Uniform *m_viewportUniform;
 
 	};
 

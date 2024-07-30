@@ -1,5 +1,6 @@
 #pragma once
 
+#include <any>
 #include <map>
 #include <string>
 #include <vector>
@@ -25,15 +26,9 @@ namespace pl::render {
 		pl::render::UniformComponentType type;
 	};
 
-	namespace {
-		struct _UniformComponentValue {
-			std::string name;
-		};
-	}
-
-	template <typename T>
-	struct UniformComponentValue : public pl::render::_UniformComponentValue {
-		T value;
+	struct UniformComponentValue {
+		std::string name;
+		std::any value;
 	};
 
 	struct UniformComponentMemoryLayout {
@@ -51,8 +46,7 @@ namespace pl::render {
 			Uniform(const pl::render::Uniform::CreateInfos &createInfos);
 			~Uniform();
 
-			void write(const std::vector<pl::render::_UniformComponentValue> &components);
-			void bind(pl::Count index);
+			void write(const std::vector<pl::render::UniformComponentValue> &components);
 
 			inline const pl::Uint32 &getBuffer() const noexcept {return m_buffer;}
 

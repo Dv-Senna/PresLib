@@ -71,8 +71,8 @@ namespace pl::blocks {
 
 
 		pl::Vec2f halfNormalizedSize {
-			0.5f * m_image->getTexture().getSize().x / (pl::Float32)m_instance->getWindow().getSize().x,
-			0.5f * m_image->getTexture().getSize().y / (pl::Float32)m_instance->getWindow().getSize().y
+			0.5f * m_image->getTexture().getSize().x,
+			0.5f * m_image->getTexture().getSize().y
 		};
 
 		std::cout << "IMAGE SIZE : " << halfNormalizedSize << std::endl;
@@ -92,6 +92,10 @@ namespace pl::blocks {
 
 		m_state.renderDescriptor.textures = {
 			{0, &m_image->getTexture()}
+		};
+
+		m_state.renderDescriptor.uniforms = {
+			{0, m_instance->getViewportUniform()}
 		};
 	}
 

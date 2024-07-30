@@ -36,9 +36,9 @@ int main(int, char *[]) {
 		triangleCreateInfos.color = {1.f, 0.f, 0.f};
 		triangleCreateInfos.position = {0.f, 0.f};
 		triangleCreateInfos.vertices = {
-			pl::Vec2f(0.f, 0.5f),
-			pl::Vec2f(0.5f, -0.5f),
-			pl::Vec2f(-0.5f, -0.5f)
+			pl::Vec2f(0.f, 200.f),
+			pl::Vec2f(200.f, -200.f),
+			pl::Vec2f(-200.f, -200.f)
 		};
 		pl::blocks::Triangle triangle {triangleCreateInfos};
 		slide1.registerBlock(&triangle);
@@ -46,16 +46,16 @@ int main(int, char *[]) {
 		triangleCreateInfos.color = {0.f, 1.f, 0.f};
 		triangleCreateInfos.position = {0.f, 0.f};
 		triangleCreateInfos.vertices = {
-			pl::Vec2f(0.5f, 0.5f),
-			pl::Vec2f(1.f, -0.5f),
-			pl::Vec2f(-0.5f, -0.5f)
+			pl::Vec2f(200.f, 200.f),
+			pl::Vec2f(400.f, -200.f),
+			pl::Vec2f(-200.f, -200.f)
 		};
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
 		slide1.registerBlock(&triangle2);
 
 		pl::blocks::Image::CreateInfos imageCreateInfos {};
 		imageCreateInfos.path = "logo.png";
-		imageCreateInfos.position = {0.5f, 0.f};
+		imageCreateInfos.position = {300.f, 0.f};
 		imageCreateInfos.scale = {.2f, .2f};
 		pl::blocks::Image image {imageCreateInfos};
 		image.setRotation({0.f, -1.f, 0.f});
@@ -63,7 +63,7 @@ int main(int, char *[]) {
 
 		imageCreateInfos.path = "spritesheet.png";
 		imageCreateInfos.position = {0.f, 0.f};
-		imageCreateInfos.scale = {1.f, 1.f};
+		imageCreateInfos.scale = {.5f, .5f};
 		pl::blocks::Image image2 {imageCreateInfos};
 		slide2.registerBlock(&image2);
 

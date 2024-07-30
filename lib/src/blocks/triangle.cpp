@@ -69,6 +69,10 @@ namespace pl::blocks {
 		};
 		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
 		m_state.renderDescriptor.vertexLayout = m_instance->allocateObject<pl::render::VertexLayout> (vertexLayoutCreateInfos);
+
+		m_state.renderDescriptor.uniforms = {
+			{0, m_instance->getViewportUniform()}
+		};
 	}
 
 

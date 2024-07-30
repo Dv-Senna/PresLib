@@ -54,6 +54,10 @@ namespace pl::render {
 
 				PL_ASSERT(component.type == pl::render::VertexComponentType::eFloat32, "Position vertex component's type must be float32");
 
+				pl::Mat3f transform {block->getState().transform};
+				for (pl::BlockImplementation<true> *parent {block->getState().parent}; parent != nullptr; parent = parent->getState().parent)
+					transform = parent->getState().transform * transform;
+
 
 				for (pl::Count i {0}; i < verticesCount; ++i) {
 					PL_ASSERT(component.dimension == 2, "Position vertex component's dimension must be 2");
@@ -63,7 +67,7 @@ namespace pl::render {
 					pl::Float32 *y {reinterpret_cast<pl::Float32*> (blockVertices.data() + dataPosition + sizeof(pl::Float32))};
 
 					pl::Vec3f position {*x, *y, 1.f};
-					position = block->getState().transform * position;
+					position = transform * position;
 
 					*x = position.x;
 					*y = position.y;
@@ -97,7 +101,8 @@ namespace pl::render {
 	bool isSame(const pl::render::RenderGroup &group, const pl::render::Descriptor &descriptor) {
 		return *group.pipeline == *descriptor.pipeline
 			&& *group.vertexLayout == *descriptor.vertexLayout
-			&& group.textures == descriptor.textures;
+			&& group.textures == descriptor.textures
+			&& group.uniforms == descriptor.uniforms;
 	}
 
 
@@ -125,6 +130,7 @@ namespace pl::render {
 			group.vertexLayout = block->getState().renderDescriptor.vertexLayout;
 			group.vertexBuffer = nullptr;
 			group.textures = block->getState().renderDescriptor.textures;
+			group.uniforms = block->getState().renderDescriptor.uniforms;
 			m_renderGroups.push_back(group);
 		}
 
@@ -169,7 +175,15 @@ namespace pl::render {
 			for (const auto &texture : group.textures)
 				glBindTextureUnit(texture.first, texture.second->getTexture());
 
+			for (const auto &uniform : group.uniforms) {
+				glBindBufferBase(GL_UNIFORM_BUFFER, uniform.first, uniform.second->getBuffer());
+			//	std::cout << "Uniform " << uniform.first << " bound" << std::endl;
+			}
+
 			glDrawArrays(GL_TRIANGLES, 0, group.vertexBuffer->getSize() / group.vertexLayout->getStride());
+
+			for (const auto &uniform : group.uniforms)
+				glBindBufferBase(GL_UNIFORM_BUFFER, uniform.first, 0);
 
 			for (const auto &texture : group.textures)
 				glBindTextureUnit(texture.first, 0);

@@ -27,7 +27,8 @@ namespace pl {
 		m_objectHeapManager {{
 			.allocator = &m_objectHeapAllocator
 		}},
-		m_viewportRect {0, 0, createInfos.viewportSize.x, createInfos.viewportSize.y}
+		m_viewportRect {0, 0, createInfos.viewportSize.x, createInfos.viewportSize.y},
+		m_viewportUniform {nullptr}
 	{
 		std::cout << "Create Instance of PresLib" << std::endl;
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -43,12 +44,19 @@ namespace pl {
 		resourceManagerCreateInfos.heapSize = createInfos.resourceHeapSize;
 		pl::ResourceManager::create(resourceManagerCreateInfos);
 
+		pl::render::Uniform::CreateInfos viewportUniformCreateInfos {};
+		viewportUniformCreateInfos.components = {
+			{"viewportSize", pl::render::UniformComponentType::eVec2f}
+		};
+		m_viewportUniform = this->allocateObject<pl::render::Uniform> (viewportUniformCreateInfos);
+
 		stbi_set_flip_vertically_on_load(true);
 	}
 
 
 	Instance::~Instance() {
 		std::cout << "Destroy Instance of PresLib" << std::endl;
+		this->freeObject(m_viewportUniform);
 		pl::ResourceManager::destroy();
 
 		if (m_window != nullptr)
@@ -62,6 +70,7 @@ namespace pl {
 			slide.second->compile(this);
 
 		this->m_calculateViewportRect();
+		this->m_updateViewportUniform();
 
 		pl::Float deltaTime {0};
 		pl::Uint32 startFrameTime {SDL_GetTicks()};
@@ -141,6 +150,7 @@ namespace pl {
 		if (m_currentSlide >= m_slidesOrder.size())
 			return true;
 		this->m_calculateViewportRect();
+		this->m_updateViewportUniform();
 		return false;
 	}
 
@@ -150,6 +160,7 @@ namespace pl {
 			return;
 		--m_currentSlide;
 		this->m_calculateViewportRect();
+		this->m_updateViewportUniform();
 	}
 
 
@@ -185,6 +196,14 @@ namespace pl {
 		}
 
 		m_slidesOrder[m_currentSlide]->second->resize({m_viewportRect.w, m_viewportRect.h});
+	}
+
+
+	void Instance::m_updateViewportUniform() {
+		const pl::Vec2f &viewportSize {m_slidesOrder[m_currentSlide]->second->getOriginalViewportSize() * 0.5f};
+		m_viewportUniform->write({
+			{"viewportSize", viewportSize}
+		});
 	}
 
 
