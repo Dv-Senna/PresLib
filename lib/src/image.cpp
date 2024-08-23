@@ -44,7 +44,7 @@ namespace pl {
 
 		pl::Vec2i size {};
 		pl::Int channelsCount {};
-		void *data {stbi_load(m_path.c_str(), &size.x, &size.y, &channelsCount, 0)};
+		void *data {stbi_load(m_path.string().c_str(), &size.x, &size.y, &channelsCount, 0)};
 
 		pl::render::Texture::CreateInfos textureCreateInfos {};
 		textureCreateInfos.data = data;

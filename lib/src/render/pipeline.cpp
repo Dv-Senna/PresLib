@@ -10,7 +10,8 @@ namespace pl::render {
 		m_program {0},
 		m_hash {0}
 	{
-		m_hash = pl::utils::hash(m_state);
+		m_hash = pl::utils::hash(createInfos);
+
 		auto it {s_loadedPipelines.find(m_hash)};
 		if (it != s_loadedPipelines.end()) {
 			m_program = it->second;

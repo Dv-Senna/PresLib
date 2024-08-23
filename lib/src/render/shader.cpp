@@ -23,17 +23,7 @@ namespace pl::render {
 			{pl::render::ShaderStage::eFragment, GL_FRAGMENT_SHADER}
 		};
 
-		std::vector<pl::Byte> hashData {};
-		hashData.resize(
-			sizeof(pl::render::ShaderStage) + createInfos.path.string().size() * sizeof(char) + createInfos.entryPoint.size() * sizeof(char)
-		);
-		memcpy(hashData.data(), &m_stage, sizeof(pl::render::ShaderStage));
-		memcpy(hashData.data() + sizeof(pl::render::ShaderStage), createInfos.path.c_str(), createInfos.path.string().size() * sizeof(char));
-		memcpy(
-			hashData.data() + sizeof(pl::render::ShaderStage) + createInfos.path.string().size() * sizeof(char),
-			createInfos.entryPoint.c_str(), createInfos.entryPoint.size() * sizeof(char)
-		);
-		m_hash = pl::utils::hash(hashData);
+		m_hash = pl::utils::hash(createInfos);
 
 		auto it {s_loadedShaders.find(m_hash)};
 		if (it != s_loadedShaders.end()) {

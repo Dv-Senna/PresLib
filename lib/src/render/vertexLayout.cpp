@@ -24,13 +24,7 @@ namespace pl::render {
 			{pl::render::VertexComponentType::eUint32,  GL_UNSIGNED_INT}
 		};
 
-		pl::ByteCount componentByteSize {sizeof(pl::render::VertexComponentLayout) * m_components.size()};
-		std::vector<pl::Byte> hashData {};
-		hashData.resize(sizeof(pl::Uint32) + componentByteSize + sizeof(pl::render::VertexRate));
-		*reinterpret_cast<pl::Uint32*> (hashData.data()) = m_binding;
-		memcpy(hashData.data() + sizeof(pl::Uint32), m_components.data(), componentByteSize);
-		memcpy(hashData.data() + sizeof(pl::Uint32) + componentByteSize, &m_rate, sizeof(pl::render::VertexRate));
-		m_hash = pl::utils::hash(hashData);
+		m_hash = pl::utils::hash(createInfos);
 
 		glCreateVertexArrays(1, &m_vao);
 
