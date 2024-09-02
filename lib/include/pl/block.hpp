@@ -21,6 +21,7 @@ namespace pl {
 		pl::render::Descriptor renderDescriptor;
 		std::vector<pl::Byte> vertices;
 		pl::Mat3f transform {1.f};
+		pl::Int layer {0};
 		bool hasChanged {false};
 	};
 

@@ -28,6 +28,7 @@ namespace pl::render {
 		std::vector<pl::Block*> blocks;
 		std::map<pl::Uint32, const pl::render::Texture*> textures;
 		std::map<pl::Uint32, const pl::render::Uniform*> uniforms;
+		std::pair<pl::Int, pl::Int> layerRange;
 	};
 
 	class Renderer {

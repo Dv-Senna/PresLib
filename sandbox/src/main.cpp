@@ -51,7 +51,7 @@ int main(int, char *[]) {
 			pl::Vec2f(-200.f, -200.f)
 		};
 		pl::blocks::Triangle triangle2 {triangleCreateInfos};
-		slide1.registerBlock(&triangle2);
+		//slide1.registerBlock(&triangle2);
 
 		pl::blocks::Image::CreateInfos imageCreateInfos {};
 		imageCreateInfos.path = "logo.png";
@@ -72,6 +72,8 @@ int main(int, char *[]) {
 		pl::Config::setCustomRenderCallback([&] () {
 			image.rotate(3.14159f * 2.f / 60.f);
 		});
+
+		slide1.registerBlock(&triangle2);
 
 		instance.mainloop();
 	}
