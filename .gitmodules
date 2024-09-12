@@ -13,3 +13,6 @@
 [submodule "vendors/SteelEngine-Malge"]
 	path = vendors/SteelEngine-Malge
 	url = git@github.com:IronStudio/SteelEngine-Malge.git
+[submodule "vendors/entt"]
+	path = vendors/entt
+	url = git@github.com:skypjack/entt.git
