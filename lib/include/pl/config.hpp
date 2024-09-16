@@ -1,24 +1,39 @@
 #pragma once
 
+#include <filesystem>
+#include <functional>
 #include <string>
 
-#include <glm/glm.hpp>
+#include <entt/entt.hpp>
 
-#include "graphics/api.inl"
-#include "graphics/projection.hpp"
-#include "utils/color.hpp"
+#include "pl/core.hpp"
+#include "pl/types.hpp"
 
 
-namespace pl::config
-{
-	inline const glm::vec2 openglVersion {4, 6};
-	inline const pl::utils::Color openglBitsPerColor {8, 8, 8};
-	inline const bool useMSAA {true};
-	inline const int MSAASamplesCount {4};
-	inline const glm::vec2 defaultViewportSize {1920, 1080};
-	inline const pl::graphics::Api defaultGraphicsApi {pl::graphics::Api::OpenGL};
-	inline const std::string defaultPresentationTitle {"PresLib"};
-	inline const pl::graphics::Projection defaultProjection {pl::graphics::Projection::ortho};
-	inline const std::string texFolder {"./latex/"};
 
-} // namespace pl::config
+namespace pl {
+	class PL_CORE Config {
+		public:
+			static void setShaderFolderPath(const std::filesystem::path &path);
+			static const std::filesystem::path &getShaderFolderPath();
+
+			static void setImageFolderPath(const std::filesystem::path &path);
+			static const std::filesystem::path &getImageFolderPath();
+
+			static void setCustomRenderCallback(const std::function<void()> &callback);
+			static const std::function<void()> &getCustomRenderCallback();
+
+			static void setFramerate(pl::Uint fps);
+			static const pl::Uint &getFramerate();
+			static const pl::Float &getFrameDuration();
+
+
+		private:
+			static std::filesystem::path s_shaderFolderPath;
+			static std::filesystem::path s_imageFolderPath;
+			static std::function<void()> s_customRenderCallback;
+			static pl::Uint s_framerate;
+			static pl::Float s_frameDuration;
+	};
+
+} // namespace pl

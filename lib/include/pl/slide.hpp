@@ -1,40 +1,48 @@
 #pragma once
 
-#include <list>
-#include <memory>
-#include <string>
+#include <vector>
 
-#include "block.hpp"
+#include "pl/block.hpp"
+#include "pl/core.hpp"
+#include "pl/render/framebuffer.hpp"
+#include "pl/render/renderer.hpp"
 
 
-namespace pl
-{
-	class Slide final
-	{
+
+namespace pl {
+	struct Instance;
+
+	class PL_CORE Slide {
 		friend class pl::Instance;
 
 		public:
-			enum class Flag
-			{
-				none = 0
+			struct CreateInfos {
+				pl::Vec2i viewportSize {-1, -1};
 			};
 
-			struct CreateInfo
-			{
-				std::string name {""};
-				pl::Slide::Flag flags {pl::Slide::Flag::none};
-			};
+			Slide(const pl::Slide::CreateInfos &createInfos);
+			virtual ~Slide();
 
-			~Slide() = default;
+			virtual void update();
+			void draw();
+			void registerBlock(pl::Block *block);
 
-			void draw(const glm::mat4 &globalTransformation);
-			void registerBlock(std::shared_ptr<pl::Block> block);
+			inline const pl::render::Framebuffer &getFramebuffer() const noexcept {return *m_framebuffer;}
+			inline const pl::Vec2i &getViewportSize() const noexcept {return m_viewportSize;}
+			inline const pl::Vec2i &getOriginalViewportSize() const noexcept {return m_originalViewportSize;}
 
 
 		protected:
-			Slide(const pl::Slide::CreateInfo &createInfos);
+			void compile(pl::Instance *instance);
+			void resize(const pl::Vec2i &size);
 
-			std::list<std::shared_ptr<pl::Block>> m_blocks;
+			std::vector<pl::Block*> m_blocks;
+			pl::render::Framebuffer *m_framebufferMSAA;
+			pl::render::Framebuffer *m_framebuffer;
+			pl::render::Renderer m_renderer;
+			pl::Vec2i m_viewportSize;
+			pl::Vec2i m_originalViewportSize;
+			pl::Instance *m_instance;
 	};
 
 } // namespace pl

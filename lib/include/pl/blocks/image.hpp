@@ -1,46 +1,38 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <filesystem>
 
-#include "../block.hpp"
-#include "../utils/id.hpp"
-#include "line.hpp"
+#include "pl/block.hpp"
+#include "pl/core.hpp"
+#include "pl/render/shader.hpp"
+#include "pl/resourceManager.hpp"
+#include "pl/types.hpp"
 
 
-namespace pl::blocks
-{
-	class Image final :
-		public pl::Block,
-		public pl::BlockWithPosition,
-		public pl::BlockWithSize,
-		public pl::BlockWithOrientation,
-		public pl::BlockWithColor,
-		public pl::BlockWithDistortion
-	{
-		friend class pl::blocks::Line;
 
+namespace pl::blocks {
+	struct Instance;
+
+	class PL_CORE Image final : public pl::Block {
 		public:
-			struct CreateInfo
-			{
-				std::string path;
-				glm::vec2 position;
-				pl::utils::Color color {pl::utils::white};
-				pl::utils::Radians angle {0.f};
-				glm::vec2 rotationCenter {0.5f, 0.5f};
-				glm::mat4 distortion {1.f};
+			struct CreateInfos {
+				std::filesystem::path path;
+				pl::Vec2f position;
+				pl::Vec2f scale {1.f, 1.f};
 			};
 
-			Image(pl::Instance &instance, const pl::blocks::Image::CreateInfo &createInfo);
+			Image(const pl::blocks::Image::CreateInfos &createInfos);
 			~Image();
 
-			void draw(const glm::mat4 &globalTransformation) override;
+			void compile(pl::Instance *instance) override;
 
-		protected:
-			static void s_load(pl::Instance &instance);
-			static pl::utils::Id s_vertices, s_shaders[2], s_pipeline;
+			inline const pl::Vec2i &getSize() const noexcept {return m_image->getTexture().getSize();}
 
-			pl::utils::Id m_texture;
+		private:
+			pl::Instance *m_instance;
+			pl::render::Shader *m_vertexShader;
+			pl::render::Shader *m_fragmentShader;
+			pl::Resource<pl::Image> m_image;
 	};
-
 
 } // namespace pl::blocks

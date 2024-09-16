@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.20)
+
+
+set(SHADERS_NAME ${PROJECT_NAME}_shaders)
+set(SHADERS_VERSION ${PROJECT_VERSION})
+set(SHADERS_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(SHADERS_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(SHADERS_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+string(TOUPPER ${SHADERS_NAME} SHADERS_NAME_UPPERCASE)
+
+
+file(GLOB_RECURSE VERT_SHADER_SRC *.vert)
+file(GLOB_RECURSE FRAG_SHADER_SRC *.frag)
+
+set(SHADER_SRC_FILES ${VERT_SHADER_SRC} ${FRAG_SHADER_SRC})
+set(SHADER_SPIRV_FILES "")
+
+foreach(file ${SHADER_SRC_FILES})
+	list(APPEND SHADER_SPIRV_FILES "${file}.spv")
+	add_custom_command(
+		OUTPUT
+			${file}.spv
+		COMMAND
+			${Vulkan_GLSLC_EXECUTABLE} ${file} -o ${file}.spv $<$<CONFIG:Debug>:-g>
+		DEPENDS
+			${file}
+	)
+endforeach(file ${SHADER_SRC_FILES})
+
+
+
+add_custom_target(${SHADERS_NAME}
+	ALL DEPENDS
+		${SHADER_SPIRV_FILES}
+)

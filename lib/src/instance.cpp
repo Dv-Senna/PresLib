@@ -1,453 +1,210 @@
+#include "pl/instance.hpp"
+
 #include <iostream>
-#include <map>
 #include <stdexcept>
-#include <chrono>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glad/gl.h>
+#include <SDL2/SDL.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
-#include "blocks/ellipse.hpp"
-#include "blocks/group.hpp"
-#include "blocks/image.hpp"
-#include "blocks/math.hpp"
-#include "blocks/rectangle.hpp"
-#include "blocks/text.hpp"
-#include "blocks/triangle.hpp"
-#include "graphics/framebuffer.hpp"
-#include "graphics/pipeline.hpp"
-#include "graphics/shader.hpp"
-#include "graphics/vertices.hpp"
-#include "instance.hpp"
+#include "pl/assertation.hpp"
+#include "pl/config.hpp"
+#include "pl/inputManager.hpp"
+#include "pl/resourceManager.hpp"
 
 
 
-namespace pl
-{
-	Instance::Instance(const pl::Instance::CreateInfo &createInfo) : 
+namespace pl {
+	Instance::Instance(const pl::Instance::CreateInfos &createInfos) :
 		m_window {nullptr},
-		m_renderer {nullptr},
-		m_eventManager {},
-		m_fontManager {*this},
-		m_renderingCallback {nullptr},
-		m_vertices {0},
-		m_framebuffer {0},
-		m_shaders {0, 0},
-		m_pipeline {0},
 		m_slides {},
-		m_currentSlide {m_slides.end()},
-		m_transformation {1.f},
-		m_viewportSize {createInfo.viewportSize}
+		m_slidesOrder {},
+		m_currentSlide {0},
+		m_objectHeapAllocator {{
+			.size = createInfos.objectHeapSize
+		}},
+		m_objectHeapManager {{
+			.allocator = &m_objectHeapAllocator
+		}},
+		m_viewportRect {0, 0, createInfos.viewportSize.x, createInfos.viewportSize.y},
+		m_viewportUniform {nullptr}
 	{
-		static const std::map<pl::graphics::Api, SDL_WindowFlags> flags {
-			{pl::graphics::Api::OpenGL, SDL_WINDOW_OPENGL}
+		std::cout << "Create Instance of PresLib" << std::endl;
+		if (SDL_Init(SDL_INIT_VIDEO) != 0)
+			throw std::runtime_error("Can't init SDL2 : " + std::string(SDL_GetError()));
+
+		pl::Window::CreateInfos windowCreateInfos {};
+		windowCreateInfos.title = createInfos.presentationName;
+		windowCreateInfos.size = createInfos.viewportSize;
+		m_window = m_objectHeapManager.allocate<pl::Window> (windowCreateInfos);
+
+		pl::ResourceManager::CreateInfos resourceManagerCreateInfos {};
+		resourceManagerCreateInfos.instance = this;
+		resourceManagerCreateInfos.heapSize = createInfos.resourceHeapSize;
+		pl::ResourceManager::create(resourceManagerCreateInfos);
+
+		pl::render::Uniform::CreateInfos viewportUniformCreateInfos {};
+		viewportUniformCreateInfos.components = {
+			{"viewportSize", pl::render::UniformComponentType::eVec2f}
 		};
+		m_viewportUniform = this->allocateObject<pl::render::Uniform> (viewportUniformCreateInfos);
 
-		auto it {flags.find(createInfo.graphicsApi)};
-		if (it == flags.end())
-			throw std::runtime_error("PL : Can't use graphics api " + std::to_string((int)createInfo.graphicsApi) + " in window");
-		
-		m_window = SDL_CreateWindow(
-			createInfo.presentationTitle.c_str(),
-			createInfo.viewportSize.x, createInfo.viewportSize.y,
-			SDL_WINDOW_FULLSCREEN | it->second
-		);
-		if (m_window == nullptr)
-			throw std::runtime_error("PL : Can't create an SDL3 window : " + std::string(SDL_GetError()));
-
-		pl::Renderer::CreateInfo rendererCreateInfo {};
-		rendererCreateInfo.graphicsApi = createInfo.graphicsApi;
-		rendererCreateInfo.viewportSize = m_viewportSize;
-		rendererCreateInfo.window = m_window;
-		m_renderer = std::make_unique<pl::Renderer> (rendererCreateInfo);
-
-
-
-		int windowWidth {}, windowHeight {};
-		SDL_GetWindowSize(m_window, &windowWidth, &windowHeight);
-
-		float viewportRatio {m_viewportSize.x / m_viewportSize.y};
-		float windowRatio {(float)windowWidth / (float)windowHeight};
-		float scaleFactor {(m_viewportSize.y * (float)windowWidth) / ((float)windowHeight * m_viewportSize.x)};
-		glm::vec2 viewportScaledCentered {1.f, scaleFactor};
-
-		if (viewportRatio < windowRatio)
-			viewportScaledCentered = {1.f / scaleFactor, 1.f};
-
-		/************* setup framebuffer-related stuff *************/
-
-		pl::graphics::Vertices verticesInfos {
-			{
-				viewportScaledCentered.x, viewportScaledCentered.y,    1.f, 1.f,
-				-viewportScaledCentered.x, -viewportScaledCentered.y,  0.f, 0.f,
-				viewportScaledCentered.x, -viewportScaledCentered.y,   1.f, 0.f,
-
-				-viewportScaledCentered.x, viewportScaledCentered.y,   0.f, 1.f,
-				-viewportScaledCentered.x, -viewportScaledCentered.y,  0.f, 0.f,
-				viewportScaledCentered.x, viewportScaledCentered.y,    1.f, 1.f
-			},
-			{{
-				{pl::graphics::VerticesChannel::color, {0, 2, 0}},
-				{pl::graphics::VerticesChannel::textureCoord0, {1, 2, 2}}
-			}}
-		};
-		m_vertices = m_renderer->registerObject(pl::utils::ObjectType::vertices, verticesInfos);
-
-
-		pl::graphics::Shader vertexShaderInfos {
-			pl::graphics::ShaderType::vertex,
-			"shaders/framebuffer.vert.spv",
-			"main"
-		};
-		pl::graphics::Shader fragmentShaderInfos {
-			pl::graphics::ShaderType::fragment,
-			"shaders/framebuffer.frag.spv",
-			"main"
-		};
-		pl::graphics::Shader fragmentShaderMSAAInfos {
-			pl::graphics::ShaderType::fragment,
-			"shaders/framebufferMSAA.frag.spv",
-			"main"
-		};
-		m_shaders[0] = m_renderer->registerObject(pl::utils::ObjectType::shader, vertexShaderInfos);
-		m_shaders[1] = m_renderer->registerObject(pl::utils::ObjectType::shader, fragmentShaderInfos);
-		m_shaders[2] = m_renderer->registerObject(pl::utils::ObjectType::shader, fragmentShaderMSAAInfos);
-
-		pl::graphics::Uniform uniformInfos {
-			{
-				{pl::graphics::UniformFieldType::floating, "uni_SamplesCount"},
-				{pl::graphics::UniformFieldType::vec2, "uni_ViewportSize"}
-			},
-			"uni_WindowFramebufferBlock",
-			0
-		};
-
-		pl::graphics::Pipeline pipelineInfos {
-			{m_shaders[0], pl::config::useMSAA ? m_shaders[2] : m_shaders[1]},
-			pl::config::useMSAA ? std::vector<pl::graphics::Uniform> ({uniformInfos}) : std::vector<pl::graphics::Uniform> ()
-		};
-		m_pipeline = m_renderer->registerObject(pl::utils::ObjectType::pipeline, pipelineInfos);
-
-		if (pl::config::useMSAA)
-		{
-			m_renderer->setUniformValues(m_pipeline, "uni_WindowFramebufferBlock", {
-				{"uni_SamplesCount", static_cast<float> (pl::config::MSAASamplesCount)},
-				{"uni_ViewportSize", m_viewportSize}
-			});
-		}
-
-		pl::graphics::Framebuffer framebufferInfos {
-			m_viewportSize,
-			pl::config::useMSAA ? pl::config::MSAASamplesCount : 0
-		};
-		m_framebuffer = m_renderer->registerObject(pl::utils::ObjectType::framebuffer, framebufferInfos);
-
-		
-		/************* setup framebuffer-related stuff *************/
-
-
-		//m_transformation = glm::ortho(0.f, m_viewportSize.x, 0.f, m_viewportSize.y);
-		m_transformation = glm::ortho(0.f, (float)windowWidth, 0.f, (float)windowHeight);
+		stbi_set_flip_vertically_on_load(true);
 	}
 
 
-
-	Instance::~Instance()
-	{
-		if (m_renderer.get() != nullptr)
-			m_renderer.reset();
+	Instance::~Instance() {
+		std::cout << "Destroy Instance of PresLib" << std::endl;
+		this->freeObject(m_viewportUniform);
+		pl::ResourceManager::destroy();
 
 		if (m_window != nullptr)
-			SDL_DestroyWindow(m_window);
+			m_objectHeapManager.free(m_window);
+		SDL_Quit();
 	}
 
 
+	void Instance::mainloop() {
+		for (auto &slide : m_slides)
+			slide.second->compile(this);
 
-	pl::Renderer &Instance::getRenderer()
-	{
-		return *m_renderer;
-	}
+		this->m_calculateViewportRect();
+		this->m_updateViewportUniform();
 
+		pl::Float deltaTime {0};
+		pl::Uint32 startFrameTime {SDL_GetTicks()};
 
-
-	void Instance::setRenderingCallback(const std::function<void()> &callback)
-	{
-		m_renderingCallback = callback;
-	}
-
-
-
-	void Instance::run()
-	{
-		pl::utils::Id framebufferTexture {m_renderer->getFramebufferTexture(m_framebuffer)};
-		pl::graphics::RenderMode renderMode {pl::graphics::RenderMode::normal};
-		auto startTime {std::chrono::steady_clock::now()};
-		float dt {1.f};
-		
-		float dtSum {0.f};
-		int dtCount {0};
-		bool monitoring {false};
-
-		while (m_eventManager.pollEvent())
-		{
-			if (monitoring)
-			{
-				++dtCount;
-				dtSum += dt;
-			}
-
-
-
-			if (m_eventManager.isKeyDown(SDL_SCANCODE_ESCAPE))
+		while (pl::InputManager::isRunning()) {
+			pl::InputManager::update();
+			if (pl::InputManager::isKeyDown(pl::Key::eEscape))
 				return;
 
-			if (m_eventManager.isKeyPressed(SDL_SCANCODE_LEFT))
-			{
-				if (!m_slides.empty() && m_currentSlide != m_slides.begin())
-					--m_currentSlide;
-			}
-
-			if (m_eventManager.isKeyPressed(SDL_SCANCODE_RIGHT) || m_eventManager.isKeyPressed(SDL_SCANCODE_SPACE))
-			{
-				if (!m_slides.empty())
-					++m_currentSlide;
-				if (m_currentSlide == m_slides.end())
+			if (pl::InputManager::wasKeyPressed(pl::Key::eSpace) || pl::InputManager::wasKeyPressed(pl::Key::eRight)) {
+				if (this->nextSlide())
 					return;
 			}
 
-			if (m_eventManager.isKeyPressed(SDL_SCANCODE_E))
-			{
-				if (renderMode == pl::graphics::RenderMode::normal)
-					renderMode = pl::graphics::RenderMode::wireframe;
-				
-				else
-					renderMode = pl::graphics::RenderMode::normal;
+			if (pl::InputManager::wasKeyPressed(pl::Key::eLeft))
+				this->previousSlide();
 
-				m_renderer->setRenderMode(renderMode);
+			if (pl::InputManager::wasWindowResized())
+				this->handleResize();
+
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glClearColor(0.f, 0.f, 0.f, 1.f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_slidesOrder[m_currentSlide]->second->update();
+			m_slidesOrder[m_currentSlide]->second->draw();
+
+			glBlitNamedFramebuffer(
+				m_slidesOrder[m_currentSlide]->second->getFramebuffer().getFramebuffer(),
+				0,
+				0, 0, m_slidesOrder[m_currentSlide]->second->getViewportSize().x, m_slidesOrder[m_currentSlide]->second->getViewportSize().y,
+				m_viewportRect.x, m_viewportRect.y, m_viewportRect.x + m_viewportRect.w, m_viewportRect.y + m_viewportRect.h,
+				GL_COLOR_BUFFER_BIT, GL_NEAREST
+			);
+
+			if (pl::Config::getCustomRenderCallback() != nullptr)
+				pl::Config::getCustomRenderCallback()();
+
+			m_window->swap();
+
+			pl::Uint32 endFrameTime {SDL_GetTicks()};
+			pl::Float elapsedTime {static_cast<pl::Float> (endFrameTime - startFrameTime)};
+			if (elapsedTime < deltaTime) {
+				SDL_Delay(static_cast<pl::Uint32> (deltaTime - elapsedTime));
+				deltaTime = pl::Config::getFrameDuration();
 			}
-
-			if (m_eventManager.isKeyPressed(SDL_SCANCODE_P))
-			{
-				if (monitoring)
-				{
-					std::cout << "Average performance on " << dtCount << " frames : dt=" << dtSum / (float)dtCount
-					<< " | fps=" << 1000.f * (float)dtCount / dtSum << std::endl;
-					dtCount = 0;
-					dtSum = 0.f;
-				}
-
-				else
-				{
-					dtCount = 1;
-					dtSum = dt;
-				}
-
-				monitoring = !monitoring;
-			}
-
-
-			m_renderer->useFramebuffer(m_framebuffer);
-				m_renderer->cleanViewport({100, 100, 100, 255});
-
-				if (m_currentSlide != m_slides.end())
-					(*m_currentSlide)->draw(m_transformation);
-
-				if (m_renderingCallback != nullptr)
-					m_renderingCallback();
-
-			m_renderer->useFramebuffer(0);
-
-
-			m_renderer->cleanViewport(pl::utils::black);
-
-			m_renderer->usePipeline(m_pipeline);
-				m_renderer->bindTexture(m_pipeline, framebufferTexture, 0);
-					m_renderer->drawVertices(m_vertices, true);
-				m_renderer->bindTexture(m_pipeline, 0, 0);
-			m_renderer->usePipeline(0);
-
-			m_renderer->updateScreen();
-
-			dt = std::chrono::duration_cast<std::chrono::duration<float, std::milli>> (
-				std::chrono::steady_clock::now() - startTime).count();
-			startTime = std::chrono::steady_clock::now();
+			else
+				deltaTime = elapsedTime;
+			startFrameTime = SDL_GetTicks();
 		}
 	}
 
 
-
-	std::shared_ptr<pl::Slide> Instance::registerSlide(const pl::Slide::CreateInfo &createInfos)
-	{
-		m_slides.push_back(std::shared_ptr<pl::Slide> (new pl::Slide(createInfos)));
-		if (m_slides.size() == 1)
-			m_currentSlide = m_slides.begin();
-
-		return *m_slides.rbegin();
+	void Instance::registerSlide(const std::string &name, pl::Slide *slide) {
+		m_slides[name] = slide;
+		auto it {m_slides.find(name)};
+		m_slidesOrder.push_back(it);
 	}
 
 
-
-	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Slide> slide, const pl::Block::CreateInfo &createInfos)
-	{
-		if (slide.get() == nullptr)
-			throw std::runtime_error("PL : Can't register new block because slide is invalid");
-
-		auto block {pl::Instance::s_createBlock(*this, createInfos)};
-		if (block.get() == nullptr)
-			throw std::runtime_error("PL : Newly created block is null");
-
-		slide->registerBlock(block);
-		return block;
+	pl::Slide *Instance::getSlide(const std::string &name) {
+		auto it {m_slides.find(name)};
+		PL_ASSERT(it != m_slides.end(), "Invalid slide name");
+		return it->second;
 	}
 
 
-
-	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Block> block)
-	{
-		if (slide.get() == nullptr)
-			throw std::runtime_error("PL : Can't register block because slide is invalid");
-
-		if (block.get() == nullptr)
-			throw std::runtime_error("PL : Can't register block because the given block is not valid");
-
-		slide->registerBlock(block);
-		return block;
+	pl::Slide *Instance::getSlide(pl::Count index) {
+		PL_ASSERT(index < m_slidesOrder.size(), "Invalid slide index");
+		auto it {m_slidesOrder[index]};
+		return it->second;
 	}
 
 
-
-	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Block> group, const pl::Block::CreateInfo &createInfos)
-	{
-		if (group.get() == nullptr)
-			throw std::runtime_error("PL : Can't register new block because group is invalid");
-
-		auto block {pl::Instance::s_createBlock(*this, createInfos)};
-		if (block.get() == nullptr)
-			throw std::runtime_error("PL : Newly created block is null");
-
-		group.get()->registerBlock(block);
-		return block;
+	bool Instance::nextSlide() {
+		++m_currentSlide;
+		if (m_currentSlide >= m_slidesOrder.size())
+			return true;
+		this->m_calculateViewportRect();
+		this->m_updateViewportUniform();
+		return false;
 	}
 
 
-
-	std::shared_ptr<pl::Block> Instance::registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block)
-	{
-		if (group.get() == nullptr)
-			throw std::runtime_error("PL : Can't register block because group is invalid");
-
-		if (block.get() == nullptr)
-			throw std::runtime_error("PL : Can't register block because the given block is not valid");
-
-		group->registerBlock(block);
-		return block;
+	void Instance::previousSlide() {
+		if (m_currentSlide <= 0)
+			return;
+		--m_currentSlide;
+		this->m_calculateViewportRect();
+		this->m_updateViewportUniform();
 	}
 
 
-
-	const glm::mat4 &Instance::getTransformation() const noexcept
-	{
-		return m_transformation;
+	void Instance::handleResize() {
+		m_window->handleResize();
+		this->m_calculateViewportRect();
 	}
 
 
+	void Instance::m_calculateViewportRect() {
+		const pl::Vec2i &viewportSize {m_slidesOrder[m_currentSlide]->second->getOriginalViewportSize()};
 
-	const pl::EventManager &Instance::getEvent() const noexcept
-	{
-		return m_eventManager;
-	}
+		pl::Float32 ratioScreen {m_window->getSize().x / static_cast<pl::Float32> (m_window->getSize().y)};
+		pl::Float32 ratioViewport {viewportSize.x / static_cast<pl::Float32> (viewportSize.y)};
 
+		if (ratioScreen == ratioViewport)
+			m_viewportRect = {0, 0, m_window->getSize().x, m_window->getSize().y};
 
-
-	pl::FontManager &Instance::getFont() noexcept
-	{
-		return m_fontManager;
-	}
-
-
-
-	std::shared_ptr<pl::Block> Instance::s_createBlock(pl::Instance &instance, const pl::Block::CreateInfo &createInfos)
-	{
-		switch (createInfos.type)
-		{
-			case pl::Block::Type::rectangle:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Rectangle::CreateInfo))
-					throw std::runtime_error("PL : Can't register rectangle block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Rectangle> (
-					instance, std::any_cast<pl::blocks::Rectangle::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::triangle:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Triangle::CreateInfo))
-					throw std::runtime_error("PL : Can't register triangle block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Triangle> (
-					instance, std::any_cast<pl::blocks::Triangle::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::group:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Group::CreateInfo))
-					throw std::runtime_error("PL : Can't register group block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Group> (
-					instance, std::any_cast<pl::blocks::Group::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::line:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Line::CreateInfo))
-					throw std::runtime_error("PL : Can't register line block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Line> (
-					instance, std::any_cast<pl::blocks::Line::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::ellipse:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Ellipse::CreateInfo))
-					throw std::runtime_error("PL : Can't register ellipse block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Ellipse> (
-					instance, std::any_cast<pl::blocks::Ellipse::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::math:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Math::CreateInfo))
-					throw std::runtime_error("PL : Can't register math block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Math> (
-					instance, std::any_cast<pl::blocks::Math::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::image:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Image::CreateInfo))
-					throw std::runtime_error("PL : Can't register image block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Image> (
-					instance, std::any_cast<pl::blocks::Image::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			case pl::Block::Type::text:
-				if (!createInfos.data.has_value() || createInfos.data.type() != typeid(pl::blocks::Text::CreateInfo))
-					throw std::runtime_error("PL : Can't register text block because given data are invalid");
-
-				return std::make_shared<pl::blocks::Text> (
-					instance, std::any_cast<pl::blocks::Text::CreateInfo> (createInfos.data)
-				);
-				break;
-
-			default:
-				throw std::runtime_error("PL : Can't register new block because type is not valid");
+		else if (ratioScreen < ratioViewport) {
+			pl::Float32 ratio {ratioScreen / ratioViewport};
+			m_viewportRect.x = 0;
+			m_viewportRect.w = m_window->getSize().x;
+			m_viewportRect.h = ratio * m_window->getSize().y;
+			m_viewportRect.y = (m_window->getSize().y - m_viewportRect.h) * 0.5f;
 		}
 
-		return std::shared_ptr<pl::Block> (nullptr);
+		else {
+			pl::Float32 ratio {ratioViewport / ratioScreen};
+			m_viewportRect.y = 0;
+			m_viewportRect.h = m_window->getSize().y;
+			m_viewportRect.w = ratio * m_window->getSize().x;
+			m_viewportRect.x = (m_window->getSize().x - m_viewportRect.w) * 0.5f;
+		}
+
+		m_slidesOrder[m_currentSlide]->second->resize({m_viewportRect.w, m_viewportRect.h});
 	}
 
+
+	void Instance::m_updateViewportUniform() {
+		const pl::Vec2f &viewportSize {m_slidesOrder[m_currentSlide]->second->getOriginalViewportSize() * 0.5f};
+		m_viewportUniform->write({
+			{"viewportSize", viewportSize}
+		});
+	}
 
 
 } // namespace pl

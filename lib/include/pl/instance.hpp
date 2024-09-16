@@ -1,62 +1,73 @@
 #pragma once
 
-#include <functional>
-#include <memory>
+#include <map>
 #include <string>
+#include <vector>
 
-#include <SDL3/SDL.h>
-#include <glm/glm.hpp>
-
-#include "config.hpp"
-#include "eventManager.hpp"
-#include "fontManager.hpp"
-#include "graphics/api.inl"
-#include "renderer.hpp"
-#include "slide.hpp"
+#include "pl/core.hpp"
+#include "pl/memory/heapAllocator.hpp"
+#include "pl/memory/manager.hpp"
+#include "pl/render/uniform.hpp"
+#include "pl/slide.hpp"
+#include "pl/types.hpp"
+#include "pl/window.hpp"
 
 
-namespace pl
-{
-	class Instance final
-	{
+
+namespace pl {
+	class PL_CORE Instance final {
 		public:
-			struct CreateInfo
-			{
-				std::string presentationTitle {pl::config::defaultPresentationTitle};
-				pl::graphics::Api graphicsApi {pl::config::defaultGraphicsApi};
-				glm::vec2 viewportSize {pl::config::defaultViewportSize};
+			struct CreateInfos {
+				std::string presentationName;
+				pl::Vec2i viewportSize;
+				pl::ByteCount objectHeapSize {1024*1024};
+				pl::ByteCount resourceHeapSize {128*1024*1024};
 			};
 
-			Instance(const pl::Instance::CreateInfo &createInfo);
+			Instance(const pl::Instance::CreateInfos &createInfos);
 			~Instance();
 
-			pl::Renderer &getRenderer();
-			void setRenderingCallback(const std::function<void()> &callback);
-			std::shared_ptr<pl::Slide> registerSlide(const pl::Slide::CreateInfo &createInfos = {});
-			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Slide> slide, const pl::Block::CreateInfo &createInfos);
-			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Slide> slide, std::shared_ptr<pl::Block> block);
-			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, const pl::Block::CreateInfo &createInfos);
-			std::shared_ptr<pl::Block> registerBlock(std::shared_ptr<pl::Block> group, std::shared_ptr<pl::Block> block);
-			const glm::mat4 &getTransformation() const noexcept;
-			const pl::EventManager &getEvent() const noexcept;
-			pl::FontManager &getFont() noexcept;
+			void mainloop();
 
-			void run();
+			void registerSlide(const std::string &name, pl::Slide *slide);
+			pl::Slide *getSlide(const std::string &name);
+			pl::Slide *getSlide(pl::Count index);
 
+			bool nextSlide();
+			void previousSlide();
+
+			void handleResize();
+
+			template <typename T, typename ...Args>
+			inline T *allocateObject(Args ...args) {
+				return m_objectHeapManager.allocate<T> (args...);
+			}
+
+			template <typename T>
+			inline void freeObject(T *obj) {
+				m_objectHeapManager.free<T> (obj);
+			}
+
+			inline pl::Window &getWindow() const noexcept {return *m_window;}
+			inline pl::memory::Manager &getObjectHeap() noexcept {return m_objectHeapManager;}
+			inline const pl::render::Uniform *const &getViewportUniform() const noexcept {return m_viewportUniform;}
 
 		private:
-			static std::shared_ptr<pl::Block> s_createBlock(pl::Instance &instance, const pl::Block::CreateInfo &createInfos);
+			void m_calculateViewportRect();
+			void m_updateViewportUniform();
 
-			SDL_Window *m_window;
-			std::unique_ptr<pl::Renderer> m_renderer;
-			pl::EventManager m_eventManager;
-			pl::FontManager m_fontManager;
-			std::function<void()> m_renderingCallback;
-			pl::utils::Id m_vertices, m_framebuffer, m_shaders[3], m_pipeline;
-			std::list<std::shared_ptr<pl::Slide>> m_slides;
-			std::list<std::shared_ptr<pl::Slide>>::iterator m_currentSlide;
-			glm::mat4 m_transformation;
-			glm::vec2 m_viewportSize;
+			using SlideMap = std::map<std::string, pl::Slide*>;
+
+			pl::Window *m_window;
+			SlideMap m_slides;
+			std::vector<SlideMap::iterator> m_slidesOrder;
+			pl::Count m_currentSlide;
+			pl::memory::HeapAllocator m_objectHeapAllocator;
+			pl::memory::Manager m_objectHeapManager;
+			pl::Rect2i m_viewportRect;
+			pl::render::Uniform *m_viewportUniform;
+
 	};
 
 } // namespace pl
+

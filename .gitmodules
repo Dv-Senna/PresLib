@@ -1,0 +1,18 @@
+[submodule "vendors/glad"]
+	path = vendors/glad
+	url = git@github.com:IronStudio/SE-glad.git
+[submodule "vendors/freetype2"]
+	path = vendors/freetype2
+	url = git@github.com:aseprite/freetype2.git
+[submodule "vendors/utfcpp"]
+	path = vendors/utfcpp
+	url = git@github.com:nemtrif/utfcpp.git
+[submodule "vendors/stb"]
+	path = vendors/stb
+	url = git@github.com:nothings/stb.git
+[submodule "vendors/SteelEngine-Malge"]
+	path = vendors/SteelEngine-Malge
+	url = git@github.com:IronStudio/SteelEngine-Malge.git
+[submodule "vendors/entt"]
+	path = vendors/entt
+	url = git@github.com:skypjack/entt.git

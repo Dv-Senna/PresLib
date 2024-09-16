@@ -1,117 +1,104 @@
-#include <iostream>
-#include <sstream>
+#include "pl/blocks/image.hpp"
 
-#include <glm/ext/matrix_transform.hpp>
-
-#include "blocks/image.hpp"
-#include "instance.hpp"
-#include "graphics/vertices.hpp"
-#include "graphics/shader.hpp"
-#include "graphics/pipeline.hpp"
-#include "utils/loadImage.hpp"
-#include "utils/output.hpp"
+#include "pl/instance.hpp"
 
 
 
-namespace pl::blocks
-{
-	pl::utils::Id Image::s_vertices {0}, Image::s_shaders[2] {0, 0}, Image::s_pipeline {0};
-
-
-
-	Image::Image(pl::Instance &instance, const pl::blocks::Image::CreateInfo &createInfo) : 
-		pl::Block(instance),
-		pl::BlockWithPosition(createInfo.position),
-		pl::BlockWithSize({0.f, 0.f}),
-		pl::BlockWithOrientation(createInfo.angle, createInfo.rotationCenter),
-		pl::BlockWithColor(createInfo.color),
-		pl::BlockWithDistortion(createInfo.distortion),
-		m_texture {0}
+namespace pl::blocks {
+	Image::Image(const pl::blocks::Image::CreateInfos &createInfos) :
+		m_instance {nullptr},
+		m_vertexShader {nullptr},
+		m_fragmentShader {nullptr},
+		m_image {}
 	{
-		pl::blocks::Image::s_load(m_instance);
-		m_texture = pl::utils::loadImage(m_instance, createInfo.path, m_size);
+		m_image = pl::ResourceManager::load<pl::Image> (createInfos.path);
+
+		m_state.parent = nullptr;
+		m_state.position = createInfos.position;
+		m_state.rotation = 0.f;
+		m_state.zoom = createInfos.scale;
+		m_state.renderDescriptor.pipeline = nullptr;
+		m_state.renderDescriptor.vertexLayout = nullptr;
 	}
 
 
-
-	Image::~Image()
-	{
-
-	}
-
-
-
-	void Image::draw(const glm::mat4 &globalTransformation)
-	{
-		glm::vec3 rotationCenter {m_rotationCenter.x * m_size.x, m_rotationCenter.y * m_size.y, 0.f};
-		glm::mat4 transformation {1.f};
-		transformation = glm::translate(transformation, {m_position.x, m_position.y, 0.f});
-		transformation = glm::translate(transformation, rotationCenter);
-		transformation = glm::rotate(transformation, static_cast<float> (m_angle), {0.f, 0.f, 1.f});
-		transformation = glm::translate(transformation, -rotationCenter);
-		transformation = glm::scale(transformation, {m_size.x, m_size.y, 1.f});
-
-		m_instance.getRenderer().usePipeline(s_pipeline);
-			m_instance.getRenderer().setUniformValues(s_pipeline, "texture", {
-				{"transformation", glm::mat4(globalTransformation * transformation * m_distortion)},
-				{"color", static_cast<glm::vec4> (m_color)}
-			});
-			m_instance.getRenderer().bindTexture(s_pipeline, m_texture, 0);
-				m_instance.getRenderer().drawVertices(s_vertices);
-			m_instance.getRenderer().bindTexture(s_pipeline, 0, 0);
-		m_instance.getRenderer().usePipeline(0);
-	}
-
-
-
-	void Image::s_load(pl::Instance &instance)
-	{
-		static bool loaded {false};
-		if (loaded)
+	Image::~Image() {
+		if (m_instance == nullptr)
 			return;
 
-		loaded = true;
-
-		pl::graphics::Vertices vertices {
-			{
-				0.f, 0.f,    1.f, 1.f,    0.f, 1.f,
-				0.f, 0.f,    1.f, 0.f,    1.f, 1.f
-			},
-			{
-				{
-					{pl::graphics::VerticesChannel::color, {0, 2, 0}}
-				},
-				pl::graphics::VerticesUsage::staticDraw
-			}
-		};
-		s_vertices = instance.getRenderer().registerObject(pl::utils::ObjectType::vertices, vertices);
-
-		pl::graphics::Shader vertexShader {
-			pl::graphics::ShaderType::vertex,
-			"shaders/texture.vert.spv",
-			"main"
-		};
-		s_shaders[0] = instance.getRenderer().registerObject(pl::utils::ObjectType::shader, vertexShader);
-		pl::graphics::Shader fragmentShader {
-			pl::graphics::ShaderType::fragment,
-			"shaders/texture.frag.spv",
-			"main"
-		};
-		s_shaders[1] = instance.getRenderer().registerObject(pl::utils::ObjectType::shader, fragmentShader);
-
-		pl::graphics::Pipeline pipeline {
-			{s_shaders[0], s_shaders[1]},
-			{{
-				{
-					{pl::graphics::UniformFieldType::mat4, "transformation"},
-					{pl::graphics::UniformFieldType::vec4, "color"}
-				},
-				"texture", 0
-			}}
-		};
-		s_pipeline = instance.getRenderer().registerObject(pl::utils::ObjectType::pipeline, pipeline);
+		if (m_state.renderDescriptor.vertexLayout != nullptr)
+			m_instance->freeObject(m_state.renderDescriptor.vertexLayout);
+		if (m_state.renderDescriptor.pipeline != nullptr)
+			m_instance->freeObject(m_state.renderDescriptor.pipeline);
+		if (m_fragmentShader != nullptr)
+			m_instance->freeObject(m_fragmentShader);
+		if (m_vertexShader != nullptr)
+			m_instance->freeObject(m_vertexShader);
+		if (m_image.isValid())
+			pl::ResourceManager::unload(m_image);
 	}
 
+
+	void Image::compile(pl::Instance *instance) {
+		m_instance = instance;
+
+		m_image->compile(m_instance);
+
+		pl::render::Shader::CreateInfos shaderCreateInfos {};
+		shaderCreateInfos.entryPoint = "main";
+		shaderCreateInfos.path = "texture.vert";
+		shaderCreateInfos.stage = pl::render::ShaderStage::eVertex;
+		m_vertexShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
+
+		shaderCreateInfos.path = "texture.frag";
+		shaderCreateInfos.stage = pl::render::ShaderStage::eFragment;
+		m_fragmentShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
+
+		pl::render::Pipeline::CreateInfos pipelineCreateInfos {};
+		pipelineCreateInfos.state.blendMode = pl::render::BlendMode::eBlend;
+		pipelineCreateInfos.state.faceCulling = false;
+		pipelineCreateInfos.state.shaders = {m_vertexShader, m_fragmentShader};
+		m_state.renderDescriptor.pipeline = m_instance->allocateObject<pl::render::Pipeline> (pipelineCreateInfos);
+
+		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
+		vertexLayoutCreateInfos.binding = 0;
+		vertexLayoutCreateInfos.components = {
+			{.location = 0, .dimension = 2, .type = pl::render::VertexComponentType::eFloat32, .isPosition = true},
+			{.location = 1, .dimension = 2, .type = pl::render::VertexComponentType::eFloat32}
+		};
+		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
+		m_state.renderDescriptor.vertexLayout = m_instance->allocateObject<pl::render::VertexLayout> (vertexLayoutCreateInfos);
+
+
+		pl::Vec2f halfNormalizedSize {
+			0.5f * m_image->getTexture().getSize().x,
+			0.5f * m_image->getTexture().getSize().y
+		};
+
+		std::vector<pl::Float> vertices {
+			-halfNormalizedSize.x, -halfNormalizedSize.y,    0.f, 0.f,
+			halfNormalizedSize.x, -halfNormalizedSize.y,     1.f, 0.f,
+			-halfNormalizedSize.x, halfNormalizedSize.y,     0.f, 1.f,
+
+			halfNormalizedSize.x, halfNormalizedSize.y,      1.f, 1.f,
+			-halfNormalizedSize.x, halfNormalizedSize.y,     0.f, 1.f,
+			halfNormalizedSize.x, -halfNormalizedSize.y,     1.f, 0.f,
+		};
+
+		m_state.vertices.resize(sizeof(pl::Float) * vertices.size());
+		memcpy(m_state.vertices.data(), vertices.data(), sizeof(pl::Float) * vertices.size());
+
+		m_state.renderDescriptor.textures = {
+			{0, &m_image->getTexture()}
+		};
+
+		m_state.renderDescriptor.uniforms = {
+			{0, m_instance->getViewportUniform()}
+		};
+
+		m_state.rotation.x *= halfNormalizedSize.x;
+		m_state.rotation.y *= halfNormalizedSize.y;
+	}
 
 
 } // namespace pl::blocks

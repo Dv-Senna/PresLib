@@ -1,110 +1,79 @@
-#include <glm/ext/matrix_transform.hpp>
+#include "pl/blocks/triangle.hpp"
 
-#include "blocks/triangle.hpp"
-#include "graphics/pipeline.hpp"
-#include "graphics/shader.hpp"
-#include "graphics/vertices.hpp"
-#include "instance.hpp"
+#include "pl/instance.hpp"
 
+#define UNPACK_VEC2(vec) vec.x, vec.y
+#define UNPACK_VEC3(vec) vec.x, vec.y, vec.z
 
 
-namespace pl::blocks
-{
-	pl::utils::Id Triangle::s_shaders[2] {0, 0}, Triangle::s_pipeline {0};
-
-
-
-	Triangle::Triangle(pl::Instance &instance, const pl::blocks::Triangle::CreateInfo &createInfo) :
-		pl::Block(instance),
-		pl::BlockWithPosition(createInfo.position),
-		pl::BlockWithOrientation(createInfo.angle, createInfo.rotationCenter),
-		pl::BlockWithColor(createInfo.color),
-		pl::BlockWithDistortion(createInfo.distortion),
-		m_vertices {0}
+namespace pl::blocks {
+	Triangle::Triangle(const pl::blocks::Triangle::CreateInfos &createInfos) :
+		m_instance {nullptr}
 	{
-		pl::blocks::Triangle::s_load(m_instance);
+		m_state.parent = nullptr;
+		m_state.position = createInfos.position;
+		m_state.rotation = 0.f;
+		m_state.zoom = {1.f, 1.f};
+		m_state.renderDescriptor.pipeline = nullptr;
+		m_state.renderDescriptor.vertexLayout = nullptr;
 
-		glm::vec2 first {createInfo.a}, second {createInfo.b};
-
-		pl::graphics::Vertices vertices {
-			{
-				0.f, 0.f,
-				first.x, first.y,
-				second.x, second.y
-			},
-			{
-				{
-					{pl::graphics::VerticesChannel::color, {0, 2, 0}}
-				},
-				pl::graphics::VerticesUsage::staticDraw
-			}
-		};
-		m_vertices = m_instance.getRenderer().registerObject(pl::utils::ObjectType::vertices, vertices);
-	}
-
-
-	
-	Triangle::~Triangle()
-	{
-		
-	}
-
-
-
-	void Triangle::draw(const glm::mat4 &globalTransformation)
-	{
-		glm::mat4 transformation {
-			glm::rotate(
-				glm::translate(glm::mat4(1.f), glm::vec3(m_position.x, m_position.y, 0.f)),
-				static_cast<float> (m_angle), glm::vec3(0.f, 0.f, 1.f)
-			)
+		std::vector<pl::Float> vertices {
+			UNPACK_VEC2(createInfos.vertices[0]), UNPACK_VEC3(createInfos.color),
+			UNPACK_VEC2(createInfos.vertices[1]), UNPACK_VEC3(createInfos.color),
+			UNPACK_VEC2(createInfos.vertices[2]), UNPACK_VEC3(createInfos.color)
 		};
 
-		m_instance.getRenderer().usePipeline(s_pipeline);
-			m_instance.getRenderer().setUniformValues(s_pipeline, "vertices", {
-				{"transformation", glm::mat4(globalTransformation * transformation * m_distortion)},
-				{"color", static_cast<glm::vec4> (m_color)}
-			});
-			m_instance.getRenderer().drawVertices(m_vertices);
-		m_instance.getRenderer().usePipeline(0);
+		m_state.vertices.resize(sizeof(pl::Float) * vertices.size());
+		memcpy(m_state.vertices.data(), vertices.data(), sizeof(pl::Float) * vertices.size());
 	}
 
 
-
-	void Triangle::s_load(pl::Instance &instance)
-	{
-		static bool loaded {false};
-		if (loaded)
+	Triangle::~Triangle() {
+		if (m_instance == nullptr)
 			return;
 
-		loaded = true;
-
-		pl::graphics::Shader vertexShader {
-			pl::graphics::ShaderType::vertex,
-			"shaders/vertices.vert.spv",
-			"main"
-		};
-		s_shaders[0] = instance.getRenderer().registerObject(pl::utils::ObjectType::shader, vertexShader);
-		pl::graphics::Shader fragmentShader {
-			pl::graphics::ShaderType::fragment,
-			"shaders/vertices.frag.spv",
-			"main"
-		};
-		s_shaders[1] = instance.getRenderer().registerObject(pl::utils::ObjectType::shader, fragmentShader);
-
-		pl::graphics::Pipeline pipeline {
-			{s_shaders[0], s_shaders[1]},
-			{{
-				{
-					{pl::graphics::UniformFieldType::mat4, "transformation"},
-					{pl::graphics::UniformFieldType::vec4, "color"}
-				},
-				"vertices", 0
-			}}
-		};
-		s_pipeline = instance.getRenderer().registerObject(pl::utils::ObjectType::pipeline, pipeline);
+		if (m_state.renderDescriptor.vertexLayout != nullptr)
+			m_instance->freeObject(m_state.renderDescriptor.vertexLayout);
+		if (m_state.renderDescriptor.pipeline != nullptr)
+			m_instance->freeObject(m_state.renderDescriptor.pipeline);
+		if (m_fragmentShader != nullptr)
+			m_instance->freeObject(m_fragmentShader);
+		if (m_vertexShader != nullptr)
+			m_instance->freeObject(m_vertexShader);
 	}
 
+
+	void Triangle::compile(pl::Instance *instance) {
+		m_instance = instance;
+
+		pl::render::Shader::CreateInfos shaderCreateInfos {};
+		shaderCreateInfos.entryPoint = "main";
+		shaderCreateInfos.path = "test.vert";
+		shaderCreateInfos.stage = pl::render::ShaderStage::eVertex;
+		m_vertexShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
+
+		shaderCreateInfos.path = "test.frag";
+		shaderCreateInfos.stage = pl::render::ShaderStage::eFragment;
+		m_fragmentShader = m_instance->allocateObject<pl::render::Shader> (shaderCreateInfos);
+
+		pl::render::Pipeline::CreateInfos pipelineCreateInfos {};
+		pipelineCreateInfos.state.faceCulling = false;
+		pipelineCreateInfos.state.shaders = {m_vertexShader, m_fragmentShader};
+		m_state.renderDescriptor.pipeline = m_instance->allocateObject<pl::render::Pipeline> (pipelineCreateInfos);
+
+		pl::render::VertexLayout::CreateInfos vertexLayoutCreateInfos {};
+		vertexLayoutCreateInfos.binding = 0;
+		vertexLayoutCreateInfos.components = {
+			{.location = 0, .dimension = 2, .type = pl::render::VertexComponentType::eFloat32, .isPosition = true},
+			{.location = 1, .dimension = 3, .type = pl::render::VertexComponentType::eFloat32}
+		};
+		vertexLayoutCreateInfos.rate = pl::render::VertexRate::eVertex;
+		m_state.renderDescriptor.vertexLayout = m_instance->allocateObject<pl::render::VertexLayout> (vertexLayoutCreateInfos);
+
+		m_state.renderDescriptor.uniforms = {
+			{0, m_instance->getViewportUniform()}
+		};
+	}
 
 
 } // namespace pl::blocks
