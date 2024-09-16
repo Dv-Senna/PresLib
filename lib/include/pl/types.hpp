@@ -20,4 +20,9 @@ namespace pl {
 		pl::Int h;
 	};
 
+	enum class Dimension {
+		e2,
+		e3
+	};
+
 } // namespace pl

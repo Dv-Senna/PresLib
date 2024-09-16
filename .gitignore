@@ -31,8 +31,9 @@
 *.out
 *.app
 
-# vs code
+# editors
 .vscode/*
+.cache/*
 
 # Scripts
 *.bat
@@ -49,3 +50,6 @@ latex/*
 
 # Logs
 *.log
+
+# compile_command.json
+compile_command.json

@@ -22,7 +22,7 @@ namespace pl::blocks {
 			};
 
 			Image(const pl::blocks::Image::CreateInfos &createInfos);
-			~Image() override;
+			~Image();
 
 			void compile(pl::Instance *instance) override;
 

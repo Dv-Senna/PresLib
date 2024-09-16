@@ -4,6 +4,8 @@
 #include <functional>
 #include <string>
 
+#include <entt/entt.hpp>
+
 #include "pl/core.hpp"
 #include "pl/types.hpp"
 
@@ -24,6 +26,7 @@ namespace pl {
 			static void setFramerate(pl::Uint fps);
 			static const pl::Uint &getFramerate();
 			static const pl::Float &getFrameDuration();
+
 
 		private:
 			static std::filesystem::path s_shaderFolderPath;

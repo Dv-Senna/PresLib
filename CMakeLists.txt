@@ -10,6 +10,8 @@ string(TOUPPER ${PROJECT_ACRONYM} PROJECT_ACRONYM_UPPERCASE)
 set(PROJECT_CPP_DIALECT 23)
 set(PROJECT_C_DIALECT 23)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS, ON)
+
 # external dependencies
 
 find_package(SDL2 CONFIG REQUIRED)
@@ -40,6 +42,7 @@ set(DEPS_INCLUDE_DIRS
 	${CMAKE_SOURCE_DIR}/vendors/stb
 	${CMAKE_SOURCE_DIR}/vendors/SteelEngine-Malge/se-malge/include
 	${CMAKE_SOURCE_DIR}/vendors/utfcpp/source
+	${CMAKE_SOURCE_DIR}/vendors/entt/single_include
 )
 set(DEPS_LIBRARIES ${SDL2_LIBRARIES} glad freetype)
 

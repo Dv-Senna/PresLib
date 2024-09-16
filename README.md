@@ -2,8 +2,8 @@
 
 <p align="center">
 	<img src="https://img.shields.io/badge/version-dev0.6.0-informational" />
-	<img src="https://img.shields.io/badge/Windows-success-success" />
-	<img src="https://img.shields.io/badge/Linux-success-success" />
+	<img src="https://img.shields.io/badge/Windows-success-error" />
+	<img src="https://img.shields.io/badge/Linux-success-error" />
 	<img src="https://img.shields.io/badge/MacOS-not tested-important" />
 </p>
 
